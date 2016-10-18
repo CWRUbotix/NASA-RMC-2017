@@ -1,0 +1,9 @@
+*.pyc
+build*/
+*.user
+*.exe
+*.dll
+*.lib
+*.so
+*.a
+*.app
