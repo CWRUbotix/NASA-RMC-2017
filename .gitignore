@@ -7,3 +7,8 @@ build*/
 *.so
 *.a
 *.app
+*.pb.cc
+*.pb.h
+*_pb.py
+*_pb2.py
+*_pb3.py
