@@ -48,7 +48,7 @@ void MainWindow::handleLocomotion(LocomotionControl_LocomotionType direction) {
     amqp_bytes_t message_bytes;
     message_bytes.len = msg_size;
     message_bytes.bytes = msg_buff;
-    const char* queue_name = "test";
+    const char* queue_name = "locomotion";
     int status = amqp_basic_publish(m_conn,
                                     1,
                                     amqp_cstring_bytes(""),

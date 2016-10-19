@@ -1,13 +1,13 @@
 syntax = "proto2";
 
-message SingleMotorControl {
+message SingleMotorDrive {
   required uint32 motorID = 1;
   required sint32 voltage_percent = 2;
   optional uint32 timeout_ms = 3;
 }
 
-message MultiMotorControl {
-  repeated SingleMotorControl element = 1;
+message MultiMotorDrive {
+  repeated SingleMotorDrive element = 1;
 }
 
 message SingleServoControl {
@@ -33,3 +33,4 @@ message LocomotionControl {
   required sint32 speed_percent = 2;
   required uint32 timeout_ms = 3;
 }
+

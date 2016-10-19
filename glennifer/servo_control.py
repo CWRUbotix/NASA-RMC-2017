@@ -1,17 +1,10 @@
 import pika
-import serial
 import messages_pb2
+
+queue_name = 'servo_control'
 
 # Create a global channel variable to hold our channel object in
 channel = None
-
-ser_connected = True
-
-try:
-    ser = serial.Serial('COM5', 9600, timeout=0)
-except:
-    print("Warning: serial not connected")
-    ser_connected = False
 
 # Step #2
 def on_connected(connection):
@@ -24,25 +17,31 @@ def on_channel_open(new_channel):
     """Called when our channel has opened"""
     global channel
     channel = new_channel
-    channel.queue_declare(queue="test", durable=True, exclusive=False, auto_delete=False, callback=on_queue_declared)
+    channel.queue_declare(queue=queue_name, durable=True, exclusive=False, auto_delete=False, callback=on_queue_declared)
 
 # Step #4
 def on_queue_declared(frame):
     """Called when RabbitMQ has told us our Queue has been declared, frame is the response from RabbitMQ"""
-    channel.basic_consume(handle_delivery, queue='test', no_ack = True)
+    channel.basic_consume(handle_delivery, queue=queue_name, no_ack = True)
 
 # Step #5
 def handle_delivery(channel, method, header, body):
     """Called when we receive a message from RabbitMQ"""
     print('recieved')
-    print(channel)
-    print(method)
-    print(body)
-    msg = messages_pb2.LocomotionControl()
-    msg.ParseFromString(body)
-    print(msg)
-    if (ser_connected):
-        ser.write(msg.locomotionType)
+    msg_in = messages_pb2.MultiServoControl()
+    msg_in.ParseFromString(body)
+    print(msg_in)
+    msg_out = messages_pb2.MultiMotorControl()
+    for ssc in msg_in.element:
+        smc = msg_out.element.add()
+        smc.motorID = ssc.motorID
+        smc.voltage_percent = ssc.speed_percent
+        smc.timeout_ms = ssc.timeout_ms
+    
+    channel.basic_publish('', 'motor_drive', msg_out.SerializeToString())
+    print('sent')
+    print(msg_out)
+    
     
 
 # Step #1: Connect to RabbitMQ using the default parameters
