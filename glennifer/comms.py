@@ -1,10 +1,17 @@
 import pika
 import serial
+import messages_pb2
 
 # Create a global channel variable to hold our channel object in
 channel = None
 
-ser = serial.Serial('COM5', 9600, timeout=0)
+ser_connected = True
+
+try:
+    ser = serial.Serial('COM5', 9600, timeout=0)
+except:
+    print("Warning: serial not connected")
+    ser_connected = False
 
 # Step #2
 def on_connected(connection):
@@ -31,7 +38,11 @@ def handle_delivery(channel, method, header, body):
     print(channel)
     print(method)
     print(body)
-    ser.write(body)
+    msg = messages_pb2.LocomotionControl()
+    msg.ParseFromString(body)
+    print(msg)
+    if (ser_connected):
+        ser.write(msg.locomotionType)
     
 
 # Step #1: Connect to RabbitMQ using the default parameters

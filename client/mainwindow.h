@@ -5,6 +5,7 @@
 #include <amqp_tcp_socket.h>
 #include <amqp.h>
 #include <amqp_framing.h>
+#include "messages.pb.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +21,7 @@ public:
     ~MainWindow();
 
 public slots:
+    void handleLocomotion(LocomotionControl_LocomotionType direction);
     void handleLocomotionUp();
     void handleLocomotionDown();
     void handleLocomotionLeft();
