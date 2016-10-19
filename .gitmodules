@@ -1,0 +1,6 @@
+[submodule "third-party/protobuf"]
+	path = third-party/protobuf
+	url = https://github.com/google/protobuf
+[submodule "third-party/rabbitmq-c"]
+	path = third-party/rabbitmq-c
+	url = https://github.com/alanxz/rabbitmq-c.git
