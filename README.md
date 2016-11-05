@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/cwruRobotics/NASA-RMC-2017.png?label=ready&title=Ready)](https://waffle.io/cwruRobotics/NASA-RMC-2017)
 This is the entire codebase for Case Western Reserve University's 2017 NASA Robotic Mining Challenge robot. It is currently made up a minimal skeleton of test scripts written in python.
 
 Running this code requires Python 3 with the the Pika and PySerial libraries. The robot must also be running a standalone AMQP server such as RabbitMQ.
