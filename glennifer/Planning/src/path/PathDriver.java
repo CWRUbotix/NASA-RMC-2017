@@ -74,14 +74,6 @@ public class PathDriver {
 
     // GET/SET
 
-    public PathPlanning getPlanner() {
-        return planner;
-    }
-
-    public PathExecution getExecutor() {
-        return executor;
-    }
-
 
     // MAIN METHOD
 
