@@ -1,5 +1,7 @@
 package path;
 
+import commands.MidLevelCommand;
+
 /**
  * This class is responsible for publishing Messages detailing the next
  * MidLevelCommand the robot should execute. The queue of commands to
@@ -10,4 +12,27 @@ package path;
  * Created by Brian on 11/9/2016.
  */
 public class PathExecution {
+
+    // FIELDS
+
+    private MidLevelCommand currentCommand;
+
+
+    // PUBLIC METHODS
+
+    public PathExecution() {
+
+    }
+
+
+    // GET / SET
+    public MidLevelCommand getCurrentCommand() {
+        return currentCommand;
+    }
+
+    public void setCurrentCommand(MidLevelCommand currentCommand) {
+        this.currentCommand = currentCommand;
+    }
+
+
 }
