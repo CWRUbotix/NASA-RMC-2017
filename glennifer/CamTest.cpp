@@ -1,8 +1,7 @@
 /*
  * CamTest.cpp
  *
- *  Created on: Nov 9, 2016
- *      Author: phoenix
+ *
  */
 #include <highgui.h>
 #include <cv.hpp>
@@ -12,39 +11,94 @@
 #include <cvaux.h>
 #include <cv.h>
 #include <iostream>
+#include <string>
 
 using namespace cv;
 using namespace std;
+typedef unsigned char byte;
 
-int main()
-{
-    //initialize and allocate memory to load the video stream from camera
-    cv::VideoCapture camera0(0);
-  cv::VideoCapture camera1(1);
+VideoCapture cam0(0);
+VideoCapture cam1(1);
 
-    if( !camera0.isOpened() ) return 1;
- if( !camera1.isOpened() ) return 1;
-
-    while(true) {
-    // grab and retrieve each frames of the video sequentially
-        cv::Mat3b frame0;
-        camera0 >> frame0;
-     cv::Mat3b frame1;
-      camera1 >> frame1;
-
-        cv::imshow("Video0", frame0);
-      cv::imshow("Video1", frame1);
-
-        //wait for 40 milliseconds
-        int c = cvWaitKey(40);
-
-        //exit the loop if user press "Esc" key  (ASCII value of "Esc" is 27)
-        if(27 == char(c)) break;
-    }
-
-    return 0;
+Mat bytesToMat(byte * bytes,int width,int height) {
+    Mat image = Mat(height,width,CV_8UC3,bytes).clone(); // make a copy
+    return image;
 }
 
+byte * matToBytes(Mat image) {
+   int size = image.total() * image.elemSize();
+   byte * framesend = new byte[size];
+   memcpy(framesend,image.data,size * sizeof(byte));
+   return framesend;
+}
+
+//get integrated camera frame
+cv::Mat goGetFrame0(){
+	Mat temp0;
+	while(!cam0.isOpened()) {
+		cout << "Camera Zero is not Open" << endl;
+	}
+	cam0 >> temp0;
+	return temp0;
+
+}
+
+//get carl zeiss tessar hd logitech camera
+cv::Mat goGetFrame(){
+	Mat temp;
+	while(!cam1.isOpened()) {
+		cout << "Camera One is not Open" << endl;
+	}
+	cam1 >> temp;
+	return temp;
+
+}
+
+int main() {
+	int one = 0;
+
+	if(!cam0.isOpened()){
+			cout << "camera1 cannot be opened";
+		}
+
+	if(!cam1.isOpened()){
+			cout << "camera1 cannot be opened";
+		}
+	while(true) {
+		//Camera 0
+		string onestring0 = "" + (char)one;
+		string onepath0 = "/home/phoenix/Pictures/TestRun0/frame1-" + onestring0;
+		namedWindow("cam0", WINDOW_AUTOSIZE);
+		//Mat framef0;
+		Mat frame0;
+		frame0 = goGetFrame0().clone();
+		//cvtColor(framef0,frame0, CV_BGR2RGB); //transforms from bgr2rgb
+		string path0 = onepath0 + ".jpg";
+		imwrite(path0, frame0);
+		imshow("cam0", frame0);
+
+		//Camera 1
+		string onestring = "" + (char)one;
+		string onepath = "/home/phoenix/Pictures/TestRun1/frame1-" + onestring;
+		namedWindow("cam1", WINDOW_AUTOSIZE);
+		//Mat framef1;
+		Mat frame1;
+		frame1 = goGetFrame().clone();
+		//cvtColor(framef1, frame1, CV_BGR2RGB); //transforms from bgr2rgb
+		string path = onepath + ".jpg";
+		//matToBytes(frame1);
+		imwrite(path, frame1);
+		imshow("cam1", frame1);
+
+		one++;
+
+		int c = cvWaitKey(40);
+		if(27 == char(c))
+			break;
+	}
+
+	return 0;
+}
 
 
 
