@@ -44,7 +44,7 @@ cv::Mat goGetFrame0(){
 }
 
 //get carl zeiss tessar hd logitech camera
-cv::Mat goGetFrame(){
+cv::Mat goGetFrame1(){
 	Mat temp;
 	while(!cam1.isOpened()) {
 		cout << "Camera One is not Open" << endl;
@@ -83,7 +83,7 @@ int main() {
 		namedWindow("cam1", WINDOW_AUTOSIZE);
 		//Mat framef1;
 		Mat frame1;
-		frame1 = goGetFrame().clone();
+		frame1 = goGetFrame1().clone();
 		//cvtColor(framef1, frame1, CV_BGR2RGB); //transforms from bgr2rgb
 		string path = onepath + ".jpg";
 		//matToBytes(frame1);
