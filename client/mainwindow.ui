@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>887</width>
+    <width>919</width>
     <height>622</height>
    </rect>
   </property>
@@ -22,7 +22,7 @@
       </property>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -335,44 +335,29 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_15">
                 <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_16">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_14">
-                    <item>
-                     <widget class="QLabel" name="label_7">
-                      <property name="text">
-                       <string>Duration</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QSlider" name="locomotion_DurationSlider">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_13">
-                    <item>
-                     <widget class="QLabel" name="label_6">
-                      <property name="text">
-                       <string>Speed</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QSlider" name="locomotion_SpeedSlider">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
+                 <layout class="QVBoxLayout" name="verticalLayout_16"/>
+                </item>
+                <item>
+                 <widget class="QTabWidget" name="tabWidget_2">
+                  <property name="currentIndex">
+                   <number>2</number>
+                  </property>
+                  <widget class="QWidget" name="Config1">
+                   <attribute name="title">
+                    <string>Config1</string>
+                   </attribute>
+                  </widget>
+                  <widget class="QWidget" name="Config2">
+                   <attribute name="title">
+                    <string>Config2</string>
+                   </attribute>
+                  </widget>
+                  <widget class="QWidget" name="Config3">
+                   <attribute name="title">
+                    <string>Config3</string>
+                   </attribute>
+                  </widget>
+                 </widget>
                 </item>
                 <item>
                  <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -430,402 +415,201 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_ServoControl">
+       <widget class="QWidget" name="tab_ExcavationControl">
         <attribute name="title">
-         <string>Servo Control</string>
+         <string>Excavation Control</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QGroupBox" name="groupBox_5">
-           <property name="title">
-            <string>Front Left Motor</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <item>
-             <widget class="QCheckBox" name="servo_FrontLeftEnableCheckBox">
-              <property name="text">
-               <string>Enabled</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <widget class="QSlider" name="servo_FrontLeftSpeedSlider">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_38">
-                <item>
-                 <widget class="QProgressBar" name="servo_FrontLeftForwardSpeedBar">
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="invertedAppearance">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QProgressBar" name="servo_FrontLeftReverseSpeedBar">
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="invertedAppearance">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="servo_FrontLeftZeroButton">
-                <property name="text">
-                 <string>Zero</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_3">
-           <property name="title">
-            <string>Front Right Motor</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_14">
-            <item>
-             <widget class="QCheckBox" name="servo_FrontRightEnableCheckBox">
-              <property name="text">
-               <string>Enabled</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_18">
-              <item>
-               <widget class="QSlider" name="servo_FrontRightSpeedSlider">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_39">
-                <item>
-                 <widget class="QProgressBar" name="servo_FrontRightForwardSpeedBar">
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QProgressBar" name="servo_FrontRightReverseSpeedBar">
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="invertedAppearance">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="servo_FrontRightZeroButton">
-                <property name="text">
-                 <string>Zero</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_4">
-           <property name="title">
-            <string>Back Left Motor</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_15">
-            <item>
-             <widget class="QCheckBox" name="servo_BackLeftEnableCheckBox">
-              <property name="text">
-               <string>Enabled</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_17">
-              <item>
-               <widget class="QSlider" name="servo_BackLeftSpeedSlider">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_40">
-                <item>
-                 <widget class="QProgressBar" name="servo_BackLeftForwardSpeedBar">
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QProgressBar" name="servo_BackLeftReverseSpeedBar">
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="invertedAppearance">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="servo_BackLeftZeroButton">
-                <property name="text">
-                 <string>Zero</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_6">
-           <property name="title">
-            <string>Back Right Motor</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_17">
-            <item>
-             <widget class="QCheckBox" name="servo_BackRightEnableCheckBox">
-              <property name="text">
-               <string>Enabled</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_16">
-              <item>
-               <widget class="QSlider" name="servo_BackRightSpeedSlider">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_41">
-                <item>
-                 <widget class="QProgressBar" name="servo_BackRightForwardSpeedBar">
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QProgressBar" name="servo_BackRightReverseSpeedBar">
-                  <property name="value">
-                   <number>24</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="invertedAppearance">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="servo_BackRightZeroButton">
-                <property name="text">
-                 <string>Zero</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QCheckBox" name="checkBox">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>80</y>
+           <width>100</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Basket On</string>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="plainTextEdit_2">
+         <property name="geometry">
+          <rect>
+           <x>250</x>
+           <y>250</y>
+           <width>101</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="plainText">
+          <string>Translation</string>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="plainTextEdit_5">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>330</y>
+           <width>81</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="plainText">
+          <string>Speed</string>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="plainTextEdit_6">
+         <property name="geometry">
+          <rect>
+           <x>250</x>
+           <y>330</y>
+           <width>91</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="plainText">
+          <string>Duration</string>
+         </property>
+        </widget>
+        <widget class="QSplitter" name="splitter_3">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>110</y>
+           <width>495</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QSlider" name="horizontalSlider">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="QDoubleSpinBox" name="doubleSpinBox">
+          <property name="maximum">
+           <double>90.000000000000000</double>
+          </property>
+         </widget>
+         <widget class="QPlainTextEdit" name="plainTextEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="plainText">
+           <string>Arm Angle</string>
+          </property>
+          <property name="backgroundVisible">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QSplitter" name="splitter_4">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>250</y>
+           <width>207</width>
+           <height>29</height>
+          </rect>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QRadioButton" name="radioButton">
+          <property name="text">
+           <string>RadioButton</string>
+          </property>
+         </widget>
+         <widget class="QSlider" name="horizontalSlider_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QSplitter" name="splitter_2">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>290</y>
+           <width>495</width>
+           <height>29</height>
+          </rect>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QRadioButton" name="radioButton_2">
+          <property name="text">
+           <string>RadioButton</string>
+          </property>
+         </widget>
+         <widget class="QSlider" name="horizontalSlider_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="QSlider" name="horizontalSlider_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>Start</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>Stop</string>
+          </property>
+         </widget>
+        </widget>
        </widget>
-       <widget class="QWidget" name="tab_MotorDrive">
+       <widget class="QWidget" name="tab">
         <attribute name="title">
-         <string>Motor Control</string>
+         <string>Deposition Control</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_39">
-         <item>
-          <widget class="QGroupBox" name="groupBox_15">
-           <property name="title">
-            <string>Front Left Motor</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_36">
-            <item>
-             <widget class="QCheckBox" name="motor_FrontLeftEnableCheckBox">
-              <property name="text">
-               <string>Enabled</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_37">
-              <item>
-               <widget class="QSlider" name="motor_FrontLeftDriveSlider">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="motor_FrontLeftZeroButton">
-                <property name="text">
-                 <string>Zero</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_16">
-           <property name="title">
-            <string>Front Right Motor</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_37">
-            <item>
-             <widget class="QCheckBox" name="motor_FrontRightEnableCheckBox">
-              <property name="text">
-               <string>Enabled</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_38">
-              <item>
-               <widget class="QSlider" name="motor_FrontRightDriveSlider">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="motor_FrontRightZeroButton">
-                <property name="text">
-                 <string>Zero</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_14">
-           <property name="title">
-            <string>Back Left Motor</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_35">
-            <item>
-             <widget class="QCheckBox" name="motor_BackLeftEnableCheckBox">
-              <property name="text">
-               <string>Enabled</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_36">
-              <item>
-               <widget class="QSlider" name="motor_BackLeftDriveSlider">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="motor_BackLeftZeroButton">
-                <property name="text">
-                 <string>Zero</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_13">
-           <property name="title">
-            <string>Back Right Motor</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_34">
-            <item>
-             <widget class="QCheckBox" name="motor_BackRightEnableCheckBox">
-              <property name="text">
-               <string>Enabled</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_35">
-              <item>
-               <widget class="QSlider" name="motor_BackRightDriveSlider">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="motor_BackRightZeroButton">
-                <property name="text">
-                 <string>Zero</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QSlider" name="horizontalSlider_9">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>60</y>
+           <width>160</width>
+           <height>29</height>
+          </rect>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="plainTextEdit_7">
+         <property name="geometry">
+          <rect>
+           <x>230</x>
+           <y>60</y>
+           <width>141</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="plainText">
+          <string>Dump Angel</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="checkBox_3">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>120</y>
+           <width>100</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Conveyor</string>
+         </property>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="verticalLayoutWidget">
@@ -851,8 +635,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>887</width>
-     <height>21</height>
+     <width>919</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
