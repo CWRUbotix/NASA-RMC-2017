@@ -15,8 +15,21 @@ public class MidLevelCommand extends Command{
 
     public enum MidLevelCommandEnum {
 
-        MOVE_STRAIGHT;
-
+    	//Locomotion
+    	MOVE_STRAIGHT;
+    	STRAFE;
+    	TURN;
+    	CONFIGURE;
+    		
+    	//Excavation
+    	SET_ARM_POSITION;
+    	SET_TRANSLATION_POSITION;
+    	MOVE_BUCKET_CONVEYOR;
+    	
+    	//Deposition
+    	SET_DUMP_POSITION;
+    	MOVE_DUMP_CONVEYOR;
+    		
     }
 
 
@@ -31,6 +44,7 @@ public class MidLevelCommand extends Command{
     // GET/SET
 
     public MidLevelCommandEnum getCommand() {
+
         return command;
     }
 

@@ -13,5 +13,6 @@ build*/
 *_pb2.py
 *_pb3.py
 *.iml
+*.project
 .idea*/
 out*/
