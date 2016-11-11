@@ -18,9 +18,9 @@ public class LocomotionMidLevelCommand extends MidLevelCommand{
 	//Enum used if the command is CONFIGURE
 	public enum LocomotionConfigurationEnum {
 
-    	STRAIGHT; //The robot can only move forward or backward
-		TURN; //The robot can only turn in place
-		STRAFE; //The robot can only strafe side to side	
+    	STRAIGHT, //The robot can only move forward or backward
+		TURN, //The robot can only turn in place
+		STRAFE //The robot can only strafe side to side
     }
 	
 	
@@ -42,12 +42,8 @@ public class LocomotionMidLevelCommand extends MidLevelCommand{
         	this.power = power;
         }
     }
+
     
-    public LocomotionConfigurationEnum getCommand() {
-
-        return configurationMode;
-    }
-
     public void setCommand(LocomotionConfigurationEnum configurationMode) {
         this.configurationMode = configurationMode;
     }

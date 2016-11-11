@@ -16,19 +16,19 @@ public class MidLevelCommand extends Command{
     public enum MidLevelCommandEnum {
 
     	//Locomotion
-    	MOVE_STRAIGHT;
-    	STRAFE;
-    	TURN;
-    	CONFIGURE;
+    	MOVE_STRAIGHT,
+    	STRAFE,
+    	TURN,
+    	CONFIGURE,
     		
     	//Excavation
-    	SET_ARM_POSITION;
-    	SET_TRANSLATION_POSITION;
-    	MOVE_BUCKET_CONVEYOR;
+    	SET_ARM_POSITION,
+    	SET_TRANSLATION_POSITION,
+    	MOVE_BUCKET_CONVEYOR,
     	
     	//Deposition
-    	SET_DUMP_POSITION;
-    	MOVE_DUMP_CONVEYOR;
+    	SET_DUMP_POSITION,
+    	MOVE_DUMP_CONVEYOR
     		
     }
 
