@@ -2,6 +2,8 @@ package path;
 
 import commands.MidLevelCommand;
 
+import java.util.Queue;
+
 /**
  * This class is responsible for publishing Messages detailing the next
  * MidLevelCommand the robot should execute. The queue of commands to
@@ -16,6 +18,7 @@ public class PathExecution {
     // FIELDS
 
     private MidLevelCommand currentCommand;
+    private Queue<MidLevelCommand> commandQueue;
 
 
     // PUBLIC METHODS
@@ -26,6 +29,7 @@ public class PathExecution {
 
 
     // GET / SET
+
     public MidLevelCommand getCurrentCommand() {
         return currentCommand;
     }
@@ -34,5 +38,11 @@ public class PathExecution {
         this.currentCommand = currentCommand;
     }
 
+    public Queue<MidLevelCommand> getCommandQueue() {
+        return commandQueue;
+    }
 
+    public void setCommandQueue(Queue<MidLevelCommand> commandQueue) {
+        this.commandQueue = commandQueue;
+    }
 }
