@@ -43,7 +43,7 @@ public class LocomotionMidLevelCommand extends MidLevelCommand{
         }
     }
 
-    
+
     public void setCommand(LocomotionConfigurationEnum configurationMode) {
         this.configurationMode = configurationMode;
     }

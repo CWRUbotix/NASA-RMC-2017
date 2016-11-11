@@ -35,6 +35,13 @@ public class PathDriver {
 
         /* Message Subscriptions */
 
+        //Put topics into queues
+            //declare queue (name, durability, name callback for queue creation)
+
+        //basic consume
+            //call something parse message into Java objects we can use
+            //
+
 
         /* Message Advertisements */
 
