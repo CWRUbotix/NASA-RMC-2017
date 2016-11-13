@@ -17,8 +17,8 @@ sudo pip3 install protobuf
 # Install pika, the AMQP library for python
 sudo pip3 install pika
 
-# Install the Java 7 Development Kit
-sudo apt-get -q -y install openjdk-7-jdk
+# Install the Java 7 Development Kit and Maven
+sudo apt-get -q -y install openjdk-7-jdk maven
 
 # Install and set up the RabbitMQ server
 echo 'deb http://www.rabbitmq.com/debian/ testing main' |
