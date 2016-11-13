@@ -8,14 +8,14 @@ queue_name = 'motor_drive'
 ser_connected = True
 
 try:
-    ser = serial.Serial('COM5', 9600, timeout=0)
+    ser = serial.Serial('COM5', 9600, timeout=1)
 except:
     print("Warning: serial not connected")
     ser_connected = False
 
 def timeout_callback(motorID):
     if ser_connected:
-        ser.write(bytes([motorID,0]))
+        ser.write(bytes('M' + str(motorID+1) + ': ' + str(0) + '\n', 'ascii'))
     print('set ' + str(motorID) + ' to ' + str(0))
 
 motor_events = {0:None,
@@ -53,7 +53,10 @@ def handle_delivery(channel, method, header, body):
     print(msg_in)
     for smc in msg_in.element:
         if ser_connected:
-            ser.write(bytes([smc.motorID, smc.voltage_percent]))
+            voltage_percent = smc.voltage_percent
+            if (smc.motorID == 1):
+                voltage_percent *= -1
+            ser.write(bytes('M' + str(smc.motorID+1) + ': ' + str(20*voltage_percent) + '\n', 'ascii'))
         print('set ' + str(smc.motorID) + ' to ' + str(smc.voltage_percent))
 
         # cancel old timeout event
@@ -61,7 +64,7 @@ def handle_delivery(channel, method, header, body):
             motor_events[smc.motorID].cancel()
 
         # create and store new timeout event
-        motor_event = threading.Timer(smc.timeout_ms / 1000.0,
+        motor_event = threading.Timer(smc.timeout_ms / 100.0,
                                       timeout_callback,
                                       kwargs={
                                           'motorID': smc.motorID})
