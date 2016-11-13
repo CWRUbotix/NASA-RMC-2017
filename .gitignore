@@ -14,4 +14,3 @@ build*/
 *_pb3.py
 Messages.java
 *.o
-moc_*
