@@ -19,6 +19,7 @@ sudo pip3 install pika
 
 # Install the Java 8 Development Kit and Maven
 sudo add-apt-repository ppa:openjdk-r/ppa
+sudo apt-get update
 sudo apt-get -q -y install openjdk-8-jdk maven
 
 # Install and set up the RabbitMQ server
