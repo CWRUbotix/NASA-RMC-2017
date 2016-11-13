@@ -1,5 +1,117 @@
 syntax = "proto2";
 
+package com.cwrubotix.glennifer;
+
+// Message types from schemas document
+
+message UnixTime {
+	required uint64 time_int = 1;
+	required float time_frac = 2;
+}
+
+message RpmUpdate {
+	required float rpm = 1;
+	required UnixTime timestamp = 2;
+}
+
+message DisplacementUpdate {
+	required float displacement = 1;
+	required UnixTime timestamp = 2;
+}
+
+message PositionUpdate {
+	required float position = 1;
+	required UnixTime timestamp = 2;
+}
+
+message LimitUpdate {
+	required bool pressed = 1;
+	required UnixTime timestamp = 2;
+}
+
+message ImuUpdate {
+	required float orientation = 1;
+	required UnixTime timestamp = 2;
+}
+
+message LoadUpdate {
+	required float load = 1;
+	required UnixTime timestamp = 2;
+}
+
+message Fault {
+	required uint32 fault_code = 1;
+	required UnixTime timestamp = 2;
+	repeated uint32 params = 3;
+}
+
+message Adjustment {
+	optional Fault source_fault = 1;
+	required uint32 adjustment_code = 2;
+	required UnixTime timestamp = 3;
+	repeated uint32 params = 4;
+}
+
+message VoltageControlCommand {
+	required float voltage = 1;
+}
+
+message SpeedContolCommand {
+	required float rpm = 1;
+	required float timeout = 2;
+}
+
+message PositionContolCommand {
+	required float position = 1;
+	required float timeout = 2;
+}
+
+message LocomotionControlCommand {
+	enum Type {
+		STRAIGHT = 0;
+		STRAFE = 1;
+		TURN = 2;
+		CONFIGURE = 3;
+	}
+	enum Configuration {
+		STRAIGHT_CONFIG = 0;
+		STRAFE_CONFIG = 1;
+		TURN_CONFIG = 2;
+	}
+	required Type type = 1;
+	optional float speed = 2;
+	optional Configuration target = 3;
+	optional float power = 4;
+	required float timeout = 5;
+}
+
+message ExcavationControlCommand {
+	enum Type {
+		POSITION_ARM = 0;
+		POSITION_TRANSLATION = 1;
+		MOVE_BUCKET_CONVEYOR = 2;
+	}
+	required Type type = 1;
+	optional float speed = 2;
+	optional float position = 3;
+	optional float power = 4;
+	required float timeout = 5;
+}
+
+message DepositionControlCommand {
+	enum Type {
+		POSITION_DUMP = 0;
+		MOVE_CONVEYOR = 1;
+	}
+	required Type type = 1;
+	optional float speed = 2;
+	optional float position = 3;
+	optional float power = 4;
+	required float timeout = 5;
+}
+
+// Old messages
+
 message SingleMotorDrive {
   required uint32 motorID = 1;
   required sint32 voltage_percent = 2;
@@ -33,4 +145,3 @@ message LocomotionControl {
   required sint32 speed_percent = 2;
   required uint32 timeout_ms = 3;
 }
-

@@ -12,21 +12,21 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QObject::connect(ui->locomotion_UpButton, &QPushButton::clicked,
-                     this, &MainWindow::handleLocomotionUp);
-    QObject::connect(ui->locomotion_DownButton, &QPushButton::clicked,
-                     this, &MainWindow::handleLocomotionDown);
-    QObject::connect(ui->locomotion_LeftButton, &QPushButton::clicked,
-                     this, &MainWindow::handleLocomotionLeft);
-    QObject::connect(ui->locomotion_RightButton, &QPushButton::clicked,
-                     this, &MainWindow::handleLocomotionRight);
+//    QObject::connect(ui->locomotion_UpButton, &QPushButton::clicked,
+//                     this, &MainWindow::handleLocomotionUp);
+//    QObject::connect(ui->locomotion_DownButton, &QPushButton::clicked,
+//                     this, &MainWindow::handleLocomotionDown);
+//    QObject::connect(ui->locomotion_LeftButton, &QPushButton::clicked,
+//                     this, &MainWindow::handleLocomotionLeft);
+//    QObject::connect(ui->locomotion_RightButton, &QPushButton::clicked,
+//                     this, &MainWindow::handleLocomotionRight);
 }
 
-MainWindow::MainWindow(amqp_connection_state_t conn, QWidget *parent) :
-    MainWindow::MainWindow(parent)
-{
-    m_conn = conn;
-}
+//MainWindow::MainWindow(amqp_connection_state_t conn, QWidget *parent) :
+//    MainWindow::MainWindow(parent)
+//{
+//    m_conn = conn;
+//}
 
 MainWindow::~MainWindow()
 {
@@ -36,8 +36,8 @@ MainWindow::~MainWindow()
 void MainWindow::handleLocomotion(LocomotionControl_LocomotionType direction) {
     LocomotionControl msg;
     msg.set_locomotiontype(direction);
-    msg.set_speed_percent(ui->locomotion_SpeedSlider->value());
-    msg.set_timeout_ms(ui->locomotion_DurationSlider->value());
+ //   msg.set_speed_percent(ui->locomotion_SpeedSlider->value());
+ //   msg.set_timeout_ms(ui->locomotion_DurationSlider->value());
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
     if (!msg_buff) {
