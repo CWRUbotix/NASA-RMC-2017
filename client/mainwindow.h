@@ -7,6 +7,8 @@
 #include <amqp_framing.h>
 #include "messages.pb.h"
 
+using namespace com::cwrubotix::glennifer;
+
 namespace Ui {
 class MainWindow;
 }
@@ -21,11 +23,11 @@ public:
     ~MainWindow();
 
 public slots:
-    //void handleLocomotion(LocomotionControl_LocomotionType direction);
-    //void handleLocomotionUp();
-    //void handleLocomotionDown();
-    //void handleLocomotionLeft();
-    //void handleLocomotionRight();
+    void handleLocomotion(LocomotionControl_LocomotionType direction);
+    void handleLocomotionUp();
+    void handleLocomotionDown();
+    void handleLocomotionLeft();
+    void handleLocomotionRight();
 
 private:
     Ui::MainWindow *ui;
