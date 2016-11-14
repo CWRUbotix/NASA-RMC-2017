@@ -32,7 +32,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+/*
 void MainWindow::handleLocomotion(LocomotionControl_LocomotionType direction) {
     LocomotionControl msg;
     msg.set_locomotiontype(direction);
@@ -78,3 +78,4 @@ void MainWindow::handleLocomotionLeft() {
 void MainWindow::handleLocomotionRight() {
     handleLocomotion(LocomotionControl_LocomotionType_RIGHT);
 }
+*/
