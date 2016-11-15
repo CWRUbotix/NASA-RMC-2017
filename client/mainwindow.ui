@@ -64,7 +64,7 @@
                 <item>
                  <widget class="QTabWidget" name="tabWidget_2">
                   <property name="currentIndex">
-                   <number>2</number>
+                   <number>1</number>
                   </property>
                   <widget class="QWidget" name="Config1">
                    <attribute name="title">
@@ -83,14 +83,14 @@
                      <item>
                       <layout class="QVBoxLayout" name="verticalLayout_7">
                        <item>
-                        <widget class="QPushButton" name="locomotion_UpButton_3">
+                        <widget class="QPushButton" name="locomotion_UpButton">
                          <property name="text">
                           <string>Up</string>
                          </property>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="locomotion_DownButton_3">
+                        <widget class="QPushButton" name="locomotion_DownButton">
                          <property name="text">
                           <string>Down</string>
                          </property>
@@ -116,14 +116,14 @@
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_10">
                      <item>
-                      <widget class="QPushButton" name="locomotion_LeftButton_4">
+                      <widget class="QPushButton" name="locomotion_LeftButton">
                        <property name="text">
                         <string>Left</string>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="locomotion_RightButton_4">
+                      <widget class="QPushButton" name="locomotion_RightButton">
                        <property name="text">
                         <string>Right</string>
                        </property>
