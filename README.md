@@ -32,19 +32,27 @@ For reference, these are all the dependencies required to build and run Glennife
   * Included as a git submodule
 * Google protocol buffers: https://developers.google.com/protocol-buffers/
 
-### For the client ###
+### For the client on Linux ###
 
 To setup the dev environment for the client on Ubuntu, run ./setup-devenv-client.sh
 
 To setup the dev environment for the client on some other version of linux, inspect the contents of ./setup-devenv-client.sh and change all the apt-get statements to use your distro's package manager with the proper package names. Then, add your changed script to the repo (and this README file) for others to use!
 
-To setup the dev environment for the client on Windows, run ./setup-devenv-client.ps1
+### For the client on Windows ###
 
-If any of these scripts fail, inspect the script and try to do what failed manually. If there is a problem with the script that should be fixed, please fix it!
+To setup the dev environment for the client on Windows, use the following procedure:
+
+1. Ensure you are running a 64-bit windows operating system
+2. Install Visual Studio 2015
+3. Install CMake, making sure it is in your system PATH
+4. Install Qt
+5. Install git for windows, making sure it is in your system PATH
+6. Run ./setup-devenv-client.ps1
 
 For reference, these are all the dependencies required to build and run Glennifer:
 
 * A C/C++ compiler, such as gcc or msvc
+* CMake
 * The Qt GUI framework: https://www.qt.io/download-open-source/
 * rabbitmq-c, the RabbitMQ client for c: https://github.com/alanxz/rabbitmq-c
   * Included as a git submodule
