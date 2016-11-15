@@ -7,6 +7,8 @@
 #include <amqp_framing.h>
 #include "messages.pb.h"
 
+using namespace com::cwrubotix::glennifer;
+
 namespace Ui {
 class MainWindow;
 }
