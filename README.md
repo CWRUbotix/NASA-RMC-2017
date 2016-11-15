@@ -25,7 +25,7 @@ For reference, these are all the dependencies required to build and run Glennife
 * pyserial, a serial communication library for python: https://pythonhosted.org/pyserial/
   * `pip install pyserial`
 * An arbritrary AMQP server, such as RabbitMQ: https://www.rabbitmq.com/download.html
-* The Java Runtime: http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+* The Java Development Kit, version 8 or higher: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 * The RabbitMQ client for Java: https://www.rabbitmq.com/java-client.html
 * A C/C++ compiler, such as gcc
 * rabbitmq-c, the RabbitMQ client for c: https://github.com/alanxz/rabbitmq-c
