@@ -11,18 +11,16 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = GlenniferClient
 TEMPLATE = app
 
-INCLUDEPATH += $$PWD/../pb
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
     amqp_utils.cpp \
-    ../pb/messages.pb.cc
+    messages.pb.cc
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
     amqp_utils.h \
-    ../pb/messages.pb.h
+    messages.pb.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui
