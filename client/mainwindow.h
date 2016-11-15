@@ -6,6 +6,9 @@
 #include <amqp.h>
 #include <amqp_framing.h>
 #include "messages.pb.h"
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsItem>
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +33,11 @@ public slots:
 private:
     Ui::MainWindow *ui;
     amqp_connection_state_t m_conn;
+    QGraphicsScene *scene;
+    QGraphicsRectItem *rectangle1;
+    QGraphicsRectItem *rectangle2;
+    QGraphicsRectItem *rectangle3;
+    QGraphicsRectItem *rectangle4;
 };
 
 #endif // MAINWINDOW_H

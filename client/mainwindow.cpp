@@ -5,12 +5,34 @@
 #include <amqp_framing.h>
 #include "amqp_utils.h"
 #include "messages.pb.h"
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsItem>
+#include <QDebug>
+#include <QImage>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    scene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(scene);
+
+    QBrush greenBrush(Qt::green);
+    QPen outlinePen(Qt::black);
+    outlinePen.setWidth(2);
+
+    rectangle1 = scene->addRect(-200, 0, 10, 20, outlinePen, greenBrush);
+    rectangle2 = scene->addRect(80, 0, 10, 20, outlinePen, greenBrush);
+    rectangle3 = scene->addRect(-200, 80, 10, 20, outlinePen, greenBrush);
+    rectangle4 = scene->addRect(80, 80, 10, 20, outlinePen, greenBrush);
+    QImage image("./clockwiseArrow.png");
+    qDebug() << image;
+    ui->label->setPixmap(QPixmap::fromImage(image));
+           // ("background-image:url(./clockwiseArrow.png);");
+
 
 //    QObject::connect(ui->locomotion_UpButton, &QPushButton::clicked,
 //                     this, &MainWindow::handleLocomotionUp);
@@ -34,6 +56,8 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::handleLocomotion(LocomotionControl_LocomotionType direction) {
+
+
     LocomotionControl msg;
     msg.set_locomotiontype(direction);
  //   msg.set_speed_percent(ui->locomotion_SpeedSlider->value());
