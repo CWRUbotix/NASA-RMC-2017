@@ -11,6 +11,17 @@
 #include <QDebug>
 #include <QImage>
 
+/*
+ * In this file, the state of the robot is queried by RPC.
+ * Since those RPC calls do not exist yet, instead we are using fake calls like this:
+ *
+ * float x = 0; // getLocomotionFrontLeftWheelRpm();
+ * float y = 0; // getLocomotionFrontLeftWheelPodPos();
+ * LocomotionConfiguration x = STRAIGHT; // getLocomotionConfiguration();
+ * float a = 0; // getLocomotionStraightSpeed();
+ * float b = 0; // getLocomotionTurnSpeed();
+ * float c = 0; // getLocomotionStrafeSpeed();
+ */
 
 using namespace com::cwrubotix::glennifer;
 
