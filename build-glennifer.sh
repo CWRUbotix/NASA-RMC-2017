@@ -5,4 +5,8 @@
 
 # Currently all this does is generate the protobuf classes
 
-./build-pb.sh 
+./build-pb.sh
+
+cd glennifer/robot_state
+mvn install
+cd ../..

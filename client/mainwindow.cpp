@@ -12,6 +12,8 @@
 #include <QImage>
 
 
+using namespace com::cwrubotix::glennifer;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -34,21 +36,21 @@ MainWindow::MainWindow(QWidget *parent) :
            // ("background-image:url(./clockwiseArrow.png);");
 
 
-//    QObject::connect(ui->locomotion_UpButton, &QPushButton::clicked,
-//                     this, &MainWindow::handleLocomotionUp);
-//    QObject::connect(ui->locomotion_DownButton, &QPushButton::clicked,
-//                     this, &MainWindow::handleLocomotionDown);
-//    QObject::connect(ui->locomotion_LeftButton, &QPushButton::clicked,
-//                     this, &MainWindow::handleLocomotionLeft);
-//    QObject::connect(ui->locomotion_RightButton, &QPushButton::clicked,
-//                     this, &MainWindow::handleLocomotionRight);
+    QObject::connect(ui->locomotion_UpButton, &QPushButton::clicked,
+                     this, &MainWindow::handleLocomotionUp);
+    QObject::connect(ui->locomotion_DownButton, &QPushButton::clicked,
+                     this, &MainWindow::handleLocomotionDown);
+    QObject::connect(ui->locomotion_LeftButton, &QPushButton::clicked,
+                     this, &MainWindow::handleLocomotionLeft);
+    QObject::connect(ui->locomotion_RightButton, &QPushButton::clicked,
+                     this, &MainWindow::handleLocomotionRight);
 }
 
-//MainWindow::MainWindow(amqp_connection_state_t conn, QWidget *parent) :
-//    MainWindow::MainWindow(parent)
-//{
-//    m_conn = conn;
-//}
+MainWindow::MainWindow(amqp_connection_state_t conn, QWidget *parent) :
+    MainWindow::MainWindow(parent)
+{
+    m_conn = conn;
+}
 
 MainWindow::~MainWindow()
 {

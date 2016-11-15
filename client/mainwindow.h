@@ -10,6 +10,8 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 
+using namespace com::cwrubotix::glennifer;
+
 namespace Ui {
 class MainWindow;
 }
