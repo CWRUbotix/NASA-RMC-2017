@@ -31,6 +31,7 @@ public slots:
     void handleLocomotionDown();
     void handleLocomotionLeft();
     void handleLocomotionRight();
+    void on_spinBox_setWheelAngle_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;
@@ -40,6 +41,7 @@ private:
     QGraphicsRectItem *rectangle2;
     QGraphicsRectItem *rectangle3;
     QGraphicsRectItem *rectangle4;
+    void updateAngle(int x);
 };
 
 #endif // MAINWINDOW_H
