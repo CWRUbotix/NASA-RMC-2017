@@ -11,7 +11,7 @@
 # Copied from http://stackoverflow.com/questions/2124753/how-i-can-use-powershell-with-the-visual-studio-command-prompt
 
 pushd 'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC'
-cmd /c "vcvarsall.bat&set" |
+cmd /c "vcvarsall.bat amd64 & set" |
 foreach {
   if ($_ -match "=") {
     $v = $_.split("="); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
@@ -21,10 +21,13 @@ popd
 write-host "`nVisual Studio 2015 Command Prompt variables set." -ForegroundColor Yellow
 
 # Download and build protobuf 3.1.0
+$FileExists = Test-Path .\protobuf-3.1.0\ 
+If ($FileExists -eq $False) {
+	wget https://github.com/google/protobuf/releases/download/v3.1.0/protobuf-cpp-3.1.0.zip -OutFile protobuf-cpp-3.1.0.zip
+	Expand-Archive protobuf-cpp-3.1.0.zip -dest . -Force
+	rm protobuf-cpp-3.1.0.zip
+}
 
-wget https://github.com/google/protobuf/releases/download/v3.1.0/protobuf-cpp-3.1.0.zip -OutFile protobuf-cpp-3.1.0.zip
-Expand-Archive protobuf-cpp-3.1.0.zip -dest . -Force
-rm protobuf-cpp-3.1.0.zip
 
 cd .\protobuf-3.1.0\cmake\
 
@@ -50,7 +53,7 @@ cd .\third-party\rabbitmq-c\
 New-Item -Force -ItemType directory -Path build
 cd .\build\
 
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DBUILD_TESTS=OFF -DENABLE_SSL_SUPPORT=OFF -DCMAKE_CXX_FLAGS_RELEASE=/MT ..
+cmake -G "NMake Makefiles" -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DENABLE_SSL_SUPPORT=OFF -DBUILD_TESTS=OFF ..
 cmake --build .
 
 cd ..

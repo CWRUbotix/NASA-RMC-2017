@@ -27,8 +27,8 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     connectiondialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -llibrabbitmq.4
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -llibrabbitmq.4
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq.4
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq.4
 else:unix: LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq
 
 INCLUDEPATH += $$PWD/../third-party/rabbitmq-c/librabbitmq
