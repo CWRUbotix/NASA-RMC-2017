@@ -38,5 +38,5 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../protobuf-3.1.0/cmake/bu
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../protobuf-3.1.0/cmake/build/debug/ -llibprotobuf
 else:unix: LIBS += -L/usr/local/lib/ -lprotobuf
 
-INCLUDEPATH += $$PWD/../protobuf-3.1.0/src
-DEPENDPATH += $$PWD/../protobuf-3.1.0/src
+win32:INCLUDEPATH += $$PWD/../protobuf-3.1.0/src
+win32:DEPENDPATH += $$PWD/../protobuf-3.1.0/src
