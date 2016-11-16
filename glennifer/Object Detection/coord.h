@@ -1,3 +1,5 @@
+#ifndef COORD_H
+#define COORD_H
 struct coord
 {
 	int x;
@@ -5,14 +7,15 @@ struct coord
 
 	struct coord* next;
 	struct coord* prev;
-}
+};
 
-struct 3d_coord
+struct three_d_coord
 {
 	int x;
 	int y;
 	int z;
 
-	struct coord* next;
-	struct coord* prev;
-}
+	struct three_d_coord* next;
+	struct three_d_coord* prev;
+};
+#endif

@@ -1,3 +1,6 @@
 #include "coord.h"
 
-char** gen_topo_map (struct 3d_coord* point_cloud, int width, int height, int up_cutoff, int down_cutoff);
+#ifndef TOPO_H
+#define TOPO_H
+char** gen_topo_map (struct three_d_coord* point_cloud, int width, int height, int up_cutoff, int down_cutoff);
+#endif

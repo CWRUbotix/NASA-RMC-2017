@@ -81,7 +81,7 @@ struct object* find_objects (char** topo_map, int width, int height)
 		{
 			//If there's something here and we haven't already added it to the object list...
 			if (topo_map [i][j] && !mark_map [i][j])
-				gen_object (&ret, topo_map, mark_map, x, y, width, height);				
+				gen_object (&ret, topo_map, mark_map, i, j, width, height);				
 		}
 	}
 
