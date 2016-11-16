@@ -6,6 +6,11 @@
 #include <amqp.h>
 #include <amqp_framing.h>
 #include "messages.pb.h"
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsItem>
+
+using namespace com::cwrubotix::glennifer;
 
 namespace Ui {
 class MainWindow;
@@ -26,10 +31,17 @@ public slots:
     void handleLocomotionDown();
     void handleLocomotionLeft();
     void handleLocomotionRight();
+    void on_spinBox_setWheelAngle_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;
     amqp_connection_state_t m_conn;
+    QGraphicsScene *scene;
+    QGraphicsRectItem *rectangle1;
+    QGraphicsRectItem *rectangle2;
+    QGraphicsRectItem *rectangle3;
+    QGraphicsRectItem *rectangle4;
+    void updateAngle(int x);
 };
 
 #endif // MAINWINDOW_H

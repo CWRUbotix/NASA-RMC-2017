@@ -48,33 +48,33 @@
 
 #include <QString>
 
-QString amqp_error_message(amqp_rpc_reply_t x)
-{
-  switch (x.reply_type) {
-  case AMQP_RESPONSE_NORMAL:
-    return "";
+//QString amqp_error_message(amqp_rpc_reply_t x)
+//{
+//  switch (x.reply_type) {
+//  case AMQP_RESPONSE_NORMAL:
+//    return "";
 
-  case AMQP_RESPONSE_NONE:
-    return "%s: missing RPC reply type!";
+//  case AMQP_RESPONSE_NONE:
+//    return "%s: missing RPC reply type!";
 
-  case AMQP_RESPONSE_LIBRARY_EXCEPTION:
-    return amqp_error_string2(x.library_error);
+//  case AMQP_RESPONSE_LIBRARY_EXCEPTION:
+//    return amqp_error_string2(x.library_error);
 
-  case AMQP_RESPONSE_SERVER_EXCEPTION:
-    switch (x.reply.id) {
-    case AMQP_CONNECTION_CLOSE_METHOD: {
-      amqp_connection_close_t *m = (amqp_connection_close_t *) x.reply.decoded;
-      return "server connection error " + QString::number(m->reply_code);
-    }
-    case AMQP_CHANNEL_CLOSE_METHOD: {
-      amqp_channel_close_t *m = (amqp_channel_close_t *) x.reply.decoded;
-      return "server channel error" + QString::number(m->reply_code);
-    }
-    default:
-      return "unknown server error, method id" + QString::number(x.reply.id);
-    }
+//  case AMQP_RESPONSE_SERVER_EXCEPTION:
+//    switch (x.reply.id) {
+//    case AMQP_CONNECTION_CLOSE_METHOD: {
+//      amqp_connection_close_t *m = (amqp_connection_close_t *) x.reply.decoded;
+//      return "server connection error " + QString::number(m->reply_code);
+//    }
+//    case AMQP_CHANNEL_CLOSE_METHOD: {
+//      amqp_channel_close_t *m = (amqp_channel_close_t *) x.reply.decoded;
+//      return "server channel error" + QString::number(m->reply_code);
+//    }
+//    default:
+//      return "unknown server error, method id" + QString::number(x.reply.id);
+//    }
 
-  default:
-      return "unknown reply type!";
-  }
-}
+//  default:
+//      return "unknown reply type!";
+//  }
+//}
