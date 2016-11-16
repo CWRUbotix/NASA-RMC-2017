@@ -155,8 +155,8 @@
                    <widget class="QLabel" name="label">
                     <property name="geometry">
                      <rect>
-                      <x>76</x>
-                      <y>80</y>
+                      <x>70</x>
+                      <y>50</y>
                       <width>81</width>
                       <height>31</height>
                      </rect>
@@ -181,8 +181,8 @@
                    <widget class="QPushButton" name="Rotate_Clockwise">
                     <property name="geometry">
                      <rect>
-                      <x>274</x>
-                      <y>52</y>
+                      <x>270</x>
+                      <y>20</y>
                       <width>86</width>
                       <height>27</height>
                      </rect>
@@ -194,39 +194,14 @@
                    <widget class="QPushButton" name="Rotate_AntiClockwise">
                     <property name="geometry">
                      <rect>
-                      <x>51</x>
-                      <y>51</y>
+                      <x>50</x>
+                      <y>20</y>
                       <width>119</width>
                       <height>27</height>
                      </rect>
                     </property>
                     <property name="text">
                      <string>Anti-Clockwise</string>
-                    </property>
-                   </widget>
-                   <widget class="QPlainTextEdit" name="plainTextEdit_4">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="geometry">
-                     <rect>
-                      <x>90</x>
-                      <y>90</y>
-                      <width>101</width>
-                      <height>31</height>
-                     </rect>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Plain</enum>
-                    </property>
-                    <property name="lineWidth">
-                     <number>0</number>
-                    </property>
-                    <property name="lineWrapMode">
-                     <enum>QPlainTextEdit::NoWrap</enum>
-                    </property>
-                    <property name="plainText">
-                     <string>Wheel Angle</string>
                     </property>
                    </widget>
                    <widget class="QSpinBox" name="spinBox_setWheelAngle">
@@ -240,6 +215,32 @@
                     </property>
                     <property name="maximum">
                      <number>180</number>
+                    </property>
+                   </widget>
+                   <widget class="QLabel" name="label_3">
+                    <property name="geometry">
+                     <rect>
+                      <x>106</x>
+                      <y>94</y>
+                      <width>91</width>
+                      <height>21</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string>Wheel Angle</string>
+                    </property>
+                   </widget>
+                   <widget class="QLabel" name="label_4">
+                    <property name="geometry">
+                     <rect>
+                      <x>270</x>
+                      <y>50</y>
+                      <width>81</width>
+                      <height>31</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string/>
                     </property>
                    </widget>
                   </widget>

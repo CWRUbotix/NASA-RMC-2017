@@ -41,9 +41,14 @@ MainWindow::MainWindow(QWidget *parent) :
     rectangle2 = scene->addRect(80, 0, 10, 20, outlinePen, greenBrush);
     rectangle3 = scene->addRect(-200, 80, 10, 20, outlinePen, greenBrush);
     rectangle4 = scene->addRect(80, 80, 10, 20, outlinePen, greenBrush);
-    QImage image("./clockwiseArrow.png");
-    qDebug() << image;
+
+    QImage image("../clockwiseArrow.png");
     ui->label->setPixmap(QPixmap::fromImage(image));
+    ui->label->setScaledContents(true);
+
+    ui->label_4->setPixmap(QPixmap::fromImage(image.mirrored(true,false)));
+    ui->label_4->setScaledContents(true);
+
            // ("background-image:url(./clockwiseArrow.png);");
 
 
