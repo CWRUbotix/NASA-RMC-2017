@@ -1,3 +1,7 @@
+/* this class control receive commands from path planning 
+ * and configure glennifer motors and actuators accordingly
+ */
+
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -7,6 +11,13 @@ import com.rabbitmq.client.DefaultConsumer;
 
 public class MotorLayer {
   /* declare motor indentity */
+  Motor [] wheel = new Motor[4];        // declare 4 wheel objects
+  Motor bucket = new Motor();           // declare bucket object
+  Motor conveyor = new Motor();         // declare conveyor object
+
+  Pod [] wheelPod = new Pod[4];         // declare 4 wheel pod objects
+  Pod excavation = new Pod();           // declare excavation pod object
+  Pod dump = new Pod();                 // declare dump pod object
   
    
   private final static String QUEUE_NAME = "motorhighlevel";
@@ -26,4 +37,7 @@ public class MotorLayer {
     public void handleDelivery (String consumerTag, Envelope envelope, 
     AMQP.BasicProperties properties, byte[] body) throws IOException {
       String message = new String (body, "UTF-8");
+      }
+    }
+  }
 }

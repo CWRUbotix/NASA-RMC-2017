@@ -2,9 +2,9 @@
  * the position of the Pod 
  */
 public class Pod {
-  private int posistion;    // desired position of the pod (in degree)
-  private int turnSpeed;    // pod turning speed
-  private float timeout;
+  private int posistion = 0;    // desired position of the pod (in degree)
+  private int turnSpeed = 0;    // pod turning speed
+  private float timeout = 0;
 
   /* pod constructor */
   public Pod (int p, int s, int t) {
