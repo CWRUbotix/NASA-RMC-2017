@@ -6,7 +6,9 @@ import com.rabbitmq.client.DefaultConsumer;
 
 
 public class MotorLayer {
- 
+  /* declare motor indentity */
+  
+   
   private final static String QUEUE_NAME = "motorhighlevel";
 
   public static void main (String[] args) 
@@ -16,7 +18,7 @@ public class MotorLayer {
     Connection connection = factory.newConnection();
     Channel channel = connection.createChannel();
 
-    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+    channel.queueDeclare(QUEUE_NAME, true, false, false, null);
     System.out.println("Waiting for message. CTRL+C to exit");
 
     Consumer consumer = new DefaultConsumer(channel) {
