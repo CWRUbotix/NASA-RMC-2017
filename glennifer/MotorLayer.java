@@ -1,67 +1,27 @@
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.DefaultConsumer;
+
+
 public class MotorLayer {
-  
-  // what should be the return type
-  // where the configuration file should be
-  public void receive(Object command, Object state) {
-    switch (state) {
-      // locomotion state
-      case Locomotion: { 
-        // commands in locomotion states
-        switch (commmand) {
-          case moveStraight:
-            return 
-            break;
-            
-          case strafe:
-            return 
-            break;
-          
-          case turn:
-            return 
-            break;
-          
-          case configure:
-            return;
-            break;
-            
-        }
-      }
-      
-      // excavation state
-      case Excavation: {
-        // commands in excavation state
-        switch (command) {
-          // commands in excavation state
-          case arm:
-            return;
-            break;
-            
-          case translation:
-            return;
-            break;   
-            
-          case bucket:
-            return;
-            break;
-        }
-      }
-      
-      // deposition state
-      case Deposition: {
-        // commands in deposition state
-        switch(command) {
-          case dump:
-            return;
-            break;
-          
-          case conveyor:
-            return;
-            break;
-        }
-      }
-    }
-  }
-  
-  /* future commands definition */
-  
+ 
+  private final static String QUEUE_NAME = "motorhighlevel";
+
+  public static void main (String[] args) 
+  throws java.io.IOException, java.lang.InterruptedException {
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.sethost("localhost");
+    Connection connection = factory.newConnection();
+    Channel channel = connection.createChannel();
+
+    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+    System.out.println("Waiting for message. CTRL+C to exit");
+
+    Consumer consumer = new DefaultConsumer(channel) {
+    @Override
+    public void handleDelivery (String consumerTag, Envelope envelope, 
+    AMQP.BasicProperties properties, byte[] body) throws IOException {
+      String message = new String (body, "UTF-8");
 }
