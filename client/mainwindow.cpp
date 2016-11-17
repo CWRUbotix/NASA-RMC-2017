@@ -49,8 +49,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->label_4->setPixmap(QPixmap::fromImage(image.mirrored(true,false)));
     ui->label_4->setScaledContents(true);
 
-           // ("background-image:url(./clockwiseArrow.png);");
-
 
     QObject::connect(ui->locomotion_UpButton, &QPushButton::clicked,
                      this, &MainWindow::handleLocomotionUp);
@@ -70,6 +68,7 @@ MainWindow::MainWindow(amqp_connection_state_t conn, QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete scene;
     delete ui;
 }
 
@@ -126,17 +125,6 @@ void MainWindow::on_spinBox_setWheelAngle_valueChanged(int value){
 }
 
 void MainWindow::updateAngle(int x){
-
-    QBrush greenBrush(Qt::green);
-    QPen outlinePen(Qt::black);
-    outlinePen.setWidth(2);
-
-    ui->graphicsView->scene()->clear();
-
-    rectangle1 = scene->addRect(-200, 0, 10, 20, outlinePen, greenBrush);
-    rectangle2 = scene->addRect(80, 0, 10, 20, outlinePen, greenBrush);
-    rectangle3 = scene->addRect(-200, 80, 10, 20, outlinePen, greenBrush);
-    rectangle4 = scene->addRect(80, 80, 10, 20, outlinePen, greenBrush);
 
     rectangle1->setTransformOriginPoint(QPoint(-195,10));
     rectangle1->setRotation(x);
