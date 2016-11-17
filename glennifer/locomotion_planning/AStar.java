@@ -3,7 +3,6 @@ package algorithms;
 import java.util.*;
 
 /**
- * 
  * @author Jatin Thakur
  * @modifier Shota Nemoto
  *
@@ -12,6 +11,9 @@ public class AStar {
 	public static final int DIAGONAL_COST = 14;
 	public static final int V_H_COST = 10;
 
+	/**
+	 *This will have to be modified to work with the SLAM map
+	 */
 	static class Cell {
 		int heuristicCost = 0; // Heuristic cost
 		int finalCost = 0; // G+H
@@ -127,9 +129,9 @@ public class AStar {
 	}
 
 	/*
-	 * Params : tCase = test case No. x, y = Board's dimensions si, sj = start
-	 * location's x and y coordinates ei, ej = end location's x and y
-	 * coordinates int[][] blocked = array containing inaccessible cell
+	 * x, y = Board's dimensions; si, sj = start
+	 * location's x and y coordinates; ei, ej = end location's x and y
+	 * coordinates; int[][] blocked = array containing inaccessible cell
 	 * coordinates
 	 */
 	public static ArrayList<int[]> planPath(int x, int y, int si, int sj, int ei, int ej, int[][] blocked) {
@@ -154,9 +156,7 @@ public class AStar {
 			for (int j = 0; j < y; ++j) {
 				grid[i][j] = new Cell(i, j);
 				grid[i][j].heuristicCost = Math.abs(i - endI) + Math.abs(j - endJ);
-				// System.out.print(grid[i][j].heuristicCost+" ");
 			}
-			// System.out.println();
 		}
 		grid[si][sj].finalCost = 0;
 
@@ -173,15 +173,11 @@ public class AStar {
 
 		if (closed[endI][endJ]) {
 			// Trace back the path
-			// System.out.println("Path: ");
 			Cell current = grid[endI][endJ];
-			// System.out.print(current);
 			while (current.parent != null) {
-				// System.out.print(" -> "+current.parent);
 				path.add(0, current);
 				current = current.parent;
 			}
-			// System.out.println();
 
 			ArrayList<int[]> path_coordinates = new ArrayList<int[]>();
 			int counter = 0;
