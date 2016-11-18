@@ -9,6 +9,11 @@ import message.MessageSender;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * This class functions as the driver for the Planning module. This class will receive and
@@ -77,6 +82,9 @@ public class PathDriver {
 
         MidLevelCommand currentCommand = executor.getCurrentCommand();
 
+        if(currentCommand==null)
+            return;
+
         Message ccMessage = messageBuilder.commandMessage(currentCommand);
 
         try {
@@ -88,6 +96,59 @@ public class PathDriver {
             //person we'd like to report an error to.
         }
     }
+
+    private void addCommandToQueue(MidLevelCommand command){
+        executor.addCommandToQueue(command);
+    }
+
+
+
+    private void addDefaultCommandToQueue() {
+
+        MidLevelCommand command = new MidLevelCommand(  0.0f,
+                                                        0.0f,
+                                                        MidLevelCommand.MidLevelCommandEnum.MOVE_STRAIGHT,
+                                                        MidLevelCommand.MidLevelCommandPriority.MIDDLE );
+
+        addCommandToQueue(command);
+    }
+
+    private void publishNextCommand(){
+
+        MidLevelCommand nextCommand = executor.getNextCommand();
+
+        if(nextCommand==null)
+            return;
+
+        Message ccMessage = messageBuilder.commandMessage(nextCommand);
+
+        try {
+            messageSender.publish(ccMessage);
+        }
+        catch(IOException e){
+            //Log error, don't send a message. We'd like to report error,
+            //but we just had an IO error trying to communicate to the
+            //person we'd like to report an error to.
+        }
+    }
+
+    private void publishQueue(){
+        PriorityQueue<MidLevelCommand> queue = executor.getCommandQueue();
+
+        if(queue == null)
+            return;
+
+        Message message = messageBuilder.queueMessage(queue);
+
+        try{
+            messageSender.publish(message);
+        }
+        catch(IOException e){
+            ;
+        }
+    }
+
+
 
     // GET/SET
 
@@ -115,9 +176,16 @@ public class PathDriver {
                 try {
                     nextLine = reader.readLine();
 
-                    Callback callback = Callback.callbackOf(nextLine);
+                    String[] inputArr = nextLine.split(" ");
 
-                    doCallback(callback);
+                    List<String> inputList = new ArrayList<>(Arrays.asList(inputArr));
+                    String command = inputList.get(0);
+                    inputList.remove(0);
+                    List<String> args = new ArrayList<>(inputList);
+
+                    Callback callback = Callback.callbackOf(command);
+
+                    doCallback(callback, args);
 
                 }
                 catch(IOException e){
@@ -129,12 +197,35 @@ public class PathDriver {
 
         }
 
-        private void doCallback(Callback callback) throws IOException {
+        private void doCallback(Callback callback, List<String> args) throws IOException {
 
             switch(callback){
 
                 case PUBLLISH_CURRENT_COMMAND:
                     PathDriver.this.publishCurrentCommand();
+                    break;
+
+                case ADD_DEFAULT_COMMAND_TO_QUEUE:
+                    PathDriver.this.addDefaultCommandToQueue();
+                    break;
+
+                case ADD_COMMAND_TO_QUEUE:
+                    MidLevelCommand command = new MidLevelCommand(
+                            Float.parseFloat(args.get(0)),
+                            Float.parseFloat(args.get(1)),
+                            MidLevelCommand.MidLevelCommandEnum.valueOf(args.get(2)),
+                            MidLevelCommand.MidLevelCommandPriority.valueOf(args.get(3))
+                            );
+
+                    PathDriver.this.addCommandToQueue(command);
+                    break;
+
+                case PUBLISH_NEXT_COMMAND:
+                    PathDriver.this.publishNextCommand();
+                    break;
+
+                case PUBLISH_QUEUE:
+                    PathDriver.this.publishQueue();
                     break;
 
                 default:
@@ -152,6 +243,10 @@ public class PathDriver {
     private enum Callback {
 
         PUBLLISH_CURRENT_COMMAND,
+        PUBLISH_NEXT_COMMAND,
+        ADD_DEFAULT_COMMAND_TO_QUEUE,
+        PUBLISH_QUEUE,
+        ADD_COMMAND_TO_QUEUE,
         UNKNWON_CALLBACK;
 
 
@@ -161,8 +256,24 @@ public class PathDriver {
 
             switch(callbackName){
 
-                case "publish":
+                case "current":
                     callback = PUBLLISH_CURRENT_COMMAND;
+                    break;
+
+                case "addDefault":
+                    callback = ADD_DEFAULT_COMMAND_TO_QUEUE;
+                    break;
+
+                case "next":
+                    callback = PUBLISH_NEXT_COMMAND;
+                    break;
+
+                case "queue":
+                    callback = PUBLISH_QUEUE;
+                    break;
+
+                case "add":
+                    callback = ADD_COMMAND_TO_QUEUE;
                     break;
 
                 default:

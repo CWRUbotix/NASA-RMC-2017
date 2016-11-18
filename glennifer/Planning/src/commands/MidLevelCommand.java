@@ -35,10 +35,16 @@ public class MidLevelCommand extends Command{
 
     public enum MidLevelCommandPriority {
 
-        URGENT, 
+        URGENT,
         HIGH,
         MIDDLE,
-        LOW
+        LOW;
+
+        public int compare(MidLevelCommandPriority otherPriority){
+            return otherPriority.ordinal() - this.ordinal();
+        }
+
+
     }
 
 
@@ -48,6 +54,19 @@ public class MidLevelCommand extends Command{
         super(speed, timeout);
         this.command = command;
         this.priority = priority;
+    }
+
+    @Override
+    public String toString(){
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(command.name() + ": ");
+        builder.append("speed=" + getSpeed() + ", ");
+        builder.append("timeout=" + getTimeout() + ", ");
+        builder.append("priority=" + getPriority().name() + "\n");
+
+        return builder.toString();
     }
 
 

@@ -2,6 +2,7 @@ package path;
 
 import commands.MidLevelCommand;
 
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 /**
@@ -28,13 +29,12 @@ public class PathExecution {
     }
 
      public void addCommandToQueue(MidLevelCommand command){
-        if(PriorityQueue != null){
-            PriorityQueue.add(command);
+        if(commandQueue == null){
+            MidLevelComparator comparator = new MidLevelComparator();
+            commandQueue = new PriorityQueue(11, comparator);
         }
-        else{   
-            MidLevelComparator comparator = new MidLevelComparator<MidLevelCommand>();
-            PriorityQueue = new PriorityQueue<MidLevelCommand>(11, comparator);
-        }
+
+        commandQueue.add(command);
         
     }
 
@@ -42,7 +42,12 @@ public class PathExecution {
     // GET / SET    
 
     public MidLevelCommand getCurrentCommand() {
+
         return currentCommand;
+    }
+
+    public MidLevelCommand getNextCommand() {
+        return commandQueue!=null ? commandQueue.peek() : null;
     }
 
     public void setCurrentCommand(MidLevelCommand currentCommand) {
@@ -59,17 +64,17 @@ public class PathExecution {
 
 
     //Comparator used for the priority queue
-    class MidLevelComparator implements Comparator<MidLevelCommand>{
+    private class MidLevelComparator implements Comparator<MidLevelCommand> {
         @Override
         public int compare(MidLevelCommand x, MidLevelCommand y) {
         // We just want to compare the priority values of the commands
-            if (x.getPriority() < y.getPriority()){
-                return -1;
-            }
-            if (x.getPriority() > y.getPriority()){
-                return 1;
-            }
-            return 0;
+
+            MidLevelCommand.MidLevelCommandPriority xPriority = x.getPriority();
+            MidLevelCommand.MidLevelCommandPriority yPriority = y.getPriority();
+
+            int compareVal = xPriority.compare(yPriority);
+
+            return compareVal;
         }
     }
 

@@ -1,6 +1,9 @@
 package message;
 
 import commands.Command;
+import commands.MidLevelCommand;
+
+import java.util.PriorityQueue;
 
 /**
  * Builder class to construct appropriate Messages.
@@ -23,6 +26,17 @@ public class MessageBuilder {
         String msg = cmd.toString();
         Message message = new Message(msg);
         return message;
+    }
+
+    public Message queueMessage(PriorityQueue<MidLevelCommand> queue){
+
+        StringBuilder builder = new StringBuilder();
+
+        for(MidLevelCommand c : queue){
+            builder.append(c.toString());
+        }
+
+        return readableMessage(builder.toString());
     }
 
 }
