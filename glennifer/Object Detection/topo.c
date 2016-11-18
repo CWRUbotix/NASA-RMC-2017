@@ -19,7 +19,7 @@ char** gen_topo_map (struct three_d_coord* point_cloud, int width, int height, i
 		for (j = 0; j < height; j ++)
 		{
 			ret [i][j] = 0;
-			two_d_map [i][j] = 0;
+			two_d_map [i][j] = -1;
 		}
 	}
 
@@ -31,7 +31,7 @@ char** gen_topo_map (struct three_d_coord* point_cloud, int width, int height, i
 		current = current->next;
 	}
 
-	//Insert some interpolation code here?
+	interpolate (two_d_map, width, height);
 
 	//Turn the 2d map into a simple topographic map
 	for (i = 0; i < width; i ++)
@@ -46,4 +46,52 @@ char** gen_topo_map (struct three_d_coord* point_cloud, int width, int height, i
 	}
 
 	return ret;
+}
+
+void interpolate (int** two_d_map, int width, int height)
+{
+	int i;
+	int j;
+	int k;
+	int l;
+	double value1;
+	double value2;
+	double dvalue;
+
+	for (i = 0; i < width; i ++)
+	{
+		j = 0;
+		value1 = 0;
+
+		while (j < height)
+		{
+			while (two_d_map [i][j] == -1 && j < height)
+				j ++;
+
+			if (j == height)
+			{
+				for (j = 0; j < height; j ++)
+					two_d_map [i][j] = 0;
+			}
+			else
+			{
+				value1 = two_d_map [i][j];
+				j ++;
+				k = j;
+
+				while (two_d_map [i][j] == -1 && j < height)
+					j ++;
+
+				if (j == height)
+					value2 = value1;
+				else
+					value2 = two_d_map [i][j];
+
+				dvalue = (value2 - value1)/(k - j);
+
+				for (l = k; l < j; l ++)
+					two_d_map [i][l] = dvalue * (l - k) + two_d_map [i][k];
+			}
+		}
+	}
 }
