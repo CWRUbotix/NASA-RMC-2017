@@ -2,7 +2,7 @@ package path;
 
 import commands.MidLevelCommand;
 
-import java.util.Queue;
+import java.util.PriorityQueue;
 
 /**
  * This class is responsible for publishing Messages detailing the next
@@ -18,13 +18,24 @@ public class PathExecution {
     // FIELDS
 
     private MidLevelCommand currentCommand;
-    private Queue<MidLevelCommand> commandQueue;
+    private PriorityQueue<MidLevelCommand> commandQueue;
 
 
     // PUBLIC METHODS
 
     public PathExecution() {
 
+    }
+
+     public void addCommandToQueue(MidLevelCommand command){
+        if(PriorityQueue != null){
+            PriorityQueue.add(command);
+        }
+        else{   
+            MidLevelComparator comparator = new MidLevelComparator<MidLevelCommand>();
+            PriorityQueue = new PriorityQueue<MidLevelCommand>(11, comparator);
+        }
+        
     }
 
 
@@ -38,11 +49,29 @@ public class PathExecution {
         this.currentCommand = currentCommand;
     }
 
-    public Queue<MidLevelCommand> getCommandQueue() {
+    public PriorityQueue<MidLevelCommand> getCommandQueue() {
         return commandQueue;
     }
 
-    public void setCommandQueue(Queue<MidLevelCommand> commandQueue) {
+    public void setCommandQueue(PriorityQueue<MidLevelCommand> commandQueue) {
         this.commandQueue = commandQueue;
     }
+
+
+    //Comparator used for the priority queue
+    class MidLevelComparator implements Comparator<MidLevelCommand>{
+        @Override
+        public int compare(MidLevelCommand x, MidLevelCommand y) {
+        // We just want to compare the priority values of the commands
+            if (x.getPriority() < y.getPriority()){
+                return -1;
+            }
+            if (x.getPriority() > y.getPriority()){
+                return 1;
+            }
+            return 0;
+        }
+    }
+
+
 }

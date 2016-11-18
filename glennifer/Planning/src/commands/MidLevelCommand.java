@@ -9,6 +9,7 @@ public class MidLevelCommand extends Command{
 
 
     private MidLevelCommandEnum command;
+    private MidLevelCommandPriority priority;
 
 
     // ENUM
@@ -32,12 +33,21 @@ public class MidLevelCommand extends Command{
     		
     }
 
+    public enum MidLevelCommandPriority {
+
+        URGENT, 
+        HIGH,
+        MIDDLE,
+        LOW
+    }
+
 
     // CONSTRUCTORS
 
-    public MidLevelCommand(float speed, float timeout, MidLevelCommandEnum command){
+    public MidLevelCommand(float speed, float timeout, MidLevelCommandEnum command, MidLevelCommandPriority priority){
         super(speed, timeout);
         this.command = command;
+        this.priority = priority;
     }
 
 
@@ -50,6 +60,15 @@ public class MidLevelCommand extends Command{
 
     public void setCommand(MidLevelCommandEnum command) {
         this.command = command;
+    }
+
+    public MidLevelCommandPriority getPriority() {
+
+        return priority;
+    }
+
+    public void setPriority(MidLevelCommandPriority priority) {
+        this.priority= priority;
     }
 
     //
