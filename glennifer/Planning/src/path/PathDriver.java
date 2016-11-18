@@ -1,11 +1,14 @@
 package path;
 
+import cli.CommandLineHarness;
 import commands.MidLevelCommand;
 import message.Message;
 import message.MessageBuilder;
 import message.MessageSender;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * This class functions as the driver for the Planning module. This class will receive and
@@ -39,7 +42,7 @@ public class PathDriver {
             //declare queue (name, durability, name callback for queue creation)
 
         //basic consume
-            //call something parse message into Java objects we can use
+            //call szomething parse message into Java objects we can use
             //
 
 
@@ -50,6 +53,13 @@ public class PathDriver {
         messageBuilder = new MessageBuilder();
         messageSender = new MessageSender();
 
+    }
+
+    public PathDriver(MessageSender sender){
+        planner = new PathPlanning();
+        executor = new PathExecution();
+        messageBuilder = new MessageBuilder();
+        messageSender = sender;
     }
 
 
@@ -87,6 +97,81 @@ public class PathDriver {
     public static void main(String[] args){
 
         PathDriver driver = new PathDriver();
+
+    }
+
+    public class CommandLineHarness {
+
+
+        public void runCLI(){
+
+            String nextLine = "";
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+
+            while( nextLine != null && !nextLine.equals("quit") ){
+
+                try {
+                    nextLine = reader.readLine();
+
+                    Callback callback = Callback.callbackOf(nextLine);
+
+                    doCallback(callback);
+
+                }
+                catch(IOException e){
+                    nextLine = "";
+                }
+            }
+
+            System.out.println("Exiting");
+
+        }
+
+        private void doCallback(Callback callback) throws IOException {
+
+            switch(callback){
+
+                case PUBLLISH_CURRENT_COMMAND:
+                    PathDriver.this.publishCurrentCommand();
+                    break;
+
+                default:
+                    sendDefaultMessage();
+
+            }
+        }
+
+        private void sendDefaultMessage() throws IOException {
+            Message message = PathDriver.this.messageBuilder.readableMessage("Unrecognized command");
+            PathDriver.this.messageSender.publish(message);
+        }
+    }
+
+    private enum Callback {
+
+        PUBLLISH_CURRENT_COMMAND,
+        UNKNWON_CALLBACK;
+
+
+        private static Callback callbackOf(String callbackName){
+
+            Callback callback;
+
+            switch(callbackName){
+
+                case "publish":
+                    callback = PUBLLISH_CURRENT_COMMAND;
+                    break;
+
+                default:
+                    callback = UNKNWON_CALLBACK;
+            }
+            return callback;
+        }
+
+
 
     }
 

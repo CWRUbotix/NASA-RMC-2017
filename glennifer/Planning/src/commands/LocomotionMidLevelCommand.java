@@ -27,8 +27,7 @@ public class LocomotionMidLevelCommand extends MidLevelCommand{
 	
 
     public LocomotionMidLevelCommand(float speed, float timeout, MidLevelCommandEnum command){
-        super(speed, timeout);
-        this.command = command;
+        super(speed, timeout, command);
     }
     
  // GET/SET

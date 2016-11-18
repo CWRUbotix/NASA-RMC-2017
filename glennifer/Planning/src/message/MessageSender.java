@@ -16,6 +16,10 @@ public class MessageSender {
         target = System.out;
     }
 
+    public MessageSender(OutputStream outputStream){
+        target = outputStream;
+    }
+
     // PUBLIC METHODS
 
     public void publish(Message message) throws IOException{

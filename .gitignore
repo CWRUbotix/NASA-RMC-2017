@@ -1,5 +1,6 @@
 *.pyc
 build*/
+out*/
 *.user
 *.exe
 *.dll

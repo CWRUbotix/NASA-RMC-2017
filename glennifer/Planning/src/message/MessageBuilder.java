@@ -15,6 +15,10 @@ public class MessageBuilder {
         return message;
     }
 
+    public Message readableMessage(String msg){
+        return message(msg + '\n');
+    }
+
     public Message commandMessage(Command cmd){
         String msg = cmd.toString();
         Message message = new Message(msg);
