@@ -28,7 +28,7 @@ public class PathExecution {
 
     }
 
-     public void addCommandToQueue(MidLevelCommand command){
+    public void addCommandToQueue(MidLevelCommand command){
         if(commandQueue == null){
             MidLevelComparator comparator = new MidLevelComparator();
             commandQueue = new PriorityQueue(11, comparator);
