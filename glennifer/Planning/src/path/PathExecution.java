@@ -38,6 +38,16 @@ public class PathExecution {
         
     }
 
+    public MidLevelCommand popNextCommand(){
+        if(commandQueue != null){
+            if(commandQueue.size() > 0){
+                return commandQueue.poll();
+            }
+            //else queue is empty
+        }
+        //queue doesn't exist
+    }
+
 
     // GET / SET    
 
