@@ -47,7 +47,8 @@ To setup the dev environment for the client on Windows, use the following proced
 3. Install CMake, making sure it is in your system PATH
 4. Install Qt
 5. Install git for windows, making sure it is in your system PATH
-6. Run ./setup-devenv-client.ps1
+6. Install Conan
+7. Run ./setup-devenv-client.ps1
 
 For reference, these are all the dependencies required to build and run Glennifer:
 

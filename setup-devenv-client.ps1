@@ -6,6 +6,7 @@
 # * You have installed CMake, and it is in your system PATH
 # * You have installed Qt
 # * You have installed git for windows, and it is in your system PATH
+# * You have installed Conan for windows
 
 # Set environment variables for Visual Studio 2015 Command Prompt
 # Copied from http://stackoverflow.com/questions/2124753/how-i-can-use-powershell-with-the-visual-studio-command-prompt
@@ -44,19 +45,10 @@ cd ..
 cd ..
 cd ..\..
 
-# Download and build rabbitmq-c
+# Use conan to install other deps (rabbitmq-c)
 
-git submodule init third-party/rabbitmq-c
-git submodule update third-party/rabbitmq-c
-
-cd .\third-party\rabbitmq-c\
-New-Item -Force -ItemType directory -Path build
-cd .\build\
-
-cmake -G "NMake Makefiles" -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DENABLE_SSL_SUPPORT=OFF -DBUILD_TESTS=OFF ..
-cmake --build .
-
+cd client
+conan install
 cd ..
-cd ..\..
 
 

@@ -25,12 +25,8 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     connectiondialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq.4
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq.4
-else:unix: LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq
-
-INCLUDEPATH += $$PWD/../third-party/rabbitmq-c/librabbitmq
-DEPENDPATH += $$PWD/../third-party/rabbitmq-c/librabbitmq
+CONFIG += conan_basic_setup
+include(conanbuildinfo.pri)
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../protobuf-3.1.0/cmake/build/release/ -llibprotobuf
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../protobuf-3.1.0/cmake/build/debug/ -llibprotobuf
