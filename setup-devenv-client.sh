@@ -9,6 +9,9 @@ sudo apt-get -q -y install make cmake g++ gdb
 sudo apt-get -q -y remove qt4-qmake
 sudo apt-get -q -y install qt5-default qtdeclarative5-dev
 
+# Install the protobuf compiler, protoc
+sudo apt-get -q -y install protobuf-compiler
+
 # Install protobuf library for C/C++
 sudo apt-get -q -y install libprotobuf-dev
 
@@ -18,5 +21,5 @@ sudo pip install conan
 
 # Use conan to install other deps (rabbitmq-c)
 cd client
-conan install
+conan install --build missing
 cd ..
