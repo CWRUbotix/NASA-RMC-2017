@@ -13,7 +13,7 @@ sudo apt-get -q -y install qt5-default qtdeclarative5-dev
 sudo apt-get -q -y install libprotobuf-dev
 
 # Install Conan
-sudo apt-get -q -y install python3 python3-pip
+sudo apt-get -q -y install python python-pip
 sudo pip install conan
 
 # Use conan to install other deps (rabbitmq-c)
