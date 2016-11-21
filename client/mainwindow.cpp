@@ -1,9 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <amqp_tcp_socket.h>
-#include <amqp.h>
-#include <amqp_framing.h>
-#include "amqp_utils.h"
+#include <AMQPcpp.h>
 #include "messages.pb.h"
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -60,10 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleLocomotionRight);
 }
 
-MainWindow::MainWindow(amqp_connection_state_t conn, QWidget *parent) :
+MainWindow::MainWindow(AMQP *amqp, QWidget *parent) :
     MainWindow::MainWindow(parent)
 {
-    m_conn = conn;
+    m_amqp = amqp;
 }
 
 MainWindow::~MainWindow()
@@ -77,8 +74,8 @@ void MainWindow::handleLocomotion(LocomotionControl_LocomotionType direction) {
 
     LocomotionControl msg;
     msg.set_locomotiontype(direction);
- //   msg.set_speed_percent(ui->locomotion_SpeedSlider->value());
- //   msg.set_timeout_ms(ui->locomotion_DurationSlider->value());
+    msg.set_speed_percent(123.0F);
+    msg.set_timeout_ms(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
     if (!msg_buff) {
@@ -86,21 +83,17 @@ void MainWindow::handleLocomotion(LocomotionControl_LocomotionType direction) {
         return;
     }
     msg.SerializeToArray(msg_buff, msg_size);
-    amqp_bytes_t message_bytes;
-    message_bytes.len = msg_size;
-    message_bytes.bytes = msg_buff;
-    const char* queue_name = "locomotion";
-    int status = amqp_basic_publish(m_conn,
-                                    1,
-                                    amqp_cstring_bytes(""),
-                                    amqp_cstring_bytes(queue_name),
-                                    0,
-                                    0,
-                                    NULL,
-                                    message_bytes);
-    if (AMQP_STATUS_OK != status) {
-        ui->consoleOutputTextBrowser->append("Failed to publish message.\nDetails: amqp_basic_publish() returned: " + QString::number(status) + "\n");
-    }
+    qDebug() << "serialized";
+    qDebug() << QString::number(uint64_t(m_amqp));
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    qDebug() << "ex created";
+    ex->Declare("amq.topic", "topic");
+    qDebug() << "ex declared";
+
+    ex->Publish((char*)msg_buff, msg_size, "locomotion");
+    qDebug() << "ex published";
+
     free(msg_buff);
 }
 
