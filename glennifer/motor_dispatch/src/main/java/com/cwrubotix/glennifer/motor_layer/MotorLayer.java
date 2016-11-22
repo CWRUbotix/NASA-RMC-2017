@@ -1,3 +1,5 @@
+package com.cwrubotix.glennifer.motor_dispatch;
+
 /* this class control receive commands from path planning 
  * and configure glennifer motors and actuators accordingly
  */

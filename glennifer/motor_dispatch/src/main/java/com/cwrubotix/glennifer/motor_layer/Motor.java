@@ -1,3 +1,5 @@
+package com.cwrubotix.glennifer.motor_dispatch;
+
 /* this class responsible for the motor speed */
 public class Motor {
   private int rmp = 0;        // motor rpm
