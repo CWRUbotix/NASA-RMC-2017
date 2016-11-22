@@ -5,7 +5,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsItem>
-#include <QDebug>
 #include <QImage>
 
 /*
@@ -83,16 +82,10 @@ void MainWindow::handleLocomotion(LocomotionControl_LocomotionType direction) {
         return;
     }
     msg.SerializeToArray(msg_buff, msg_size);
-    qDebug() << "serialized";
-    qDebug() << QString::number(uint64_t(m_amqp));
 
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
-    qDebug() << "ex created";
-    ex->Declare("amq.topic", "topic");
-    qDebug() << "ex declared";
-
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "locomotion");
-    qDebug() << "ex published";
 
     free(msg_buff);
 }

@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "connectiondialog.h"
 #include <QApplication>
-#include <QDebug>
 #include <AMQPcpp.h>
 #include <QMessageBox>
 

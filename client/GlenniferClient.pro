@@ -14,12 +14,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
-    amqp_utils.cpp \
     messages.pb.cc
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
-    amqp_utils.h \
     messages.pb.h
 
 FORMS    += mainwindow.ui \
