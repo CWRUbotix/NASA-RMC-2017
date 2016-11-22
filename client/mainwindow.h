@@ -2,10 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <amqp_tcp_socket.h>
-#include <amqp.h>
-#include <amqp_framing.h>
+#include <AMQPcpp.h>
 #include "messages.pb.h"
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsItem>
+
+using namespace com::cwrubotix::glennifer;
 
 namespace Ui {
 class MainWindow;
@@ -17,7 +20,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    explicit MainWindow(amqp_connection_state_t conn, QWidget *parent = 0);
+    explicit MainWindow(AMQP *amqp, QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
@@ -26,10 +29,17 @@ public slots:
     void handleLocomotionDown();
     void handleLocomotionLeft();
     void handleLocomotionRight();
+    void on_spinBox_setWheelAngle_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;
-    amqp_connection_state_t m_conn;
+    AMQP *m_amqp;
+    QGraphicsScene *scene;
+    QGraphicsRectItem *rectangle1;
+    QGraphicsRectItem *rectangle2;
+    QGraphicsRectItem *rectangle3;
+    QGraphicsRectItem *rectangle4;
+    void updateAngle(int x);
 };
 
 #endif // MAINWINDOW_H

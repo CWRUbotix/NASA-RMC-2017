@@ -22,7 +22,7 @@
       </property>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -46,280 +46,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_11">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_6">
-                <item>
-                 <widget class="QLabel" name="label">
-                  <property name="text">
-                   <string>Front Left</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_8">
-                  <item>
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_43">
-                    <item>
-                     <widget class="QProgressBar" name="locomotion_FrontLeftForwardSpeedBar">
-                      <property name="value">
-                       <number>24</number>
-                      </property>
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QProgressBar" name="locomotion_FrontLeftReverseSpeedBar">
-                      <property name="value">
-                       <number>24</number>
-                      </property>
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="invertedAppearance">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_8">
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>Front Right</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_10">
-                  <item>
-                   <spacer name="horizontalSpacer_8">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_44">
-                    <item>
-                     <widget class="QProgressBar" name="locomotion_FrontRightForwardSpeedBar">
-                      <property name="value">
-                       <number>24</number>
-                      </property>
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QProgressBar" name="locomotion_FrontRightReverseSpeedBar">
-                      <property name="value">
-                       <number>24</number>
-                      </property>
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="invertedAppearance">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_5">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
-                <item>
-                 <widget class="QLabel" name="label_4">
-                  <property name="text">
-                   <string>Back Left</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_11">
-                  <item>
-                   <spacer name="horizontalSpacer_9">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_45">
-                    <item>
-                     <widget class="QProgressBar" name="locomotion_BackLeftForwardSpeedBar">
-                      <property name="value">
-                       <number>24</number>
-                      </property>
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QProgressBar" name="locomotion_BackLeftReverseSpeedBar">
-                      <property name="value">
-                       <number>24</number>
-                      </property>
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="invertedAppearance">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_6">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_10">
-                <item>
-                 <widget class="QLabel" name="label_5">
-                  <property name="text">
-                   <string>Back Right</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_12">
-                  <item>
-                   <spacer name="horizontalSpacer_10">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_46">
-                    <item>
-                     <widget class="QProgressBar" name="locomotion_BackRightForwardSpeedBar">
-                      <property name="value">
-                       <number>24</number>
-                      </property>
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QProgressBar" name="locomotion_BackRightReverseSpeedBar">
-                      <property name="value">
-                       <number>24</number>
-                      </property>
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="invertedAppearance">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_7">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-             </layout>
+             <widget class="QGraphicsView" name="graphicsView"/>
             </item>
            </layout>
           </widget>
@@ -335,76 +62,189 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_15">
                 <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_16"/>
-                </item>
-                <item>
                  <widget class="QTabWidget" name="tabWidget_2">
                   <property name="currentIndex">
                    <number>2</number>
                   </property>
                   <widget class="QWidget" name="Config1">
                    <attribute name="title">
-                    <string>Config1</string>
+                    <string>YDirection</string>
                    </attribute>
+                   <widget class="QWidget" name="layoutWidget_2">
+                    <property name="geometry">
+                     <rect>
+                      <x>4</x>
+                      <y>4</y>
+                      <width>421</width>
+                      <height>111</height>
+                     </rect>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_9">
+                     <item>
+                      <layout class="QVBoxLayout" name="verticalLayout_7">
+                       <item>
+                        <widget class="QPushButton" name="locomotion_UpButton">
+                         <property name="text">
+                          <string>Up</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="locomotion_DownButton">
+                         <property name="text">
+                          <string>Down</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
                   </widget>
                   <widget class="QWidget" name="Config2">
                    <attribute name="title">
-                    <string>Config2</string>
+                    <string>XDirection</string>
                    </attribute>
+                   <widget class="QWidget" name="layoutWidget_3">
+                    <property name="geometry">
+                     <rect>
+                      <x>4</x>
+                      <y>4</y>
+                      <width>421</width>
+                      <height>111</height>
+                     </rect>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_10">
+                     <item>
+                      <widget class="QPushButton" name="locomotion_LeftButton">
+                       <property name="text">
+                        <string>Left</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="locomotion_RightButton">
+                       <property name="text">
+                        <string>Right</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
                   </widget>
                   <widget class="QWidget" name="Config3">
                    <attribute name="title">
-                    <string>Config3</string>
+                    <string>RobotRotate</string>
                    </attribute>
-                  </widget>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_3">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_6">
-                    <item>
-                     <widget class="QPushButton" name="locomotion_LeftButton">
-                      <property name="text">
-                       <string>Left</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_2">
-                      <item>
-                       <widget class="QPushButton" name="locomotion_UpButton">
-                        <property name="text">
-                         <string>Up</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="locomotion_DownButton">
-                        <property name="text">
-                         <string>Down</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="locomotion_RightButton">
-                      <property name="text">
-                       <string>Right</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
                    <widget class="QProgressBar" name="locomotion_ProgressBar">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>140</y>
+                      <width>411</width>
+                      <height>25</height>
+                     </rect>
+                    </property>
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
                     <property name="value">
                      <number>24</number>
                     </property>
                    </widget>
-                  </item>
-                 </layout>
+                   <widget class="QLabel" name="label">
+                    <property name="geometry">
+                     <rect>
+                      <x>70</x>
+                      <y>50</y>
+                      <width>81</width>
+                      <height>31</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                   <widget class="QLabel" name="label_2">
+                    <property name="geometry">
+                     <rect>
+                      <x>283</x>
+                      <y>80</y>
+                      <width>67</width>
+                      <height>17</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                   <widget class="QPushButton" name="Rotate_Clockwise">
+                    <property name="geometry">
+                     <rect>
+                      <x>270</x>
+                      <y>20</y>
+                      <width>86</width>
+                      <height>27</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string>Clockwise</string>
+                    </property>
+                   </widget>
+                   <widget class="QPushButton" name="Rotate_AntiClockwise">
+                    <property name="geometry">
+                     <rect>
+                      <x>50</x>
+                      <y>20</y>
+                      <width>119</width>
+                      <height>27</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string>Anti-Clockwise</string>
+                    </property>
+                   </widget>
+                   <widget class="QSpinBox" name="spinBox_setWheelAngle">
+                    <property name="geometry">
+                     <rect>
+                      <x>200</x>
+                      <y>90</y>
+                      <width>61</width>
+                      <height>31</height>
+                     </rect>
+                    </property>
+                    <property name="maximum">
+                     <number>180</number>
+                    </property>
+                   </widget>
+                   <widget class="QLabel" name="label_3">
+                    <property name="geometry">
+                     <rect>
+                      <x>106</x>
+                      <y>94</y>
+                      <width>91</width>
+                      <height>21</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string>Wheel Angle</string>
+                    </property>
+                   </widget>
+                   <widget class="QLabel" name="label_4">
+                    <property name="geometry">
+                     <rect>
+                      <x>270</x>
+                      <y>50</y>
+                      <width>81</width>
+                      <height>31</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </widget>
+                 </widget>
                 </item>
                </layout>
               </widget>

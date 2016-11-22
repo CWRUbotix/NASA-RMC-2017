@@ -15,3 +15,7 @@ build*/
 *.o
 /pb/
 /glennifer/robot_state/target/
+/protobuf-3.1.0/
+*.autosave
+conanbuildinfo.*
+conaninfo.txt
