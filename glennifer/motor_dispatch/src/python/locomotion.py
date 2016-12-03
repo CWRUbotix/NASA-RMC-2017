@@ -107,10 +107,10 @@ def handle_turn(channel, method, header, body):
 		# call out error
 
 	# else if the configuration is correct
-	setup_rpm_timeout(front_left_speed, msg_in.rpm, msg_in.timeout)
-	setup_rpm_timeout(front_right_speed, msg_in.rpm, msg_in.timeout)
-	setup_rpm_timeout(back_left_speed, msg_in.rpm, msg_in.timeout)
-	setup_rpm_timeout(back_right_speed, msg_in.rpm, msg_in.timeout)
+	setup_rpm_timeout(front_left_speed, msg_in.rpm, msg_in.timeout, 'motorcontrol.locomotion.front_left_wheel_rpm')
+	setup_rpm_timeout(front_right_speed, msg_in.rpm, msg_in.timeout, 'motorcontrol.locomotion.front_right_wheel_rpm')
+	setup_rpm_timeout(back_left_speed, msg_in.rpm, msg_in.timeout, 'motorcontrol.locomotion.back_left_wheel_rpm')
+	setup_rpm_timeout(back_right_speed, msg_in.rpm, msg_in.timeout, 'motorcontrol.locomotion.back_right_wheel_rpm')
 	
 def handle_strafe(channel, method, header, body):
   # Called when we receive message from strafe queue
@@ -132,11 +132,17 @@ def handle_configure(channel, method, header, body):
 	# Caleed when we receive message from configure queue
 	configure.ParseFromString(body)
 
-def setup_rpm_timeout(wheel, rpm, timeout):
+def setup_rpm_timeout(wheel, rpm, timeout, topic):
+	# Setup rpm and timeout for the wheel object
+	# while at the same time send the serialized message to 
+	# the exchange
 	wheel.rpm = rpm
 	wheel.timeout = timeout
+	channel.basic_publish(exchange=exchange_emit,
+			routing_key=topic,
+			body=wheel.SerializeToString())
+
 
 def setup_turn_timeout(wheel, rpm, timeout):
 	wheel.pod = pod
 	wheel.timeout = timeout
-
