@@ -1,5 +1,6 @@
 The locomotion.py program is responsible for locomotion part of glennifer
 It perform three simple tasks:
+    #
     1. Receive commands from decision layer
     2. Interpret these commands and see if there are any errors
     3. Send commands to individual wheels
