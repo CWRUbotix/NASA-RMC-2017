@@ -15,6 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import com.cwrubotix.glennifer.Messages.LocomotionControlCommand;
+import com.cwrubotix.glennifer.Messages.ExcavationControlCommand;
+import com.cwrubotix.glennifer.Messages.DepositionControlCommand;
+
 /**
  * This class functions as the driver for the Planning module. This class will receive and
  * subscribe to relevant Messages. To respond to those messages, it will make the appropriate
@@ -201,7 +205,7 @@ public class PathDriver {
 
             switch(callback){
 
-                case PUBLLISH_CURRENT_COMMAND:
+                case PUBLISH_CURRENT_COMMAND:
                     PathDriver.this.publishCurrentCommand();
                     break;
 
@@ -242,7 +246,7 @@ public class PathDriver {
 
     private enum Callback {
 
-        PUBLLISH_CURRENT_COMMAND,
+        PUBLISH_CURRENT_COMMAND,
         PUBLISH_NEXT_COMMAND,
         ADD_DEFAULT_COMMAND_TO_QUEUE,
         PUBLISH_QUEUE,
@@ -257,7 +261,7 @@ public class PathDriver {
             switch(callbackName){
 
                 case "current":
-                    callback = PUBLLISH_CURRENT_COMMAND;
+                    callback = PUBLISH_CURRENT_COMMAND;
                     break;
 
                 case "addDefault":

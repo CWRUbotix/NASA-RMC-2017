@@ -5,6 +5,10 @@ import commands.MidLevelCommand;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
+import com.cwrubotix.glennifer.Messages.LocomotionControlCommand;
+import com.cwrubotix.glennifer.Messages.ExcavationControlCommand;
+import com.cwrubotix.glennifer.Messages.DepositionControlCommand;
+
 /**
  * This class is responsible for publishing Messages detailing the next
  * MidLevelCommand the robot should execute. The queue of commands to
