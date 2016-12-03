@@ -1,5 +1,5 @@
 The locomotion.py program is responsible for locomotion part of glennifer
-#It perform three simple tasks:
+#It performs three simple tasks:
     1. Receive commands from decision layer
     2. Interpret these commands and see if there are any errors
     3. Send commands to individual wheels
@@ -34,4 +34,4 @@ By doing this, the program have four different queue for four different purposes
     1. Should the configuration queue be requested by remote procedure queue
     2. What if three queues: straight, turn, strafe be innundated with commands, will there any errors
     3. What kind of variables we will use for pod to turn the wheels, eg: degree??
-    4. How we gonna strafe
+    4. How we gonna strafe: how the wheels turn to strafe
