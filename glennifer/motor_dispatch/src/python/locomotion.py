@@ -25,8 +25,14 @@ straight_binding_key = 'subsystem.locomotion.turn'
 straight_binding_key = 'subsystem.locomotion.strafe'
 straight_binding_key = 'subsystem.locomotion.configure'
 
+# Declare exchange from subsys
 exchange_name = ''
 
+# Declare exchange for emitting message
+exchange_emit = 'locomotion_hardware'
+
+# Declare configuration 
+configuration = message_pb2.LocomotionControlCommandConfigure()
 
 channel = None
 
@@ -60,7 +66,10 @@ def on_channel_open(new_channel):
 	channel.queue_bind(exchange=exchange_name, queue=configure_queue,
 			routing_key=configure_binding_key)
 
-
+	# create exchange emitting messages to hardware
+	channel.exchange_declare(exchange=exchange_emit,
+			type='topic')
+	
 	on_queue_bind()
 
 def on_queue_bind(frame):
@@ -75,34 +84,53 @@ def handle_straight(channel, method, header, body):
 	msg_in = message_pb2.LocomotionControlCommandStraight()
 	msg_in.ParseFromString(body)
 
-	# call out error if the configuration is not straight yet
+	# call out error if the configuration is not STRAIGHT yet
 	if (configure.target is not 
 			message_pb2.LocomotionCommandConfigure.Configure.STRAIGHT_CONFIG)
 		# call out error
 
+	# else if the configuration is correct 
+	# set the wheels rpm and timeout
 	setup_rpm_timeout(front_left_speed, msg_in.rpm, msg_in.timeout)
 	setup_rpm_timeout(front_right_speed, msg_in.rpm, msg_in.timeout)
 	setup_rpm_timeout(back_left_speed, msg_in.rpm, msg_in.timeout)
 	setup_rpm_timeout(back_right_speed, msg_in.rpm, msg_in.timeout)
 	
-
 def handle_turn(channel, method, header, body):
 	# Called when we receive messages from turn queue
 	msg_in = message_pb2.LocomotionControlCommandTurn()
 	msg_in.ParseFromString(body)
 
+	# call out error if the configuration is not TURN yet
+	if (configuration.target is not 
+			message_pb2.LocomotionCommandConfigure.Configure.TURN_CONFIG)
+		# call out error
 
-
-
+	# else if the configuration is correct
+	setup_rpm_timeout(front_left_speed, msg_in.rpm, msg_in.timeout)
+	setup_rpm_timeout(front_right_speed, msg_in.rpm, msg_in.timeout)
+	setup_rpm_timeout(back_left_speed, msg_in.rpm, msg_in.timeout)
+	setup_rpm_timeout(back_right_speed, msg_in.rpm, msg_in.timeout)
+	
 def handle_strafe(channel, method, header, body):
   # Called when we receive message from strafe queue
 	msg_in = message_pb2.LocomotionControlCommandStrafe()
 	msg_in.ParseFromString(body)
 
+	# call out error if the configuration is not STRAFE yet
+	if (configuration.target is not 
+			message_pb2.LocomotionCommandConfigure.Configure.TURN_CONFIG)
+		# call out error
+
+	# else if the configuration is correct
+	setup_rpm_timeout(front_left_speed, msg_in.rpm, msg_in.timeout)
+	setup_rpm_timeout(front_right_speed, msg_in.rpm, msg_in.timeout)
+	setup_rpm_timeout(back_left_speed, msg_in.rpm, msg_in.timeout)
+	setup_rpm_timeout(back_right_speed, msg_in.rpm, msg_in.timeout)
+
 def handle_configure(channel, method, header, body):
 	# Caleed when we receive message from configure queue
-
-
+	configure.ParseFromString(body)
 
 def setup_rpm_timeout(wheel, rpm, timeout):
 	wheel.rpm = rpm
@@ -111,3 +139,4 @@ def setup_rpm_timeout(wheel, rpm, timeout):
 def setup_turn_timeout(wheel, rpm, timeout):
 	wheel.pod = pod
 	wheel.timeout = timeout
+
