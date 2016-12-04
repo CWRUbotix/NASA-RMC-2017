@@ -45,6 +45,9 @@ def on_channel_open(new_channel):
 	global channel
 	channel = new_channel
 
+	# the channel receive one message at a time
+	channel.basic_qos(prefetch_count=1)
+
   # declare and bind straight queue
 	channel.queue_declare(queue=straight_queue, durable=True,
 			exclusive=False, auto_delete=False)
@@ -86,7 +89,7 @@ def handle_straight(channel, method, header, body):
 
 	# call out error if the configuration is not STRAIGHT yet
 	if (configure.target is not 
-			message_pb2.LocomotionCommandConfigure.Configure.STRAIGHT_CONFIG)
+			message_pb2.LocomotionCommandConfigure.Configuration.STRAIGHT_CONFIG)
 		# call out error
 
 	# else if the configuration is correct 
@@ -103,7 +106,7 @@ def handle_turn(channel, method, header, body):
 
 	# call out error if the configuration is not TURN yet
 	if (configuration.target is not 
-			message_pb2.LocomotionCommandConfigure.Configure.TURN_CONFIG)
+			message_pb2.LocomotionCommandConfigure.Configuration.TURN_CONFIG)
 		# call out error
 
 	# else if the configuration is correct
@@ -119,7 +122,7 @@ def handle_strafe(channel, method, header, body):
 
 	# call out error if the configuration is not STRAFE yet
 	if (configuration.target is not 
-			message_pb2.LocomotionCommandConfigure.Configure.TURN_CONFIG)
+			message_pb2.LocomotionCommandConfigure.Configuration.TURN_CONFIG)
 		# call out error
 
 	# else if the configuration is correct
@@ -130,12 +133,31 @@ def handle_strafe(channel, method, header, body):
 
 def handle_configure(channel, method, header, body):
 	# Caleed when we receive message from configure queue
-	configure.ParseFromString(body)
+	configuration.ParseFromString(body)
 
+	if (configuration.target is 
+			message_pb2.LocomotionCommandConfigure.Configuration.STRAIGHT_CONFIG)
+		setup_config_timeout(front_left_pod, 0, msg_in.timeout)
+		setup_config_timeout(front_right_pod, 0, msg_in.timeout)
+		setup_config_timeout(back_left_pod, 0, msg_in.timeout)
+		setup_config_timeout(back_right_pod, 0, msg_in.timeout)
+	else if (configuration.target is
+			message_pb2.LocomotionCommandConfigure.Configuration.TURN_CONFIG)
+		setup_config_timeout(front_left_pod, 0.5, msg_in.timeout)
+		setup_config_timeout(front_right_pod, 0.5, msg_in.timeout)
+		setup_config_timeout(back_left_pod, 0.5, msg_in.timeout)
+		setup_config_timeout(back_right_pod, 0.5, msg_in.timeout)
+	else if (configuration.target is
+			message_pb2.LocomotionCommandConfigure.Configuration.STRAFE_CONFIG)
+		setup_config_timeout(front_left_pod, 0, msg_in.timeout)
+		setup_config_timeout(front_right_pod, 0, msg_in.timeout)
+		setup_config_timeout(back_left_pod, 0, msg_in.timeout)
+		setup_config_timeout(back_right_pod, 0, msg_in.timeout)
+	
 def setup_rpm_timeout(wheel, rpm, timeout, topic):
 	# Setup rpm and timeout for the wheel object
 	# while at the same time send the serialized message to 
-	# the exchange
+	# the emitting exchange
 	wheel.rpm = rpm
 	wheel.timeout = timeout
 	channel.basic_publish(exchange=exchange_emit,
@@ -143,6 +165,13 @@ def setup_rpm_timeout(wheel, rpm, timeout, topic):
 			body=wheel.SerializeToString())
 
 
-def setup_turn_timeout(wheel, rpm, timeout):
+def setup_config_timeout(wheel, rpm, timeout, topic):
+	# Setup pod and timeout for the wheel object
+	# while at the same time serialized message to 
+	# the emitting exchange
 	wheel.pod = pod
 	wheel.timeout = timeout
+	channel.basic_publish(exchange=exchange_emit,
+			routing_key=topic,
+			body=wheel.SerializeToString())
+
