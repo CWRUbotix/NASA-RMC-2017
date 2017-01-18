@@ -1,5 +1,6 @@
 package commands;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -7,17 +8,15 @@ import java.util.List;
  * @author Shota
  *
  */
-public abstract class HighLevelCommand {
+public class HighLevelCommand {
+	
+	public static final String amount_identifier = "AMOUNT";
+	public static final String duration_identifier = "DURATION";
 
 	/**
-	 * This field serves as the integer portion of the time stamp
+	 * This field serves as the time stamp of when this command was issued
 	 */
-	int intTime;
-	
-	/**
-	 * This field serves as the fractional portion of the time stamp
-	 */
-	float fracTime;
+	long timeStamp;
 	
 	/**
 	 * This field serves as the Identification number of the command,
@@ -25,22 +24,95 @@ public abstract class HighLevelCommand {
 	 */
 	int id;
 
-	public int getIntTime() {
-		return intTime;
-	}
+	/**
+	 * This field serves as the indicator for what type of operation the command specifies.
+	 * 1: Locomotion
+	 * 2: Deposition
+	 * 3: Excavation
+	 */
+	int type;
+	
+	/**
+	 * This field helps distinguish certain commands between specifying an amount and a duration
+	 */
+	String identifier;
 
-	public void setIntTime(int intTime) {
-		this.intTime = intTime;
+	/**
+	 * This array holds the specific details of the command
+	 */
+	double[] data;
+	
+	/**
+	 * Creates a High level command for Locomotion
+	 * @param id 
+	 * @param x X coordinate of the destination
+	 * @param y Y coordinate of the destination
+	 * @param z Z coordinate of the destination
+	 */
+	public HighLevelCommand(int id, float x, float y, float z){
+		this.type = 1;
+		this.id = id;
+		this.timeStamp = Calendar.getInstance().getTimeInMillis();
+		this.data = new double[]{x,y,z};
 	}
-
-	public float getFracTime() {
-		return fracTime;
+	
+	/**
+	 * Creates a High level command for Deposition with a specified amount remaining
+	 * @param id
+	 * @param amount
+	 */
+	public HighLevelCommand(int id, float amount){
+		this.type = 2;
+		this.id = id;
+		this.identifier = this.amount_identifier;
+		this.timeStamp = Calendar.getInstance().getTimeInMillis();
+		this.data = new double[]{amount};
 	}
-
-	public void setFracTime(float fracTime) {
-		this.fracTime = fracTime;
+	
+	/**
+	 * Creates a High level command for Deposition with a specified duration
+	 * @param id
+	 * @param duration The duration of the dig in seconds
+	 */
+	public HighLevelCommand(int id, int duration){
+		this.type = 2;
+		this.id = id;
+		this.identifier = this.duration_identifier;
+		this.timeStamp = Calendar.getInstance().getTimeInMillis();
+		this.data = new double[]{duration};
 	}
-
+	
+	/**
+	 * Creates a High level command for Excavation with a specified amount in the bin remaining
+	 * @param id
+	 * @param depth
+	 * @param amount
+	 */
+	public HighLevelCommand(int id, float depth, float amount){
+		this.type = 3;
+		this.id = id;
+		this.identifier = this.amount_identifier;
+		this.timeStamp = Calendar.getInstance().getTimeInMillis();
+		this.data = new double[]{depth, amount};
+	}
+	
+	/**
+	 * Creates a High level command for Excavation with a specified amount in the bin remaining
+	 * @param id
+	 * @param depth
+	 * @param duration of the excavation in seconds
+	 */
+	public HighLevelCommand(int id, float depth, int duration){
+		this.type = 3; 
+		this.id = id;
+		this.identifier = this.duration_identifier;
+		this.timeStamp = Calendar.getInstance().getTimeInMillis();
+		this.data = new double[]{depth, duration};
+	}
+	public long getTimeStamp(){
+		return this.timeStamp;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -49,14 +121,19 @@ public abstract class HighLevelCommand {
 		this.id = id;
 	}
 	
+	public int getType() {
+		return type;
+	}
+
+	public double[] getData() {
+		return data;
+	}
 	
-	//-------------Not to use-----------------
+	public double getData(int index) {
+		return data[index];
+	}
 	
-//	/**
-//	 * This list is for containing all of the data members of the commmand
-//	 * for easy access.
-//	 */
-//	List<Object> dataMembers;
-//	
-//	public abstract List<Object> getDataMembers();
+	public String getIdentifier(){
+		return identifier;
+	}
 }
