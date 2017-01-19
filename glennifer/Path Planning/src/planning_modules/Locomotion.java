@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
+import commands.HighLevelCommand;
 import commands.LocoHLC;
 import commands.MidLevelCommand;
 
@@ -32,21 +33,28 @@ public class Locomotion {
 		}
 	}
 
-	public static Queue<MidLevelCommand> receiveCommand(LocoHLC highCommand) {
+	public static Queue<MidLevelCommand> receiveCommand(HighLevelCommand highCommand) {
 		Queue<MidLevelCommand> output = new LinkedList<MidLevelCommand>();
 
 		// ArenaObjectMap is a placeholder for
 		// Vector[] v = calculateVectors(highCommand.getX(), highCommand.getY(),
 		// ArenaObjectMap);
-		Vector[] v = calculateVectors(highCommand.getX(), highCommand.getY());
-		float currentAngle = initialAngle;
-		for (Vector c : v) {
-			output.add(turnToFaceDirection(currentAngle, c.angle));
-			output.add(moveForVectorDistance(c));
-			currentAngle = c.angle;
-		}
+		if (highCommand.getType() == 1) {
+			
+			Vector[] v = calculateVectors((int) highCommand.getData(0), (int) highCommand.getData(1));
+			float currentAngle = initialAngle;
+			for (Vector c : v) {
+				output.add(turnToFaceDirection(currentAngle, c.angle));
+				output.add(moveForVectorDistance(c));
+				currentAngle = c.angle;
+			}
 
-		return output;
+			return output;
+		}
+		else{
+			System.err.println("Wrong type of Command");
+			return null;
+		}
 	}
 
 	public static Vector[] calculateVectors(float endX, float endY) {
