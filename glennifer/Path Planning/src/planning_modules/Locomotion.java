@@ -5,7 +5,6 @@ import java.util.Queue;
 import java.util.Random;
 
 import commands.HighLevelCommand;
-import commands.LocoHLC;
 import commands.MidLevelCommand;
 
 /**
