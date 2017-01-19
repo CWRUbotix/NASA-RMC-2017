@@ -27,8 +27,26 @@ public class Deposition {
 	 */
 	public static final float load = 60;
 
-	public static Queue<MidLevelCommand> receiveCommand(DepHLC command) {
-		return assignCommands(command.getIntDuration(), command.getFracDuration(), command.getAmount());
+	public static Queue<MidLevelCommand> receiveCommand(HighLevelCommand highCommand) {
+		if (highCommand.getType() == 2) {
+			int duration = 0;
+			float amount = 0;
+			
+			//I do realize that there could be some errors with this system, but I'll get to that later
+			if (highCommand.getIdentifier().equals(HighLevelCommand.amount_identifier)){
+				amount = (float) highCommand.getData(0);
+			}
+			if (highCommand.getIdentifier().equals(HighLevelCommand.duration_identifier)){
+				duration = (int) highCommand.getData(0);
+			}
+				
+			return assignCommands(duration, amount);
+		}
+		else{
+			System.err.println("Wrong type of Command");
+			return null;
+		}
+		//return assignCommands(command.getIntDuration(), command.getFracDuration(), command.getAmount());
 	}
 
 	/**
@@ -50,20 +68,20 @@ public class Deposition {
 		return load;
 	}
 
-	public static Queue<MidLevelCommand> assignCommands(int intTime, float fracTime, float amount) {
+	public static Queue<MidLevelCommand> assignCommands(int duration, float amount) {
 		Queue<MidLevelCommand> output = new LinkedList<MidLevelCommand>();
 
 		// If there is stuff in the bin
 		if (checkLoad() > 0) {
-			// if the bin isn’t fully extended
+			// if the bin isnâ€™t fully extended
 			if (checkPosition() < 1)
 				output.add(extend());
 
 			output.add(conveyorOn());
 			
 			//If there is a time, there should be no amount specified
-			if (intTime >= 0 && fracTime >= 0)
-				output.add(waitTime(intTime, fracTime));
+			if (duration > 0)
+				output.add(waitTime(duration));
 			//If there is no time, should be no amount specified.
 			//Might be an error here if amount == -1
 			else
@@ -101,10 +119,9 @@ public class Deposition {
 
 	// This method is for deploying a command for waiting a certain amount of
 	// time in ms (unit tbd)
-	public static MidLevelCommand waitTime(int intTime, float fracTime) {
-		// I actually don’t know if we can add a command for waiting :)
-		float time = intTime + fracTime;
-		return new MidLevelCommand("Wait " + time + " seconds");
+	public static MidLevelCommand waitTime(int duration) {
+		// I actually donâ€™t know if we can add a command for waiting :)
+		return new MidLevelCommand("Wait " + duration + " seconds");
 	}
 
 	// Same deal, but until certain value of load cell is achieved
