@@ -3,7 +3,6 @@ package planning_modules;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import commands.DepHLC;
 import commands.HighLevelCommand;
 import commands.MidLevelCommand;
 
