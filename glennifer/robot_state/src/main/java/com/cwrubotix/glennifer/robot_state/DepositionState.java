@@ -26,7 +26,7 @@ public class DepositionState {
     
     /* Data members */
     private Configuration configuration;
-	private float load;
+	private float dumpLoad;
 	private float dumpPos;
 	private float dumpingSpeed; //probably not needed but i'm not sure
 	
@@ -53,10 +53,10 @@ public class DepositionState {
     }
     /* Update methods */
     
-    public void updateLoad (float load, Instant time) throws RobotFaultException {
+    public void updateDumpLoad (float load, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
-        this.load = load;
+        dumpLoad = load;
     }
     
     public void updateDumpPos (float pos, Instant time) throws RobotFaultException {
@@ -82,8 +82,8 @@ public class DepositionState {
         return configuration;
     }
     
-    public float getLoad() {
-		return load;
+    public float getDumpLoad() {
+		return dumpLoad;
 	}
     
     public float getDumpPos() {

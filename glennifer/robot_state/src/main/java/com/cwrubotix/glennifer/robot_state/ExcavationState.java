@@ -70,7 +70,7 @@ public class ExcavationState {
         armPos = pos;
     }
 	
-	public void updateTranslationDisplacement (float displacement, Instant time) throws RobotFaultException {
+	public void updateConveyorTranslationDisplacement (float displacement, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
         // TODO: consider updating stored configuration
