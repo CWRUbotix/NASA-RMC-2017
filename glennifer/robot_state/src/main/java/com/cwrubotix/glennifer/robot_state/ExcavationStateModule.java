@@ -76,7 +76,7 @@ public class ExcavationStateModule implements Runnable {
         float displacement = message.getDisplacement();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorTranslationDisplacement(pos, time);
+            state.updateConveyorTranslationDisplacement(displacement, time);
         } catch (RobotFaultException e) {
             ExcavationStateModule.this.sendFault(e.getFaultCode(), time);
         }
@@ -93,7 +93,7 @@ public class ExcavationStateModule implements Runnable {
         }
     }
         
-    private void handleArmExtendedUpdate(byte[] body) throws IOException {
+    private void handleArmLimitExtendedUpdate(byte[] body) throws IOException {
         LimitUpdate message = LimitUpdate.parseFrom(body);
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
@@ -109,13 +109,13 @@ public class ExcavationStateModule implements Runnable {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateArmRetracted(pressed, time);
+            state.updateArmLimitRetracted(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
     }
 	
-	private void handleConveyorTranslationExtendedUpdate(byte[] body) throws IOException {
+	private void handleConveyorTranslationLimitExtendedUpdate(byte[] body) throws IOException {
         LimitUpdate message = LimitUpdate.parseFrom(body);
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
@@ -131,7 +131,7 @@ public class ExcavationStateModule implements Runnable {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorTranslationRetracted(pressed, time);
+            state.updateConveyorTranslationLimitRetracted(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }

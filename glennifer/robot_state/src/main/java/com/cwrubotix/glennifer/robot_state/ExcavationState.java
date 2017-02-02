@@ -85,11 +85,11 @@ public class ExcavationState {
         // TODO: use limit switches
     }
 	
-	public void updateConveyorTranslationExtended (boolean pressed, Instant time) throws RobotFaultException {
+	public void updateConveyorTranslationLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
     }
     
-    public void updateConveyorTranslationRetracted (boolean pressed, Instant time) throws RobotFaultException {
+    public void updateConveyorTranslationLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
     }
     

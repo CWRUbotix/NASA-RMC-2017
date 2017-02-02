@@ -43,6 +43,7 @@ public class LocomotionState {
     private float forwardSpeed;
     private float turnSpeed;
     private float strafeSpeed;
+    private Configuration configuration = Configuration.STRAIGHT;
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
     // need to do it for each sensor I think.
@@ -81,8 +82,23 @@ public class LocomotionState {
     public void updateWheelRpm (Wheel wheel, float rpm, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
-        // TODO: consider updating stored forward/turn/strafe speed here
         wheelRpm.put(wheel, rpm);
+
+        //update speed
+        //currently speed is just the average of the rpm of the 4 wheels
+        //TODO: Use real constants to make this actually accurate
+        float speed = (wheelRpm.get(Wheel.FRONT_LEFT) + wheelRpm.get(Wheel.FRONT_RIGHT) + wheelRpm.get(Wheel.BACK_LEFT) + wheelRpm.get(Wheel.BACK_RIGHT))/4;
+        switch(configuration){
+            case STRAIGHT:
+                forwardSpeed = speed;
+                break;
+            case TURN:
+                turnSpeed = speed;
+                break;
+            case STRAFE:
+                strafeSpeed = speed;
+                break;
+        }
     }
     
     public void updateWheelPodPos (Wheel wheel, float pos, Instant time) throws RobotFaultException {
@@ -93,33 +109,45 @@ public class LocomotionState {
     }
     
     public void updateWheelPodLimitExtended (Wheel wheel, boolean pressed, Instant time) throws RobotFaultException {
-        // TODO: use limit switches
+        // TODO: use limit 
+        // From Paul:
+        //For Locomotion, there is only one limit switch. 
+        //When it is fully retracted, we know we are in STRAIGHT
+        //When it is fully extended, we know we are in STRAFE
+        //Turning configuration is somewhere in between, we can't tell with the limit switches.
+        //For all situations, we should apparently use the potentiometer to double check
+
+        //For now, when we are extended, we are probably in STRAFE
+        configuration = Configuration.STRAFE;
     }
     
     public void updateWheelPodLimitRetracted (Wheel wheel, boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
+
+        //For now, when we are retracted, we are probably in STRAIGHT
+        configuration = Configuration.STRAIGHT;
     }
     
     /* State getter methods */
     
     public Configuration getConfiguration() {
         // TODO: use physical constants, real or made up, to get configuration
-        return Configuration.STRAIGHT;
+        return configuration;
     }
     
     public float getStraightSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        return 0;
+        return forwardSpeed;
     }
     
     public float getTurnSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        return 0;
+        return turnSpeed;
     }
     
     public float getStrafeSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        return 0;
+        return strafeSpeed;
     }
     
     public float getWheelRpm(Wheel wheel) {

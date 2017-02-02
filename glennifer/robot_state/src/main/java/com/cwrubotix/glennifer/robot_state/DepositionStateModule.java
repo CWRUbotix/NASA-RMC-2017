@@ -45,9 +45,9 @@ public class DepositionStateModule implements Runnable {
 			}  else if (sensorString.equals("arm_pos")) {
                 handleDumpPosUpdate(body);
             } else if (sensorString.equals("dump_limit_extended")) {
-                handleArmLimitExtendedUpdate(body);
+                handleDumpLimitExtendedUpdate(body);
             } else if (sensorString.equals("dump_limit_retracted")) {
-                handleArmLimitRetractedUpdate(body);
+                handleDumpLimitRetractedUpdate(body);
             }
         }
     };
@@ -74,7 +74,7 @@ public class DepositionStateModule implements Runnable {
         }
     }
         
-    private void handleDumpExtendedUpdate(byte[] body) throws IOException {
+    private void handleDumpLimitExtendedUpdate(byte[] body) throws IOException {
         LimitUpdate message = LimitUpdate.parseFrom(body);
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
@@ -90,7 +90,7 @@ public class DepositionStateModule implements Runnable {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateDumpRetracted(pressed, time);
+            state.updateDumpLimitRetracted(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }

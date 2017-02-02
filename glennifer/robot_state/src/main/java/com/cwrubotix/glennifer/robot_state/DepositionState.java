@@ -46,7 +46,7 @@ public class DepositionState {
         
         // TODO: handle no input from sensor
         configuration = Configuration.RETRACTED;
-        load = 0;
+        dumpLoad = 0;
 		dumpPos = 0;
 		dumpingSpeed = 0;
 
