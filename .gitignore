@@ -19,3 +19,4 @@ build*/
 *.autosave
 conanbuildinfo.*
 conaninfo.txt
+.classpath
