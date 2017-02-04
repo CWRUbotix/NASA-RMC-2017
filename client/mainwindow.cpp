@@ -26,25 +26,38 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    scene = new QGraphicsScene(this);
-    ui->graphicsView->setScene(scene);
+
+    locomotionScene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(locomotionScene);
+
+    excavationScene = new QGraphicsScene(this);
+    ui->graphicsView_2->setScene(excavationScene);
+
+    depositionScene = new QGraphicsScene(this);
+    ui->graphicsView_3->setScene(depositionScene);
 
     QBrush greenBrush(Qt::green);
+    QBrush grayBrush(Qt::gray);
+    QBrush redBrush(Qt::red);
+    QBrush blueBrush(Qt::blue);
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(2);
 
-    rectangle1 = scene->addRect(-200, 0, 10, 20, outlinePen, greenBrush);
-    rectangle2 = scene->addRect(80, 0, 10, 20, outlinePen, greenBrush);
-    rectangle3 = scene->addRect(-200, 80, 10, 20, outlinePen, greenBrush);
-    rectangle4 = scene->addRect(80, 80, 10, 20, outlinePen, greenBrush);
+    rectangle1 = locomotionScene->addRect(-50, -80, 10, 20, outlinePen, greenBrush);
+    rectangle2 = locomotionScene->addRect(50, -80, 10, 20, outlinePen, greenBrush);
+    rectangle3 = locomotionScene->addRect(-50, 80, 10, 20, outlinePen, greenBrush);
+    rectangle4 = locomotionScene->addRect(50, 80, 10, 20, outlinePen, greenBrush);
 
-    QImage image("../clockwiseArrow.png");
-    ui->label->setPixmap(QPixmap::fromImage(image));
-    ui->label->setScaledContents(true);
+    excavationScene->addRect(-80, -20, 160, 40, outlinePen, grayBrush);
+    excavationScene->addRect(-100, -10, 160, 20, outlinePen, blueBrush);
 
-    ui->label_4->setPixmap(QPixmap::fromImage(image.mirrored(true,false)));
-    ui->label_4->setScaledContents(true);
+    QPolygonF poly(4);
+    poly[0] = QPointF(-120, -60);
+    poly[1] = QPointF(20, 80);
+    poly[2] = QPointF(50, 80);
+    poly[3] = QPointF(80, -60);
 
+    depositionScene->addPolygon(poly, outlinePen, redBrush);
 
     QObject::connect(ui->locomotion_UpButton, &QPushButton::clicked,
                      this, &MainWindow::handleLocomotionUp);
@@ -64,7 +77,7 @@ MainWindow::MainWindow(AMQP *amqp, QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete scene;
+    delete locomotionScene;
     delete ui;
 }
 
