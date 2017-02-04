@@ -68,10 +68,12 @@ public class DepositionState {
     
     public void updateDumpLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
+        configuration = Configuration.EXTENDED;
     }
     
     public void updateDumpLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
+        configuration = Configuration.RETRACTED;
     }
     
     /* State getter methods */
