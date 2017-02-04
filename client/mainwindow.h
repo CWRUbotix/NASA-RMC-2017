@@ -24,7 +24,6 @@ public:
     ~MainWindow();
 
 public slots:
-    void handleLocomotion(LocomotionControl_LocomotionType direction);
     void handleLocomotionUp();
     void handleLocomotionDown();
     void handleLocomotionLeft();
