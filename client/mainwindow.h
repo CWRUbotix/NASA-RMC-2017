@@ -34,7 +34,9 @@ public slots:
 private:
     Ui::MainWindow *ui;
     AMQP *m_amqp;
-    QGraphicsScene *scene;
+    QGraphicsScene *locomotionScene;
+    QGraphicsScene *excavationScene;
+    QGraphicsScene *depositionScene;
     QGraphicsRectItem *rectangle1;
     QGraphicsRectItem *rectangle2;
     QGraphicsRectItem *rectangle3;
