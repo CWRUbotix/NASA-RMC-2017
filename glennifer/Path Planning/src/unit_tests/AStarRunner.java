@@ -8,8 +8,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Queue;
 
-import javax.swing.JApplet;
-
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
