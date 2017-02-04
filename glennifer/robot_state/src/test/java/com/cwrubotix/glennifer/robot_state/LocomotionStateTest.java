@@ -43,6 +43,26 @@ public class LocomotionStateTest {
         assertEquals(rpmFrontRight, resultFrontRight, 0);
         assertEquals(rpmBackLeft, resultBackLeft, 0);
         assertEquals(rpmBackRight, resultBackRight, 0);
+        float averageRpm = (rpmFrontLeft + rpmFrontRight + rpmBackLeft + rpmBackRight) / 4;
+        LocomotionState.Configuration resultConfiguration = instance.getConfiguration();
+        float resultAverageStraightRpm = instance.getStraightSpeed();
+        assertEquals(rpmFrontLeft, resultFrontLeft, 0);
+        assertEquals(rpmFrontRight, resultFrontRight, 0);
+        assertEquals(rpmBackLeft, resultBackLeft, 0);
+        assertEquals(rpmBackRight, resultBackRight, 0);
+        assertEquals(LocomotionState.Configuration.STRAIGHT, instance.getConfiguration());
+        assertEquals(averageRpm, resultAverageStraightRpm, 0);
+        //TODO: test that this code works for TURN configuration
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT, true, time); //enter STRAFE configuration
+        instance.updateWheelRpm(LocomotionState.Wheel.BACK_LEFT, rpmBackLeft, time); //update STRAFE speed (won't happen like this in reality)
+        resultConfiguration = instance.getConfiguration();
+        float resultAverageStrafeRpm = instance.getStrafeSpeed();
+        assertEquals(rpmFrontLeft, resultFrontLeft, 0);
+        assertEquals(rpmFrontRight, resultFrontRight, 0);
+        assertEquals(rpmBackLeft, resultBackLeft, 0);
+        assertEquals(rpmBackRight, resultBackRight, 0);
+        assertEquals(LocomotionState.Configuration.STRAFE, instance.getConfiguration());
+        assertEquals(averageRpm, resultAverageStrafeRpm, 0);
     }
 
     /**
@@ -81,5 +101,19 @@ public class LocomotionStateTest {
         assertEquals(podPosBackLeft, resultBackLeft, 0);
         assertEquals(podPosBackRight, resultBackRight, 0);
     }
-    
+
+    /**
+     * Test of updateWheelPodLimitExtended and UpdateWheelPodLimitRetracted methods, of class LocomotionState.
+     */
+    @Test
+    public void testLimitSwitchConfigurations() throws Exception {
+        Instant time = Instant.now();
+        LocomotionState instance = new LocomotionState();
+        LocomotionState.Configuration straightConfiguration = LocomotionState.Configuration.STRAIGHT;
+        LocomotionState.Configuration strafeConfiguration = LocomotionState.Configuration.STRAFE;
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT, true, time); //enter STRAFE configuration
+        assertEquals(strafeConfiguration, instance.getConfiguration());
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.BACK_LEFT, true, time); //enter STRAIGHT configuration
+        assertEquals(straightConfiguration, instance.getConfiguration());
+    }
 }
