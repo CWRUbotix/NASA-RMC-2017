@@ -17,3 +17,8 @@ build*/
 /glennifer/robot_state/target/
 /protobuf-3.1.0/
 *.autosave
+
+# IntelliJ user settings
+workspace.xml
+tasks.xml
+*.iws
