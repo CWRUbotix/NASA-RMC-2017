@@ -14,27 +14,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
-    amqp_utils.cpp \
     messages.pb.cc
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
-    amqp_utils.h \
     messages.pb.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq.4
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq.4
-else:unix: LIBS += -L$$PWD/../third-party/rabbitmq-c/build/librabbitmq/ -lrabbitmq
+CONFIG += conan_basic_setup
+include(conanbuildinfo.pri)
 
-INCLUDEPATH += $$PWD/../third-party/rabbitmq-c/librabbitmq
-DEPENDPATH += $$PWD/../third-party/rabbitmq-c/librabbitmq
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../protobuf-3.1.0/cmake/build/release/ -llibprotobuf
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../protobuf-3.1.0/cmake/build/debug/ -llibprotobuf
-else:unix: LIBS += -L/usr/local/lib/ -lprotobuf
-
-win32:INCLUDEPATH += $$PWD/../protobuf-3.1.0/src
-win32:DEPENDPATH += $$PWD/../protobuf-3.1.0/src
+unix: LIBS += -L/usr/local/lib/ -lprotobuf

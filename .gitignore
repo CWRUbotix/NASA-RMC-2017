@@ -17,6 +17,9 @@ build*/
 /glennifer/robot_state/target/
 /protobuf-3.1.0/
 *.autosave
+conanbuildinfo.*
+conaninfo.txt
+.classpath
 
 # IntelliJ user settings
 workspace.xml

@@ -10,7 +10,7 @@
 cd .\client\
 New-Item -Force -ItemType directory -Path build
 cd .\build\
-qmake -r ..\GlenniferClient.pro CONFIG+=debug
+C:\Qt\5.7\msvc2015_64\bin\qmake -r ..\GlenniferClient.pro CONFIG+=release
 nmake
 cd ..
 cd ..

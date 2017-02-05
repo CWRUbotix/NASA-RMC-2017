@@ -2,28 +2,59 @@ syntax = "proto2";
 
 package com.cwrubotix.glennifer;
 
-// Message types from schemas document
+/**
+ * Message types from the schemas document
+ *
+ * Each comment before the message specifies what AMQP queue topics the message is used for.
+ */
 
+// Used inside other messages only
 message UnixTime {
 	required uint64 time_int = 1;
 	required float time_frac = 2;
 }
 
+// sensor.locomotion.front_left.wheel_rpm
+// sensor.locomotion.front_right.wheel_rpm
+// sensor.locomotion.back_left.wheel_rpm
+// sensor.locomotion.back_right.wheel_rpm
+// sensor.excavation.bucket_conveyor_rpm
 message RpmUpdate {
 	required float rpm = 1;
 	required UnixTime timestamp = 2;
 }
 
+// sensor.excavation.bucket_conveyor_translation_displacement
 message DisplacementUpdate {
 	required float displacement = 1;
 	required UnixTime timestamp = 2;
 }
 
+// sensor.locomotion.front_left.wheel_pod_pos
+// sensor.locomotion.front_right.wheel_pod_pos
+// sensor.locomotion.back_left.wheel_pod_pos
+// sensor.locomotion.back_right.wheel_pod_pos
+// sensor.excavation.arm_pos
+// sensor.deposition.dump_pos
 message PositionUpdate {
 	required float position = 1;
 	required UnixTime timestamp = 2;
 }
 
+// sensor.locomotion.front_left.wheel_pod_limit_extended
+// sensor.locomotion.front_right.wheel_pod_limit_extended
+// sensor.locomotion.back_left.wheel_pod_limit_extended
+// sensor.locomotion.back_right.wheel_pod_limit_extended
+// sensor.locomotion.front_left.wheel_pod_limit_retracted
+// sensor.locomotion.front_right.wheel_pod_limit_retracted
+// sensor.locomotion.back_left.wheel_pod_limit_retracted
+// sensor.locomotion.back_right.wheel_pod_limit_retracted
+// sensor.excavation.arm_limit_extended
+// sensor.excavation.arm_limit_retracted
+// sensor.excavation.bucket_conveyor_translation_limit_extended
+// sensor.excavation.bucket_conveyor_translation_limit_retracted
+// sensor.deposition.dump_limit_extended
+// sensor.deposition.dump_limit_retracted
 message LimitUpdate {
 	required bool pressed = 1;
 	required UnixTime timestamp = 2;
@@ -34,6 +65,7 @@ message ImuUpdate {
 	required UnixTime timestamp = 2;
 }
 
+// sensor.deposition.load
 message LoadUpdate {
 	required float load = 1;
 	required UnixTime timestamp = 2;
@@ -52,96 +84,104 @@ message Adjustment {
 	repeated uint32 params = 4;
 }
 
-message VoltageControlCommand {
-	required float voltage = 1;
-}
-
+// motorcontrol.locomotion.front_left.wheel_rpm
+// motorcontrol.locomotion.front_right.wheel_rpm
+// motorcontrol.locomotion.back_left.wheel_rpm
+// motorcontrol.locomotion.back_right.wheel_rpm
+// motorcontrol.excavation.bucket_conveyor_rpm
+// motorcontrol.deposition.conveyor_rpm
 message SpeedContolCommand {
 	required float rpm = 1;
 	required float timeout = 2;
 }
 
+// motorcontrol.locomotion.front_left.wheel_pod_pos
+// motorcontrol.locomotion.front_right.wheel_pod_pos
+// motorcontrol.locomotion.back_left.wheel_pod_pos
+// motorcontrol.locomotion.back_right.wheel_pod_pos
+// motorcontrol.excavation.arm_pos
+// motorcontrol.excavation.conveyor_translation_displacement
+// motorcontrol.deposition.dump_pos
 message PositionContolCommand {
 	required float position = 1;
 	required float timeout = 2;
 }
 
-message LocomotionControlCommand {
-	enum Type {
-		STRAIGHT = 0;
-		STRAFE = 1;
-		TURN = 2;
-		CONFIGURE = 3;
-	}
+// subsyscommand.locomotion.straight
+message LocomotionControlCommandStraight {
+	required float speed = 1;
+	required float timeout = 2;
+}
+
+// subsyscommand.locomotion.strafe
+message LocomotionControlCommandStrafe {
+	required float speed = 1;
+	required float timeout = 2;
+}
+
+// subsyscommand.locomotion.turn
+message LocomotionControlCommandTurn {
+	required float speed = 1;
+	required float timeout = 2;
+}
+
+// subsyscommand.locomotion.configure
+message LocomotionControlCommandConfigure {
 	enum Configuration {
 		STRAIGHT_CONFIG = 0;
 		STRAFE_CONFIG = 1;
 		TURN_CONFIG = 2;
 	}
-	required Type type = 1;
-	optional float speed = 2;
-	optional Configuration target = 3;
-	optional float power = 4;
-	required float timeout = 5;
+	required Configuration target = 1;
+	required float power = 2;
+	required float timeout = 3;
 }
 
-message ExcavationControlCommand {
-	enum Type {
-		POSITION_ARM = 0;
-		POSITION_TRANSLATION = 1;
-		MOVE_BUCKET_CONVEYOR = 2;
-	}
-	required Type type = 1;
-	optional float speed = 2;
-	optional float position = 3;
-	optional float power = 4;
-	required float timeout = 5;
+// subsyscommand.excavation.position_arm
+message ExcavationControlCommandPositionArm {
+	optional float position = 1;
+	optional float power = 2;
+	required float timeout = 3;
 }
 
-message DepositionControlCommand {
-	enum Type {
-		POSITION_DUMP = 0;
-		MOVE_CONVEYOR = 1;
-	}
-	required Type type = 1;
-	optional float speed = 2;
-	optional float position = 3;
-	optional float power = 4;
-	required float timeout = 5;
+// subsyscommand.excavation.position_translation
+message ExcavationControlCommandPositionTranslation {
+	optional float position = 1;
+	optional float power = 2;
+	required float timeout = 3;
 }
 
-// Old messages
-
-message SingleMotorDrive {
-  required uint32 motorID = 1;
-  required sint32 voltage_percent = 2;
-  optional uint32 timeout_ms = 3;
+// subsyscommand.excavation.move_bucket_conveyor
+message ExcavationControlCommandMoveBucketConveyor {
+	optional float speed = 1;
+	required float timeout = 2;
 }
 
-message MultiMotorDrive {
-  repeated SingleMotorDrive element = 1;
+// subsyscommand.deposition.position_dump
+message DepositionControlCommandPositionDump {
+	optional float position = 1;
+	optional float power = 2;
+	required float timeout = 3;
 }
 
-message SingleServoControl {
-  required uint32 motorID = 1;
-  required sint32 speed_percent = 2;
-  optional uint32 timeout_ms = 3;
+// subsyscommand.deposition.move_conveyor
+message DepositionControlCommandMoveConveyor {
+	optional float speed = 1;
+	required float timeout = 2;
 }
 
-message MultiServoControl {
-  repeated SingleServoControl element = 1;
-}
+state.locomotion.configuration.query
+state.locomotion.configuration.response
+state.locomotion.straight_speed.query
+state.locomotion.straight_speed.response
+state.locomotion.turn_speed.query
+state.locomotion.turn_speed.response
+state.locomotion.strafe_speed.query
+state.locomotion.strafe_speed.response
+state.locomotion.wheel_rpms.query
+state.locomotion.wheel_rpms.response
+state.locomotion.wheel_pod_poss.query
+state.locomotion.wheel_pod_poss.response
 
-message LocomotionControl {
-  enum LocomotionType {
-    FORWARD = 0;
-	BACKWARD = 1;
-	LEFT = 2;
-	RIGHT = 3;
-	STOP = 4;
-  }
-  
-  required LocomotionType locomotionType = 1;
-  required sint32 speed_percent = 2;
-  required uint32 timeout_ms = 3;
-}
+state.excavation.arm_pos.query
+state.excavation.arm_pos.response
