@@ -20,3 +20,8 @@ build*/
 conanbuildinfo.*
 conaninfo.txt
 .classpath
+
+# IntelliJ user settings
+workspace.xml
+tasks.xml
+*.iws
