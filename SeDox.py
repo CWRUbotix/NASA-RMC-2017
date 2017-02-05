@@ -1,10 +1,9 @@
 import cv2
-import cv
 import numpy as np
 import pika
 import sys
-credentials = pika.PlainCredentials('demo', 'demo')
-parameters = pika.ConnectionParameters('172.20.93.234',  5672, '/', credentials=credentials)
+credentials = pika.PlainCredentials('guest', 'guest')
+parameters = pika.ConnectionParameters('localhost',  5672, '/', credentials=credentials)
 
 #host_input_name = raw_input("Please Connect to a Host ")
 #pika.ConnectionParameters(host = host_input_name)
@@ -17,8 +16,8 @@ def send(msg):
 
 #Camera
 cam1 = cv2.VideoCapture(0)
-cam1.set(cv.CV_CAP_PROP_FRAME_WIDTH,  320)
-cam1.set(cv.CV_CAP_PROP_FRAME_HEIGHT,  240)
+cam1.set(cv2.CAP_PROP_FRAME_WIDTH,  320)
+cam1.set(cv2.CAP_PROP_FRAME_HEIGHT,  240)
 
 #Main Loop
 while(True):

@@ -1,8 +1,8 @@
 import cv2
 import pika
 import numpy as np
-credentials = pika.PlainCredentials('demo', 'demo')
-parameters = pika.ConnectionParameters('172.20.93.234', 5672,  '/', credentials=credentials)
+credentials = pika.PlainCredentials('guest', 'guest')
+parameters = pika.ConnectionParameters('localhost', 5672,  '/', credentials=credentials)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 channel.queue_declare(queue = 'q03')
@@ -16,7 +16,7 @@ while(True):
         print("No Frame")
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         im = cv2.cvtColor(img,  cv2.COLOR_BGR2GRAY)
         ims = cv2.cvtColor(img,  cv2.COLOR_BGR2RGB)
         cv2.imshow('Picture', img)
