@@ -9,16 +9,17 @@ sudo apt-get -q -y install make cmake g++ gdb
 sudo apt-get -q -y remove qt4-qmake
 sudo apt-get -q -y install qt5-default qtdeclarative5-dev
 
+# Install the protobuf compiler, protoc
+sudo apt-get -q -y install protobuf-compiler
+
 # Install protobuf library for C/C++
 sudo apt-get -q -y install libprotobuf-dev
 
-# Build rabbitmq-c locally
-git submodule init third-party/rabbitmq-c
-git submodule update third-party/rabbitmq-c
-cd ./third-party/rabbitmq-c/
-mkdir build
-cd build
-cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DENABLE_SSL_SUPPORT=OFF
-cmake --build . --config Release
+# Install Conan
+sudo apt-get -q -y install python python-pip
+sudo pip install conan
+
+# Use conan to install other deps (rabbitmq-c)
+cd client
+conan install --build missing
 cd ..
-cd ../..
