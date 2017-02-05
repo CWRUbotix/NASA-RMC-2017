@@ -169,19 +169,3 @@ message DepositionControlCommandMoveConveyor {
 	optional float speed = 1;
 	required float timeout = 2;
 }
-
-state.locomotion.configuration.query
-state.locomotion.configuration.response
-state.locomotion.straight_speed.query
-state.locomotion.straight_speed.response
-state.locomotion.turn_speed.query
-state.locomotion.turn_speed.response
-state.locomotion.strafe_speed.query
-state.locomotion.strafe_speed.response
-state.locomotion.wheel_rpms.query
-state.locomotion.wheel_rpms.response
-state.locomotion.wheel_pod_poss.query
-state.locomotion.wheel_pod_poss.response
-
-state.excavation.arm_pos.query
-state.excavation.arm_pos.response
