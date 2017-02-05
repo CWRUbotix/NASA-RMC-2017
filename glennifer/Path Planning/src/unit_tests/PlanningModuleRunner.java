@@ -4,10 +4,7 @@ import java.util.InputMismatchException;
 import java.util.Queue;
 import java.util.Scanner;
 
-import commands.DepHLC;
-import commands.ExcHLC;
 import commands.HighLevelCommand;
-import commands.LocoHLC;
 import commands.MidLevelCommand;
 import planning_modules.Deposition;
 import planning_modules.Excavation;
