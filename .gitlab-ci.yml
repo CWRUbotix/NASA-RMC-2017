@@ -1,0 +1,29 @@
+before_script:
+  - ./setup-devenv-glennifer.sh
+
+stages:
+  - build
+  - test
+  - deploy
+  
+build_pb:
+  stage: build
+  script:
+    - ./build-pb.sh
+  tags:
+    - docker
+
+
+build_states:
+  stage: build
+  script:
+    - cd glennifer/robot_state; mvn compile
+  tags:
+    - docker
+    
+test_states:
+  stage: test
+  script:
+    - cd glennifer/robot_state; mvn test
+  tags:
+    - docker
