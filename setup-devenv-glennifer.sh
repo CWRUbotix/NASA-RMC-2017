@@ -2,31 +2,35 @@
 
 # This script sets up everything you need to build and run Glennifer on Ubuntu
 
+apt-get -q update
+
 # Install C++ compiler and tools
-sudo apt-get -q -y install autoconf automake make g++ 
+apt-get -q -y install autoconf automake make g++ 
 
 # Install python 3 and tools
-sudo apt-get -q -y install python3 python3-pip
+apt-get -q -y install python3 python3-pip
 
 # Install the protobuf compiler, protoc
-sudo apt-get -q -y install protobuf-compiler
+apt-get -q -y install protobuf-compiler
 
 # Install the protobuf library for python
-sudo pip3 install protobuf
+pip3 install protobuf
 
 # Install pika, the AMQP library for python
-sudo pip3 install pika
+pip3 install pika
 
 # Install the Java 8 Development Kit and Maven
-sudo add-apt-repository ppa:openjdk-r/ppa
-sudo apt-get update
-sudo apt-get -q -y install openjdk-8-jdk maven
+sudo apt-get install software-properties-common
+add-apt-repository ppa:openjdk-r/ppa
+apt-get update
+apt-get -q -y install openjdk-8-jdk maven
 
 # Install and set up the RabbitMQ server
+apt-get -q -y install wget
 echo 'deb http://www.rabbitmq.com/debian/ testing main' |
-        sudo tee /etc/apt/sources.list.d/rabbitmq.list
+        tee /etc/apt/sources.list.d/rabbitmq.list
 wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc |
-        sudo apt-key add -
-sudo apt-get update
-sudo apt-get install rabbitmq-server
-sudo invoke-rc.d rabbitmq-server start
+        apt-key add -
+apt-get update
+apt-get -q -y install rabbitmq-server
+invoke-rc.d rabbitmq-server start
