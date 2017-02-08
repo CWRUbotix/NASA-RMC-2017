@@ -22,8 +22,7 @@ build_pb:
   script:
     - bash ./build-pb.sh
   artifacts:
-    paths:
-      - pb/
+    untracked: true
 
 build_robot_state:
   stage: build

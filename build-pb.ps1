@@ -2,4 +2,9 @@
 
 New-Item -Force -ItemType directory -Path pb
 
-.\client\bin\protoc.exe --cpp_out=pb/. --java_out=pb/. --python_out=pb/. --python_out=glennifer/. --cpp_out=client/. messages.proto
+.\client\bin\protoc.exe --cpp_out=pb/. --java_out=pb/. --python_out=pb/. `
+  --python_out=glennifer/. `
+  --python_out=glennifer/motor_dispatch/src/python/. `
+  --cpp_out=client/. `
+  --java_out=glennifer/robot_state/src/. `
+  messages.proto

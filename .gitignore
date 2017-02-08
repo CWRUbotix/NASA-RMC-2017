@@ -17,6 +17,7 @@ out/
 *_pb3.py
 *.o
 /pb/
+Messages.java
 /glennifer/robot_state/target/
 /protobuf-3.1.0/
 *.autosave
