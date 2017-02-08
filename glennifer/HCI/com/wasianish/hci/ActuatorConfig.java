@@ -12,17 +12,35 @@ public class ActuatorConfig {
 	public int ID;
 	// Conversion from linear to angular values
 	// linValue*angLin = angValue
-	private double angLinConv;
+	public double angLinConv;
 	// True if angular values, false if linear
-	private boolean anglin;
+	public boolean anglin;
 	// Slope of the current vs. torque/force graph (current on y axis)
-	private double tfCurrentRatio;
-	// Stall torque/force
-	private double tfStall;
-	// Stall  current
-	private double stallCurrent;
-	// No load velocity
-	private double noLoadVel;
-	// No load current
-	private double noLoadCurrent;
+	public double tfCurrentRatio;
+	// Stall torque/force (Nm, N)
+	public double tfStall;
+	// Stall  current (Amps)
+	public double stallCurrent;
+	// No load velocity (rad/s, m/s)
+	public double noLoadVel;
+	// No load current (Amps)
+	public double noLoadCurrent;
+	// Nominal voltage (Volts)
+	public double nomVoltage;
+	
+	public ActuatorConfig copy() {
+		ActuatorConfig cop = new ActuatorConfig();
+		cop.name = this.name;
+		cop.description = this.description;
+		cop.ID = this.ID;
+		cop.angLinConv = this.angLinConv;
+		cop.anglin = this.anglin;
+		cop.tfCurrentRatio = this.tfCurrentRatio;
+		cop.tfStall = this.tfStall;
+		cop.stallCurrent = this.stallCurrent;
+		cop.noLoadVel = this.noLoadVel;
+		cop.noLoadCurrent = this.noLoadCurrent;
+		cop.nomVoltage = this.nomVoltage;
+		return cop;
+	}
 }

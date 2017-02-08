@@ -5,4 +5,5 @@ public class SensorConfig {
 	String description;
 	int ID;
 	boolean limitSwitch;
+	double scale;
 }

@@ -6,11 +6,15 @@ public class Sensor {
 	// Number of milliseconds that data is valid for
 	final long maxExtrapolate = 250;
 	
-	private final SensorConfig config;
+	public final SensorConfig config;
 	
 	ArrayList<SensorData> data = new ArrayList<SensorData>();
 	double RC;
 	boolean lowPass = false;
+	
+	public void updateRaw(int val) {
+		update(val*config.scale);
+	}
 	
 	/**
 	 * Updates the data with the value.  Performs low pass filter if enabled
