@@ -8,9 +8,6 @@
     <artifactId>HCI</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <build>
-        <sourceDirectory>.</sourceDirectory>
-    </build>
     <dependencies>
         <dependency>
             <groupId>org.scream3r</groupId>
