@@ -27,24 +27,4 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.12</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals><goal>add-source</goal></goals>
-                        <configuration>
-                            <sources>
-                                <source>../../pb</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
