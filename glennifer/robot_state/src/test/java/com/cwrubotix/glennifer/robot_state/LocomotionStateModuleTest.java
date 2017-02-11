@@ -1,5 +1,6 @@
 package com.cwrubotix.glennifer.robot_state;
 
+import com.cwrubotix.glennifer.Messages;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -69,5 +70,40 @@ public class LocomotionStateModuleTest {
         
         assertEquals(42F, result, 0);
     }
-    
+
+    /**
+     * Test subscription
+     */
+    @Test
+    public void testSubscribe() throws Exception {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
+
+        // Create queue
+        channel.exchangeDeclare("amq.topic", "topic", true);
+        String queueName = channel.queueDeclare().getQueue();
+        channel.queueBind(queueName, "amq.topic", queueName);
+
+        // Queue is known to be empty
+
+        // Send message
+        Messages.LocomotionStateSubscribe subMsg = Messages.LocomotionStateSubscribe.newBuilder()
+                .setStartTime(instantToUnixTime(Instant.now()))
+                .setInterval(0.1f)
+                .setReplyKey(queueName)
+                .build();
+
+        channel.basicPublish("amq.topic", "state.locomotion.subscribe", null, subMsg.toByteArray());
+
+        // Wait
+        Thread.sleep(1000);
+
+        GetResponse response = channel.basicGet(queueName, true);
+        assertNotNull("Failed to get message from state subscription", response);
+        byte[] body = response.getBody();
+        Messages.LocomotionState s = Messages.LocomotionState.parseFrom(body);
+        System.out.println(s);
+    }
 }

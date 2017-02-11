@@ -5,6 +5,7 @@
  */
 package com.cwrubotix.glennifer.robot_state;
 
+import com.cwrubotix.glennifer.Messages;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -28,9 +29,41 @@ import java.util.concurrent.TimeoutException;
  * @author Michael
  */
 public class LocomotionStateModule implements Runnable {
-    
+
+    class SubscriptionRunnable implements Runnable {
+
+        private String returnKey;
+        private int interval_ms;
+
+        public SubscriptionRunnable(String returnKey, int interval_ms) {
+            this.returnKey = returnKey;
+            this.interval_ms = interval_ms;
+        }
+
+        @Override
+        public void run() {
+            boolean go = true;
+            while (go) {
+                Instant now = Instant.now();
+                Messages.LocomotionState msg = Messages.LocomotionState.newBuilder()
+                        .setConfig(Messages.LocomotionState.Configuration.valueOf(LocomotionStateModule.this.state.getConfiguration().ordinal()))
+                        .setSpeed(LocomotionStateModule.this.state.getStraightSpeed())
+                        .setTimestamp(instantToUnixTime(now))
+                        .build();
+                byte[] data = msg.toByteArray();
+                try {
+                    LocomotionStateModule.this.channel.basicPublish("amq.topic", returnKey, null, data);
+                    Thread.sleep(interval_ms);
+                } catch (IOException e) {
+                    go = false;
+                } catch (InterruptedException e) {
+                    go = false;
+                }
+            }
+        }
+    }
+
     /* Consumer callback class and methods */
-    
     private class UpdateConsumer extends DefaultConsumer {
         
         public UpdateConsumer(Channel channel) {
@@ -67,6 +100,22 @@ public class LocomotionStateModule implements Runnable {
             } else if (sensorString.equals("wheel_pod_limit_retracted")) {
                 handleWheelPodLimitRetractedUpdate(wheel, body);
             }
+        }
+    }
+
+    private class RequestConsumer extends DefaultConsumer {
+
+        public RequestConsumer(Channel channel) {
+            super(channel);
+        }
+
+        @Override
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+            Messages.LocomotionStateSubscribe msg = Messages.LocomotionStateSubscribe.parseFrom(body);
+            float interval = msg.getInterval();
+            int interval_ms = (int)(interval / 1000);
+            String replyKey = msg.getReplyKey();
+            new Thread(new SubscriptionRunnable(replyKey, interval_ms)).start();
         }
     };
     
@@ -138,13 +187,21 @@ public class LocomotionStateModule implements Runnable {
     }
     
     public void runWithExceptions() throws IOException, TimeoutException {
+        // Setup connection
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
         this.channel = connection.createChannel();
+
+        // Subscribe to sensor updates
         String queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, "amq.topic", "sensor.locomotion.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
+
+        // Listen for requests to subscribe to state updates
+        queueName = channel.queueDeclare().getQueue();
+        channel.queueBind(queueName, "amq.topic", "state.locomotion.subscribe");
+        this.channel.basicConsume(queueName, true, new RequestConsumer(channel));
     }
     
     @Override
