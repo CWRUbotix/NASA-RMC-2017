@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import algorithms.AStar.Cell;
 import commands.MidLevelCommand;
 
 public class AStarPolygonal {
@@ -107,13 +106,16 @@ public class AStarPolygonal {
 
 	static class Polygon {
 		Point[] vertices;
-		int minX = 0, maxX = 0;
-		int minY = 0, maxY = 0;
+		int minX, maxX;
+		int minY, maxY;
+		int boxMinX, boxMaxX;
+		int boxMinY, boxMaxY;
 		Edge[] edges;
 
 		Polygon(Point[] vertices) {
 			this.vertices = vertices;
-
+			minX = this.vertices[0].x;
+			minY = this.vertices[0].y;
 			// Sets the "box" the obstacle is in
 			for (Point a : this.vertices) {
 				minX = Math.min(minX, a.x);
@@ -121,13 +123,23 @@ public class AStarPolygonal {
 				minY = Math.min(minY, a.y);
 				maxY = Math.max(maxY, a.y);
 			}
+
+			boxMinX = minX - 10;
+			boxMaxX = maxX + 10;
+			boxMinY = minY - 10;
+			boxMaxY = maxY + 10;
 		}
 
-		boolean checkInsideBox(Point p) {
+		boolean checkInsideEst(Point p) {
 			if (p.x > minX && p.x < maxX && p.y > minY && p.y < maxY)
 				return true;
 			else
 				return false;
+		}
+
+		Point[] boxPoints() {
+			return new Point[] { new Point(boxMinX, boxMinY), new Point(boxMaxX, boxMinY), new Point(boxMaxX, boxMaxY),
+					new Point(boxMinX, boxMaxY) };
 		}
 
 		/**
@@ -147,7 +159,7 @@ public class AStarPolygonal {
 	private Point end;
 
 	public static Queue<MidLevelCommand> planPath(double initial_angle, int startX, int startY, int endX, int endY,
-			ArrayList<ArrayList<int[]>> obstacles) {
+			ArrayList<ArrayList<int[]>> obstacle_points) {
 		// Creates points for the start and end coordinates
 		Point start = new Point(startX, startY);
 		Point end = new Point(endX, endY);
@@ -164,17 +176,9 @@ public class AStarPolygonal {
 		// // return travel_points;
 		// } else {
 		// Formats the obstacle array list into an arraylist of Points
-		ArrayList<Point[]> formatted_obstacles = new ArrayList<Point[]>();
-		for (ArrayList<int[]> obs : obstacles) {
-			Point[] new_obs = new Point[obs.size()];
-			for (int i = 0; i < obs.size(); i++) {
-				new_obs[i] = new Point(obs.get(i)[0], obs.get(i)[1]);
-			}
-			formatted_obstacles.add(new_obs);
-		}
 
 		// Runs the AStar Algorithm
-		travel_nodes = AStar(initial_angle, start, end, formatted_obstacles);
+		travel_nodes = AStar(initial_angle, start, end, createObstacles(obstacle_points));
 		// }
 
 		Queue<MidLevelCommand> commands = new LinkedList<MidLevelCommand>();
@@ -214,7 +218,7 @@ public class AStarPolygonal {
 	 *         point to the end.
 	 */
 	public static ArrayList<int[]> planPathPoints(double initial_angle, int startX, int startY, int endX, int endY,
-			ArrayList<ArrayList<int[]>> obstacles) {
+			ArrayList<ArrayList<int[]>> obstacle_points) {
 
 		// Creates points for the start and end coordinates
 		Point start = new Point(startX, startY);
@@ -229,17 +233,9 @@ public class AStarPolygonal {
 		// }
 
 		// Formats the obstacle array list into an arraylist of Points
-		ArrayList<Point[]> formatted_obstacles = new ArrayList<Point[]>();
-		for (ArrayList<int[]> obs : obstacles) {
-			Point[] new_obs = new Point[obs.size()];
-			for (int i = 0; i < obs.size(); i++) {
-				new_obs[i] = new Point(obs.get(i)[0], obs.get(i)[1]);
-			}
-			formatted_obstacles.add(new_obs);
-		}
 
 		// Runs the AStar Algorithm
-		ArrayList<Node> travel_nodes = AStar(initial_angle, start, end, formatted_obstacles);
+		ArrayList<Node> travel_nodes = AStar(initial_angle, start, end, createObstacles(obstacle_points));
 
 		for (Node node : travel_nodes) {
 			travel_points.add(new int[] { node.x, node.y });
@@ -260,7 +256,7 @@ public class AStarPolygonal {
 	 *         point isn't valid.
 	 */
 	private static ArrayList<Node> AStar(double initial_angle, Point start_point, Point end_point,
-			ArrayList<Point[]> obstacle_points) {
+			ArrayList<Polygon> obstacles) {
 
 		// Create start and end nodes with empty path fields
 		Node start = new Node(start_point.x, start_point.y);
@@ -268,30 +264,24 @@ public class AStarPolygonal {
 		Node end = new Node(end_point.x, end_point.y);
 
 		// Add start and end nodes to list, create and add nodes for all
-		// obstacle points and the end point
+		// obstacle box points and the end point
 		ArrayList<Node> open_nodes = new ArrayList<Node>();
 		open_nodes.add(end);
-
-		ArrayList<Polygon> obstacles = new ArrayList<Polygon>();
-
-		// Adds all of the obstacle points to open_nodes and creates polygons
-		// for the obstacles array
-		// int counter = 0;
-		Node temp_node;
-		// Point[] temp_obstacle_vertices;
-		for (Point[] b : obstacle_points) {
-			// temp_obstacle_vertices = b;
-			obstacles.add(new Polygon(b));
-			// counter = 0;
-			for (Point a : b) {
-				// open_nodes.add(new Node(a.x, a.y));
-				// temp_node = new Node(a);
-				open_nodes.add(new Node(a));
-				// temp_obstacle_vertices[counter] = temp_node;
-				// counter++;
-			}
-			// obstacles.add(new Polygon(temp_obstacle_vertices));
+		
+		if (obstacles.isEmpty()){
+			open_nodes.add(0, start);
+			return open_nodes;
 		}
+		
+		for (Polygon obs : obstacles) {
+			Point[] temp = obs.boxPoints();
+			for (Point a : temp){
+				open_nodes.add(new Node(a));
+			}
+		}
+		// ArrayList<Polygon> obstacles = new ArrayList<Polygon>();
+
+		// Adds all of the obstacle's Box points to open_nodes
 
 		if (!checkValid(start, obstacles) && !checkValid(end, obstacles))
 			return null;
@@ -355,15 +345,19 @@ public class AStarPolygonal {
 			// current.paths = lineOfSight(current, open_nodes, obstacles);
 
 			current_angle += current.parent_angle_change;
+			
+			ArrayList<Node> los = lineOfSight(current, open_nodes, obstacles);
+			open_nodes.removeAll(los);
 			// Runs through all of the nodes the current node has a direct path
 			// to
-			for (Node p : lineOfSight(current, open_nodes, obstacles)) {
+			for (Node p : los) {
 				// p = new Node(p.x, p.y);
 
 				// heuristic is the distance it is from the end_point divided by
 				// the speed of the robot
 				p.heuristic = Math.sqrt(Math.pow(end_point.x - p.x, 2) + Math.pow(end_point.y - p.y, 2))
-						/ AStarPolygonal.lateral_speed;
+						/ AStarPolygonalCopy.lateral_speed;
+				p.heuristic += current.cost;
 
 				// Determine the change in angle
 				dy = p.y - current.y;
@@ -397,8 +391,8 @@ public class AStarPolygonal {
 
 				// Total cost is the heuristic plus the cost to travel to the
 				// node
-				p.cost = p.heuristic + (distance / AStarPolygonal.lateral_speed)
-						+ Math.abs(d_angle / AStarPolygonal.turn_speed);
+				p.cost = p.heuristic + (distance / AStarPolygonalCopy.lateral_speed)
+						+ Math.abs(d_angle / AStarPolygonalCopy.turn_speed);
 
 				// This is for tracing back the path later
 				p.parent = current;
@@ -406,7 +400,7 @@ public class AStarPolygonal {
 				p.parent_distance = distance;
 
 				// current_angle += dy < 0 ? -1 * d_angle : d_angle;
-				//current_angle += d_angle;
+				// current_angle += d_angle;
 
 				// Adds the node to the heuristic nodes array
 				heuristic_nodes.add(p);
@@ -437,7 +431,7 @@ public class AStarPolygonal {
 			// whole system of equalities thing every time
 
 			// If it is inside the obstacle's "box"
-			if (a.checkInsideBox(p)) {
+			if (a.checkInsideEst(p)) {
 
 				// if it is in the "box", check the actual edges of the obstacle
 				if (a.checkInsidePrecise(p))
@@ -571,5 +565,20 @@ public class AStarPolygonal {
 
 		return (r > 0 && r < 1) && (s > 0 && s < 1);
 
+	}
+
+	private static ArrayList<Polygon> createObstacles(ArrayList<ArrayList<int[]>> points) {
+		Point[] temp;
+		ArrayList<Polygon> obstacles = new ArrayList<>();
+
+		for (List<int[]> obs : points) {
+			temp = new Point[obs.size()];
+			for (int i = 0; i < obs.size(); i++) {
+				temp[i] = new Point(obs.get(i)[0], obs.get(i)[1]);
+			}
+			obstacles.add(new Polygon(temp));
+		}
+
+		return obstacles;
 	}
 }
