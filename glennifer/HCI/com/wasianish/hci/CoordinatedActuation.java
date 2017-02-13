@@ -19,4 +19,7 @@ public class CoordinatedActuation {
 	HardwareControlInterface.ActuationType coordType;
 	// Map of data from coordinated actuator to target value for the local actuator
 	CoordinatedMap map;
+	// The current raw output of this actuation
+	// Most often will be in PWM
+	int currentOutput;
 }
