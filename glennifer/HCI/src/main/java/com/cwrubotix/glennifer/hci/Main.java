@@ -1,4 +1,4 @@
-package com.wasianish.hci;
+package com.cwrubotix.glennifer.hci;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;

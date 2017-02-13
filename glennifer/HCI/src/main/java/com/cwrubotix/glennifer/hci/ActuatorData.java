@@ -1,4 +1,4 @@
-package com.wasianish.hci;
+package com.cwrubotix.glennifer.hci;
 
 /**
  * Data for an actuator at a specified time

@@ -1,4 +1,4 @@
-package com.wasianish.hci;
+package com.cwrubotix.glennifer.hci;
 
 /**
  * Defines the movement of an actuator

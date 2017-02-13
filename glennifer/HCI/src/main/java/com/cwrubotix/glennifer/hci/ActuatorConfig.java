@@ -1,4 +1,4 @@
-package com.wasianish.hci;
+package com.cwrubotix.glennifer.hci;
 
 /**
  * Configuration values for an Actuator

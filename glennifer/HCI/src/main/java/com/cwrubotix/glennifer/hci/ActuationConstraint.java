@@ -1,6 +1,6 @@
-package com.wasianish.hci;
+package com.cwrubotix.glennifer.hci;
 
-import com.wasianish.hci.HardwareControlInterface.ActuationType;
+import com.cwrubotix.glennifer.hci.HardwareControlInterface.ActuationType;
 
 /**
  * Constrains an actuator
