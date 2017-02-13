@@ -8,6 +8,9 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 
 public class HardwareControlInterface implements Runnable {
+	public static final byte COMMAND_READ_SENSORS = 0x01;
+	public static final byte COMMAND_SET_OUTPUTS = 0x02;
+	
 	// The types of actuations and constraints that can be made
 	enum ActuationType {
 		AngVel, AngPos,
@@ -173,21 +176,46 @@ public class HardwareControlInterface implements Runnable {
 		return true;
 	}
 	
-	private void readSensors() throws SerialPortException {
+	private boolean setOutputs() throws SerialPortException {
+		// Allocate byte array for the data in the request
+		byte[] data = new byte[activeActuations.size()*4];
+		// Generate data array for request
+		// Each actuator ID is 2 bytes, each output is 2 bytes
+		for(int i = 0; i < activeActuations.size(); i++) {
+			data[3*i] = (byte)(activeActuations.get(i).actuatorID >> 8);
+			data[3*i+1] = (byte)(activeActuations.get(i).actuatorID);
+			data[3*i+2] = (byte)(activeActuations.get(i).currentOutput >> 8);
+			data[3*i+3] = (byte)(activeActuations.get(i).currentOutput);
+		}
+		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
+		// Get the response
+		SerialPacket response = readMessage();
+		if(response.command != COMMAND_SET_OUTPUTS && response.data.length <= 0) {
+			System.out.println("Failed to set outputs");
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean readSensors() throws SerialPortException {
 		// Get list of sensor IDs
 		Integer[] ids = sensors.keySet().toArray(new Integer[sensors.keySet().size()]);
 		// Allocate byte array for the data in the request
 		byte[] data = new byte[ids.length*2];
 		// Generate data array for request
-		// Each sensor ID is 2 bytes, with the first byte 
+		// Each sensor ID is 2 bytes
 		for(int i = 0; i < ids.length; i++) {
 			data[2*i] = (byte)(ids[i].intValue()>>8);
 			data[2*i+1] = (byte)ids[i].intValue();
 		}
 		// Send message, prepares it as per the interface
-		sendMessage(new SerialPacket((byte)1,data));
+		sendMessage(new SerialPacket(COMMAND_READ_SENSORS,data));
 		// Get the response
 		SerialPacket response = readMessage();
+		if(response.command != COMMAND_READ_SENSORS) {
+			System.out.println("Failed to read sensors");
+			return false;
+		}
 		// Parse the response
 		for(int i = 0; i < response.data.length/4; i++) {
 			// Parse the sensor IDs
@@ -204,6 +232,7 @@ public class HardwareControlInterface implements Runnable {
 			// Update it with the data
 			s.updateRaw(dat);
 		}
+		return true;
 	}
 	
 	private SerialPacket readMessage() throws SerialPortException {

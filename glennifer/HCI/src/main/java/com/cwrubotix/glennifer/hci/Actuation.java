@@ -15,4 +15,7 @@ public class Actuation {
 	HardwareControlInterface.ActuationType type;
 	// The target value of the actuation
 	double targetValue;
+	// The current raw output of this actuation
+	// Most often will be in PWM
+	int currentOutput;
 }
