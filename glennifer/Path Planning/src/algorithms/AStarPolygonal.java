@@ -356,7 +356,7 @@ public class AStarPolygonal {
 				// heuristic is the distance it is from the end_point divided by
 				// the speed of the robot
 				p.heuristic = Math.sqrt(Math.pow(end_point.x - p.x, 2) + Math.pow(end_point.y - p.y, 2))
-						/ AStarPolygonalCopy.lateral_speed;
+						/ AStarPolygonal.lateral_speed;
 				p.heuristic += current.cost;
 
 				// Determine the change in angle
@@ -391,8 +391,8 @@ public class AStarPolygonal {
 
 				// Total cost is the heuristic plus the cost to travel to the
 				// node
-				p.cost = p.heuristic + (distance / AStarPolygonalCopy.lateral_speed)
-						+ Math.abs(d_angle / AStarPolygonalCopy.turn_speed);
+				p.cost = p.heuristic + (distance / AStarPolygonal.lateral_speed)
+						+ Math.abs(d_angle / AStarPolygonal.turn_speed);
 
 				// This is for tracing back the path later
 				p.parent = current;
