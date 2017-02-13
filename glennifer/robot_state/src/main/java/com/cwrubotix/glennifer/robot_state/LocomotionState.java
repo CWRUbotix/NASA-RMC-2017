@@ -31,10 +31,10 @@ public class LocomotionState {
      * overall wheel pod configuration.
      */
     public enum Configuration {
+        INTERMEDIATE,
         STRAIGHT,
         TURN,
-        STRAFE,
-        INTERMEDIATE;
+        STRAFE;
     }
     
     /* Data members */
