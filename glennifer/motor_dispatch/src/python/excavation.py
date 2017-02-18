@@ -34,7 +34,7 @@ def on_arm_queue_declare(frame):
     channel.queue_bind(callback=on_arm_queue_bind, queue=arm_queue, exchange=exchange_name, routing_key=arm_queue)
 def on_translation_queue_declare(frame):
     # Called when our queue is declared
-    channel.queue_bind(callback=on_translation_queue_declare, queue=translation_queue, exchange=exchange_name, routing_key=translation_queue)
+    channel.queue_bind(callback=on_translation_queue_bind, queue=translation_queue, exchange=exchange_name, routing_key=translation_queue)
 def on_belt_queue_declare(frame):
     # Called when our queue is declared
     channel.queue_bind(callback=on_belt_queue_bind, queue=belt_queue, exchange=exchange_name, routing_key=belt_queue)
