@@ -41,16 +41,16 @@ def on_belt_queue_declare(frame):
 
 def on_arm_queue_bind(frame):
     # Called when our queue is binded
-    channel.basic_consume(handle_arm_position, queue=straight_queue, no_ack=True)
+    channel.basic_consume(handle_arm_position, queue=arm_queue, no_ack=True)
 def on_translation_queue_bind(frame):
     # Called when our queue is binded
-    channel.basic_consume(handle_translation_position, queue=turn_queue, no_ack=True)
+    channel.basic_consume(handle_translation_position, queue=translation_queue, no_ack=True)
 def on_belt_queue_bind(frame):
     # Called when our queue is binded
     channel.basic_consume(handle_belt_speed, queue=belt_queue, no_ack=True)
 
 def handle_arm_position(channel, method, header, body):
-    # Called when we receive messages from straight queue
+    # Called when we receive messages from arm queue
     msg_in = messages_pb2.LocomotionControlCommandStraight()
     msg_in.ParseFromString(body)
     
@@ -58,7 +58,7 @@ def handle_arm_position(channel, method, header, body):
     publish_arm_position(msg_in.position, msg_in.power, msg_in.timeout)
 
 def handle_translation_position(channel, method, header, body):
-    # Called when we receive messages from straight queue
+    # Called when we receive messages from translation queue
     msg_in = messages_pb2.LocomotionControlCommandStraight()
     msg_in.ParseFromString(body)
     
@@ -66,7 +66,7 @@ def handle_translation_position(channel, method, header, body):
     publish_translation_position(msg_in.position, msg_in.power, msg_in.timeout)
 
 def handle_belt_speed(channel, method, header, body):
-    # Called when we receive messages from straight queue
+    # Called when we receive messages from belt queue
     msg_in = messages_pb2.LocomotionControlCommandStraight()
     msg_in.ParseFromString(body)
     
