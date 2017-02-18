@@ -29,3 +29,7 @@ conaninfo.txt
 workspace.xml
 tasks.xml
 *.iws
+=======
+*.project
+*.class
+*.classpath
