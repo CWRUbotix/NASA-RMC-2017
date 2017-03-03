@@ -27,6 +27,8 @@ public class ActuatorConfig {
 	public double noLoadCurrent;
 	// Nominal voltage (Volts)
 	public double nomVoltage;
+	// Maximum int value for output
+	public int maxOutput = 127;
 	
 	public ActuatorConfig copy() {
 		ActuatorConfig cop = new ActuatorConfig();

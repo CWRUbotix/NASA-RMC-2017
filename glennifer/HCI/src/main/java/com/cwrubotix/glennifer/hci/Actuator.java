@@ -45,7 +45,7 @@ public class Actuator {
 	
 	// The configuration for this actuator.  Loaded in constructor
 	// Chancing the data in the config after initialization may cause unwanted consequences
-	private final ActuatorConfig config;
+	public final ActuatorConfig config;
 	
 	// Temporary storage for the update() function
 	private HashMap<Integer,ArrayList<Double>> tempData = new HashMap<Integer, ArrayList<Double>>();

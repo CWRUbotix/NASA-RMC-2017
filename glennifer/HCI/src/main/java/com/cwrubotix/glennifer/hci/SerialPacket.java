@@ -9,11 +9,10 @@ public class SerialPacket {
 	}
 	
 	public byte[] asPacket() {
-		byte[] out = new byte[3+data.length];
+		byte[] out = new byte[2+data.length];
 		out[0] = command;
-		out[1] = (byte)(data.length>>8);
-		out[2] = (byte)(data.length & 0xFF);
-		System.arraycopy(data, 0, out, 3, data.length);
+		out[1] = (byte)(data.length);
+		System.arraycopy(data, 0, out, 2, data.length);
 		return out;
 	}
 }

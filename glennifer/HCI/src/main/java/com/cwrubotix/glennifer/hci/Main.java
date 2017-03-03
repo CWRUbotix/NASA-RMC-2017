@@ -6,17 +6,32 @@ import jssc.SerialPortList;
 import jssc.SerialPortTimeoutException;
 
 public class Main {
+	public static final int baud = 9600;
 	private static HardwareControlInterface hci;
 	public static void main(String[] args) {
+		// Initialize port as null
 		String port = null;
+		// For each attached serial port
 		for(String s:SerialPortList.getPortNames()) {
 			SerialPort sp = new SerialPort(s);
 			try {
+				// Open the port
 				sp.openPort();
-				sp.writeByte((byte)0x5A);
+				sp.setParams(baud, 8, 1, 0);
+				sp.setDTR(false);
+				// Create test packet
+				byte[] bt = {0x5A,0x01,0x00};
+				// Write test byte 0x5A
+				sp.writeBytes(bt);
+				Thread.sleep(2000);
+				// Read response bytes
 				byte[] b = sp.readBytes(1,1000);
-				if(b[0] == (byte)0x5A) {
+				// If response is 0xA5, it is the arduino
+				System.out.println(Byte.toString(b[0]));
+				if(b[0] == (byte)0xA5) {
+					// Capture the string of correct port
 					port = s;
+					// Close the port
 					sp.closePort();
 					break;
 				}
@@ -31,18 +46,32 @@ public class Main {
 					e1.printStackTrace();
 				}
 				continue;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
+		// If port is still null, couldn't find it
 		if(port == null) {
 			System.out.println("Couldn't find attached arduino, please try again");
 			return;
+		} else {
+			System.out.println("Found arduino at " + port);
 		}
+		// Open the found arduino port
 		SerialPort sport = new SerialPort(port);
+		// Try open port
 		try {
 			sport.openPort();
+			Thread.sleep(1000);
+			sport.setParams(baud, 8, 1, 0);
+			sport.setDTR(false);
 		} catch (SerialPortException e) {
 			e.printStackTrace();
 			return;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		hci = new HardwareControlInterface(sport);
 		// Initialize sensors
@@ -113,6 +142,24 @@ public class Main {
 		hci.addActuator(new Actuator(configRFA, hci), configRFA.ID);
 		
 		// Constrain actuators
+		
+		// Start HCI
+		Thread hciThread = new Thread(hci);
+		hciThread.start();
+		try {
+			Thread.sleep(100);
+			Actuation a = new Actuation();
+			a.override = true;
+			a.hold = true;
+			a.targetValue = 1;
+			a.type = HardwareControlInterface.ActuationType.AngVel;
+			a.actuatorID = 0;
+			hci.queueActuation(a);
+			Thread.sleep(3000);
+			hci.halt();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 	}
 

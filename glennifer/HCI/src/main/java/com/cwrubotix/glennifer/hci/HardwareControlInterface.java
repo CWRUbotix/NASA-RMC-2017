@@ -110,6 +110,7 @@ public class HardwareControlInterface implements Runnable {
 		running = true;
 		try {
 			while(running) {
+				long t = System.currentTimeMillis();
 				// Read sensors
 				readSensors();
 				// Update actuator data
@@ -120,6 +121,7 @@ public class HardwareControlInterface implements Runnable {
 				for(Actuation a:actuationQueue) {
 					if(!addActuation(a)) {
 						// Send message that actuation was unsuccessful
+						System.out.println("Could not add actuation to actuator ID: " + a.actuatorID);
 					}
 				}
 				// Calculate errors in actuation targets with actuator data
@@ -129,12 +131,13 @@ public class HardwareControlInterface implements Runnable {
 				// Calculate errors in coordinated actuation targets with actuator data
 				
 				// PID
-				
+				calcOutputs();
 				// Set outputs
-				
+				setOutputs();
+				System.out.println(Long.toString(System.currentTimeMillis()-t));
 			}
 		} catch(SerialPortException e) {
-			
+			e.printStackTrace();
 		}
 	}
 	
@@ -173,10 +176,21 @@ public class HardwareControlInterface implements Runnable {
 		}
 		// If no conflict or override, add it
 		activeActuations.add(act);
+		actuationQueue.remove(act);
+		System.out.println("Successfully added actuation on actuator ID: " + act.actuatorID);
 		return true;
 	}
 	
+	private void calcOutputs() {
+		for(int i = 0; i < activeActuations.size(); i++) {
+			activeActuations.get(i).currentOutput = (int) (activeActuations.get(i).targetValue*actuators.get(activeActuations.get(i).actuatorID).config.maxOutput);
+		}
+	}
+	
 	private boolean setOutputs() throws SerialPortException {
+		if(activeActuations.isEmpty()) {
+			return true;
+		}
 		// Allocate byte array for the data in the request
 		byte[] data = new byte[activeActuations.size()*4];
 		// Generate data array for request
@@ -186,6 +200,7 @@ public class HardwareControlInterface implements Runnable {
 			data[3*i+1] = (byte)(activeActuations.get(i).actuatorID);
 			data[3*i+2] = (byte)(activeActuations.get(i).currentOutput >> 8);
 			data[3*i+3] = (byte)(activeActuations.get(i).currentOutput);
+			System.out.println("Setting output: " + activeActuations.get(i).currentOutput + " actuator ID: " + activeActuations.get(i).actuatorID);
 		}
 		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
 		// Get the response
@@ -194,10 +209,14 @@ public class HardwareControlInterface implements Runnable {
 			System.out.println("Failed to set outputs");
 			return false;
 		}
+		System.out.println("Successfully set outputs");
 		return true;
 	}
 	
 	private boolean readSensors() throws SerialPortException {
+		if(sensors.isEmpty()) {
+			return true;
+		}
 		// Get list of sensor IDs
 		Integer[] ids = sensors.keySet().toArray(new Integer[sensors.keySet().size()]);
 		// Allocate byte array for the data in the request
@@ -236,8 +255,8 @@ public class HardwareControlInterface implements Runnable {
 	}
 	
 	private SerialPacket readMessage() throws SerialPortException {
-		byte[] r_head = port.readBytes(3);
-		int len = ((int)(r_head[1])<<8)|r_head[0];
+		byte[] r_head = port.readBytes(2);
+		int len = r_head[1];
 		byte[] r_body = port.readBytes(len);
 		SerialPacket response = new SerialPacket(r_head[0],r_body);
 		return response;
