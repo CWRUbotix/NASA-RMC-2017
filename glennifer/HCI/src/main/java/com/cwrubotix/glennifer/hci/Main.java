@@ -4,11 +4,30 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 import jssc.SerialPortTimeoutException;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.DefaultConsumer;
 
 public class Main {
 	public static final int baud = 9600;
+	
+	/* Listen for Topics */
+	//Motor Controls
+	public static final String motorTopic = "motorcontrol.#";
+	
+	
 	private static HardwareControlInterface hci;
 	public static void main(String[] args) {
+		//Connect and Configure AMPQ			
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost("localhost"); //replace local host with host name
+		Connection channel = connection.createChannel();
+			
+		channel.exchangeDeclare(EXCHANGE_NAME, "amqp.topic");
+		String queueName = channel.queueDeclare().getQueue();
+		
 		// Initialize port as null
 		String port = null;
 		// For each attached serial port
@@ -160,6 +179,40 @@ public class Main {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		//Start AMPQ Thread
+		//Listen for messages
+		//if
+		
+		channel.queueBind(queueName, EXCHANGE_NAME, motorTopic);
+
+		
+		//Print waiting for messages
+		
+		Consumer consumer = new DefaultConsumer(channel) {
+			@Override 
+			public void handleDelivery(String consumerTag, Envelope envelope,
+										AMPQ.BasicProperties properties, byte[] body) throws IOException {
+				//String message = new String(body "UTF-8");
+				//Print Received Message
+				String routingKey = envelope.getRoutingKey();
+				String[] keys = routingKey.split(".+");
+				if(keys.length < 4){ //Case where message is not wheel 
+					String subsys = keys[1]; //eg. excavation, deposition which would be the second array item, index 1
+					String update = keys[3]; //eg. conveyor rpm
+					switch(subsys) {
+					case "excavation": 
+						//Do something with the subsys and update
+						break;
+					case "deposition":
+						//Do something with the subsys and update
+					//Will recevie motorcontrol.# meaning more than just speed control
+					//Modify accordingly
+					}
+				}
+			}
+		};
+		channel.basicConsume(queueName, true, consumer);
 
 	}
 
