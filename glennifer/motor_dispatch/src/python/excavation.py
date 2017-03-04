@@ -20,14 +20,11 @@ def on_channel_open(new_channel):
     channel = new_channel
     
   # declare and bind arm queue
-    channel.queue_declare(on_arm_queue_declare, arm_queue, durable=True,
-            exclusive=False, auto_delete=False)
+    channel.queue_declare(on_arm_queue_declare, arm_queue, durable=True, exclusive=False, auto_delete=False)
   # declare and bind translation queue
-    channel.queue_declare(on_translation_queue_declare, translation_queue, durable=True,
-            exclusive=False, auto_delete=False)
+    channel.queue_declare(on_translation_queue_declare, translation_queue, durable=True, exclusive=False, auto_delete=False)
   # declare and bind belt queue
-    channel.queue_declare(on_belt_queue_declare, belt_queue, durable=True,
-            exclusive=False, auto_delete=False)
+    channel.queue_declare(on_belt_queue_declare, belt_queue, durable=True, exclusive=False, auto_delete=False)
 			
 def on_arm_queue_declare(frame):
     # Called when our queue is declared
@@ -74,39 +71,32 @@ def handle_belt_speed(channel, method, header, body):
     publish_belt_speed(msg_in.speed, msg_in.timeout)	
     
 def publish_arm_position(position, power, timeout):
-    msg = messages_pb2.ExcavationControlCommandPositionArm()
+	msg = messages_pb2.ExcavationControlCommandPositionArm()
 	msg.position = position
 	msg.power = power
-    msg.timeout = timeout
-    topic = 'motorcontrol.excavation.arm_pos';
-    channel.basic_publish(exchange=exchange_name,
-            routing_key=topic,
-            body=msg.SerializeToString())
+	msg.timeout = timeout
+	topic = 'motorcontrol.excavation.arm_pos'
+	channel.basic_publish(exchange=exchange_name, routing_key=topic, body=msg.SerializeToString())
     
 def publish_translation_position(position, power, timeout):
-    msg = messages_pb2.ExcavationControlCommandPositionTranslation
-    msg.position = position
+	msg = messages_pb2.ExcavationControlCommandPositionTranslation
+	msg.position = position
 	msg.power = power
-    msg.timeout = timeout
-    topic = 'motorcontrol.excavation.conveyor_translation_displacement'
-    channel.basic_publish(exchange=exchange_name,
-            routing_key=topic,
-            body=msg.SerializeToString())
+	msg.timeout = timeout
+	topic = 'motorcontrol.excavation.conveyor_translation_displacement'
+	channel.basic_publish(exchange=exchange_name, routing_key=topic, body=msg.SerializeToString())
 
 def publish_belt_speed(speed, timeout):
-    msg = messages_pb2.ExcavationControlCommandMoveBucketConveyor
+	msg = messages_pb2.ExcavationControlCommandMoveBucketConveyor
 	msg.speed = speed
-    msg.timeout = timeout
-    topic = 'motorcontrol.excavation.bucket_conveyor_rpm';
-    channel.basic_publish(exchange=exchange_name,
-            routing_key=topic,
-            body=msg.SerializeToString())
+	msg.timeout = timeout
+	topic = 'motorcontrol.excavation.bucket_conveyor_rpm';
+	channel.basic_publish(exchange=exchange_name, routing_key=topic, body=msg.SerializeToString())
 			
 			
 # Step #1: Connect to RabbitMQ using the default parameters
 parameters = pika.connection.URLParameters('amqp://guest:guest@localhost:5672/%2F')
-connection = pika.SelectConnection(parameters=parameters,
-                                   on_open_callback=on_connected)
+connection = pika.SelectConnection(parameters=parameters, on_open_callback=on_connected)
 try:
     # Loop so we can communicate with RabbitMQ
     connection.ioloop.start()

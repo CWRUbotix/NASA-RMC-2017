@@ -19,11 +19,9 @@ def on_channel_open(new_channel):
     channel = new_channel
     
   # declare and bind dump queue
-    channel.queue_declare(on_dump_queue_declare, dump_queue, durable=True,
-            exclusive=False, auto_delete=False)
+    channel.queue_declare(on_dump_queue_declare, dump_queue, durable=True, exclusive=False, auto_delete=False)
   # declare and bind conveyor queue
-    channel.queue_declare(on_conveyor_queue_declare, conveyor_queue, durable=True,
-            exclusive=False, auto_delete=False)
+    channel.queue_declare(on_conveyor_queue_declare, conveyor_queue, durable=True, exclusive=False, auto_delete=False)
 			
 			
 def on_dump_queue_declare(frame):
@@ -59,23 +57,19 @@ def handle_conveyor_speed(channel, method, header, body):
     
     
 def publish_dump_position(position, power, timeout):
-    msg = messages_pb2.DepositionControlPositionDump
-    msg.position = position
+	msg = messages_pb2.DepositionControlPositionDump
+	msg.position = position
 	msg.power = power
-    msg.timeout = timeout
-    topic = 'motorcontrol.deposition.dump_pos'
-    channel.basic_publish(exchange=exchange_name,
-            routing_key=topic,
-            body=msg.SerializeToString())
+	msg.timeout = timeout
+	topic = 'motorcontrol.deposition.dump_pos'
+	channel.basic_publish(exchange=exchange_name, routing_key=topic, body=msg.SerializeToString())
 
 def publish_conveyor_speed(speed, timeout):
-    msg = messages_pb2.DepositionControlMoveConveyor
+	msg = messages_pb2.DepositionControlMoveConveyor
 	msg.speed = speed
-    msg.timeout = timeout
-    topic = 'motorcontrol.deposition.conveyor_rpm';
-    channel.basic_publish(exchange=exchange_name,
-            routing_key=topic,
-            body=msg.SerializeToString())
+	msg.timeout = timeout
+	topic = 'motorcontrol.deposition.conveyor_rpm';
+	channel.basic_publish(exchange=exchange_name, routing_key=topic, body=msg.SerializeToString())
 			
 			
 # Step #1: Connect to RabbitMQ using the default parameters
