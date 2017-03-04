@@ -200,12 +200,16 @@ public class HardwareControlInterface implements Runnable {
 		byte[] data = new byte[activeActuations.size()*4];
 		// Generate data array for request
 		// Each actuator ID is 2 bytes, each output is 2 bytes
+		// Conversion to short is not checked
 		for(int i = 0; i < activeActuations.size(); i++) {
-			data[3*i] = (byte)(activeActuations.get(i).actuatorID >> 8);
-			data[3*i+1] = (byte)(activeActuations.get(i).actuatorID);
-			data[3*i+2] = (byte)(activeActuations.get(i).currentOutput >> 8);
-			data[3*i+3] = (byte)(activeActuations.get(i).currentOutput);
-			System.out.println("Setting output: " + activeActuations.get(i).currentOutput + " actuator ID: " + activeActuations.get(i).actuatorID);
+			Actuation activeActuation = activeActuations.get(i);
+			short actuatorIdShort = (short)activeActuation.actuatorID;
+			short currentOutputShort = (short)activeActuation.currentOutput;
+			data[3*i] = (byte)(actuatorIdShort >>> 8);
+			data[3*i+1] = (byte)(actuatorIdShort);
+			data[3*i+2] = (byte)(currentOutputShort >>> 8);
+			data[3*i+3] = (byte)(currentOutputShort);
+			System.out.println("Setting output: " + currentOutputShort + " actuator ID: " + actuatorIdShort);
 		}
 		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
 		// Get the response
