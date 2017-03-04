@@ -1,14 +1,34 @@
 package com.cwrubotix.glennifer.hci;
 
+import com.cwrubotix.glennifer.Messages;
+
+import com.rabbitmq.client.*;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 import jssc.SerialPortTimeoutException;
 
-public class Main {
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class ModuleMain {
 	public static final int baud = 9600;
+	public static final String EXCHANGE_NAME = "amq.topic";
+	
+	/* Listen for Topics */
+	//Motor Controls
+	public static final String motorTopic = "motorcontrol.#";
+	
 	private static HardwareControlInterface hci;
-	public static void main(String[] args) {
+
+	public static void runWithConnectionExceptions() throws IOException, TimeoutException {
+		//Connect and Configure AMPQ
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost("localhost"); //replace local host with host name
+		Connection connection = factory.newConnection(); // throws
+		Channel channel = connection.createChannel(); // throws
+		String queueName = channel.queueDeclare().getQueue();
+
 		// Initialize port as null
 		String port = null;
 		// For each attached serial port
@@ -75,13 +95,13 @@ public class Main {
 		}
 		hci = new HardwareControlInterface(sport);
 		// Initialize sensors
-		
-		
-		
+
+
+
 		// Add sensors
-		
-		
-		
+
+
+
 		// Initialize actuators
 		ActuatorConfig configLBM = new ActuatorConfig();
 		configLBM.ID = 0;
@@ -94,19 +114,19 @@ public class Main {
 		configLBM.stallCurrent = 53;
 		configLBM.tfStall = 0.43*270;
 		configLBM.tfCurrentRatio = (configLBM.stallCurrent - configLBM.noLoadCurrent)/configLBM.tfStall;
-		
+
 		ActuatorConfig configRBM = configLBM.copy();
 		configRBM.ID = 1;
 		configRBM.name = "Right Rear Drive Motor";
-		
+
 		ActuatorConfig configLFM = configLBM.copy();
 		configLFM.ID = 2;
 		configLFM.name = "Right Front Drive Motor";
-		
+
 		ActuatorConfig configRFM = configLBM.copy();
 		configRFM.ID = 3;
 		configRFM.name = "Right Front Drive Motor";
-		
+
 		ActuatorConfig configLBA = new ActuatorConfig();
 		configLBA.ID = 4;
 		configLBA.name = "Left Rear Turning Actuator";
@@ -118,19 +138,19 @@ public class Main {
 		configLBA.stallCurrent = 5;
 		configLBA.tfStall = 33.7;
 		configLBA.tfCurrentRatio = (configLBA.stallCurrent - configLBA.noLoadCurrent)/configLBA.tfStall;
-		
+
 		ActuatorConfig configRBA = configLBA.copy();
 		configRBA.ID = 5;
 		configRBA.name = "Right Rear Turning Actuator";
-		
+
 		ActuatorConfig configLFA = configLBA.copy();
 		configLFA.ID = 6;
 		configLFA.name = "Left Front Turning Actuator";
-		
+
 		ActuatorConfig configRFA = configLBA.copy();
 		configRFA.ID = 5;
 		configRFA.name = "Right Front Turning Actuator";
-		
+
 		// Add actuators
 		hci.addActuator(new Actuator(configLBM, hci), configLBM.ID);
 		hci.addActuator(new Actuator(configRBM, hci), configRBM.ID);
@@ -140,10 +160,11 @@ public class Main {
 		hci.addActuator(new Actuator(configRBA, hci), configRBA.ID);
 		hci.addActuator(new Actuator(configLFA, hci), configLFA.ID);
 		hci.addActuator(new Actuator(configRFA, hci), configRFA.ID);
-		
+
 		// Constrain actuators
-		
+
 		// Start HCI
+		/*
 		Thread hciThread = new Thread(hci);
 		hciThread.start();
 		try {
@@ -160,6 +181,61 @@ public class Main {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		*/
+
+		//Start AMPQ Thread
+		//Listen for messages
+		//if
+
+		channel.queueBind(queueName, EXCHANGE_NAME, motorTopic);
+
+
+		//Print waiting for messages
+
+		Consumer consumer = new DefaultConsumer(channel) {
+			@Override
+			public void handleDelivery(String consumerTag, Envelope envelope,
+									   AMQP.BasicProperties properties, byte[] body) throws IOException {
+				//String message = new String(body "UTF-8");
+				//Print Received Message
+				String routingKey = envelope.getRoutingKey();
+				String[] keys = routingKey.split("\\.");
+				System.out.println(routingKey);
+				if (keys[3].equals("wheel_rpm")) {
+					Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+					System.out.println(scc.getRpm());
+				} else if (keys[3].equals("wheel_pod_pos")) {
+					Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
+					System.out.println(pcc.getPosition());
+				}
+				if(keys.length < 4){ //Case where message is not wheel
+					String subsys = keys[1]; //eg. excavation, deposition which would be the second array item, index 1
+					String update = keys[3]; //eg. conveyor rpm
+					switch(subsys) {
+						case "excavation":
+							//Do something with the subsys and update
+							break;
+						case "deposition":
+							//Do something with the subsys and update
+							//Will recevie motorcontrol.# meaning more than just speed control
+							//Modify accordingly
+					}
+				}
+			}
+		};
+		channel.basicConsume(queueName, true, consumer);
+	}
+
+	public static void main(String[] args) {
+		try {
+			runWithConnectionExceptions();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			e.printStackTrace();
+		}
+
+
 
 	}
 
