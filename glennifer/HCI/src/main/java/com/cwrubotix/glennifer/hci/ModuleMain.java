@@ -164,9 +164,10 @@ public class ModuleMain {
 		// Constrain actuators
 
 		// Start HCI
-		/*
+
 		Thread hciThread = new Thread(hci);
 		hciThread.start();
+		/*
 		try {
 			Thread.sleep(100);
 			Actuation a = new Actuation();
@@ -201,29 +202,45 @@ public class ModuleMain {
 				String routingKey = envelope.getRoutingKey();
 				String[] keys = routingKey.split("\\.");
 				System.out.println(routingKey);
+				if(keys.length < 4) {
+					System.out.println("Failed to interpret routing key");
+					return;
+				}
 				if (keys[3].equals("wheel_rpm")) {
 					Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
 					System.out.println(scc.getRpm());
+					Actuation a = new Actuation();
+					a.override = true;
+					a.hold = true;
+					a.targetValue = sign(scc.getRpm());
+					a.type = HardwareControlInterface.ActuationType.AngVel;
+					a.actuatorID = 2;
+					hci.queueActuation(a);
+
 				} else if (keys[3].equals("wheel_pod_pos")) {
 					Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
 					System.out.println(pcc.getPosition());
-				}
-				if(keys.length < 4){ //Case where message is not wheel
-					String subsys = keys[1]; //eg. excavation, deposition which would be the second array item, index 1
-					String update = keys[3]; //eg. conveyor rpm
-					switch(subsys) {
-						case "excavation":
-							//Do something with the subsys and update
-							break;
-						case "deposition":
-							//Do something with the subsys and update
-							//Will recevie motorcontrol.# meaning more than just speed control
-							//Modify accordingly
-					}
+					Actuation a = new Actuation();
+					a.override = true;
+					a.hold = true;
+					a.targetValue = sign(pcc.getPosition());
+					a.type = HardwareControlInterface.ActuationType.AngVel;
+					a.actuatorID = 3;
+					hci.queueActuation(a);
 				}
 			}
 		};
 		channel.basicConsume(queueName, true, consumer);
+	}
+
+	private static int sign(double x) {
+		if (x > 0) {
+			return 1;
+		} else if (x < 0) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 
 	public static void main(String[] args) {
