@@ -2,6 +2,7 @@ package com.cwrubotix.glennifer.hci;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import jssc.SerialPort;
@@ -153,22 +154,26 @@ public class HardwareControlInterface implements Runnable {
 			return false;
 		}
 		// For all active actuations
-		for(Actuation a: activeActuations) {
+		Iterator<Actuation> ita = activeActuations.iterator();
+		while(ita.hasNext()) {
+			Actuation a = ita.next();
 			// If target is already set and override, remove it, otherwise return false
 			if(a.actuatorID == act.actuatorID) {
 				if(act.override) {
-					activeActuations.remove(a);
+					ita.remove();
 				} else {
 					return false;
 				}
 			}
 		}
-		for(CoordinatedActuation ca: activeCoordinatedActuations) {
+		Iterator<CoordinatedActuation> itca = activeCoordinatedActuations.iterator();
+		while(itca.hasNext()) {
+			CoordinatedActuation ca = itca.next();
 			// For all active actuations
 			if(ca.actuatorID == act.actuatorID) {
 				// If target is already set and override, remove it, otherwise return false
 				if(act.override) {
-					activeCoordinatedActuations.remove(ca);
+					itca.remove();
 				} else {
 					return false;
 				}
