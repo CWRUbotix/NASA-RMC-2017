@@ -4,6 +4,7 @@
 #define ID_RFM  3
 
 #include "RoboClaw.h"
+#include "math.h"
 
 #define COMMAND_READ_SENSORS 0x01
 #define COMMAND_SET_OUTPUTS 0x02
@@ -75,8 +76,10 @@ void setActuator(short ID, short val) {
   // Initialize variables for easier switching
   // Direction of movement (true is forward)
   bool dir = (val > 0);
-  // Absolute value but bitwise
-  val &= 0x7FFF;
+  // Absolute value (doesn't work for -128, which should be illegal)
+  if (val < 0) {
+    val = -val;
+  }
   // True if roboclaw controller
   bool rc = false;
   // True if sabertooth controller

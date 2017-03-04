@@ -2,6 +2,7 @@ package com.cwrubotix.glennifer.hci;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import jssc.SerialPort;
@@ -153,22 +154,26 @@ public class HardwareControlInterface implements Runnable {
 			return false;
 		}
 		// For all active actuations
-		for(Actuation a: activeActuations) {
+		Iterator<Actuation> ita = activeActuations.iterator();
+		while(ita.hasNext()) {
+			Actuation a = ita.next();
 			// If target is already set and override, remove it, otherwise return false
 			if(a.actuatorID == act.actuatorID) {
 				if(act.override) {
-					activeActuations.remove(a);
+					ita.remove();
 				} else {
 					return false;
 				}
 			}
 		}
-		for(CoordinatedActuation ca: activeCoordinatedActuations) {
+		Iterator<CoordinatedActuation> itca = activeCoordinatedActuations.iterator();
+		while(itca.hasNext()) {
+			CoordinatedActuation ca = itca.next();
 			// For all active actuations
 			if(ca.actuatorID == act.actuatorID) {
 				// If target is already set and override, remove it, otherwise return false
 				if(act.override) {
-					activeCoordinatedActuations.remove(ca);
+					itca.remove();
 				} else {
 					return false;
 				}
@@ -195,12 +200,16 @@ public class HardwareControlInterface implements Runnable {
 		byte[] data = new byte[activeActuations.size()*4];
 		// Generate data array for request
 		// Each actuator ID is 2 bytes, each output is 2 bytes
+		// Conversion to short is not checked
 		for(int i = 0; i < activeActuations.size(); i++) {
-			data[3*i] = (byte)(activeActuations.get(i).actuatorID >> 8);
-			data[3*i+1] = (byte)(activeActuations.get(i).actuatorID);
-			data[3*i+2] = (byte)(activeActuations.get(i).currentOutput >> 8);
-			data[3*i+3] = (byte)(activeActuations.get(i).currentOutput);
-			System.out.println("Setting output: " + activeActuations.get(i).currentOutput + " actuator ID: " + activeActuations.get(i).actuatorID);
+			Actuation activeActuation = activeActuations.get(i);
+			short actuatorIdShort = (short)activeActuation.actuatorID;
+			short currentOutputShort = (short)activeActuation.currentOutput;
+			data[3*i] = (byte)(actuatorIdShort >>> 8);
+			data[3*i+1] = (byte)(actuatorIdShort);
+			data[3*i+2] = (byte)(currentOutputShort >>> 8);
+			data[3*i+3] = (byte)(currentOutputShort);
+			System.out.println("Setting output: " + currentOutputShort + " actuator ID: " + actuatorIdShort);
 		}
 		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
 		// Get the response
