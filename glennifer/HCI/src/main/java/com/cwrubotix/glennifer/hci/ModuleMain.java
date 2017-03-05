@@ -24,7 +24,9 @@ public class ModuleMain {
 	public static void runWithConnectionExceptions() throws IOException, TimeoutException {
 		//Connect and Configure AMPQ
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost"); //replace local host with host name
+		factory.setHost("192.168.0.100"); //replace local host with host name
+		factory.setUsername("usera");
+		factory.setPassword("usera");
 		Connection connection = factory.newConnection(); // throws
 		Channel channel = connection.createChannel(); // throws
 		String queueName = channel.queueDeclare().getQueue();
