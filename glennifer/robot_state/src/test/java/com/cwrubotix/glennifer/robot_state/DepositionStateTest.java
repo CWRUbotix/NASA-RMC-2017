@@ -16,8 +16,9 @@ public class DepositionStateTest {
         float load = 4.1F;
         Instant time = Instant.now();
         DepositionState instance = new DepositionState();
-        instance.updateDumpLoad(load, time);
-        float resultLoad = instance.getDumpLoad();
+        DepositionState.LoadCell cell = DepositionState.LoadCell.BACK_LEFT;
+        instance.updateDumpLoad(cell, load, time);
+        float resultLoad = instance.getDumpLoad(DepositionState.LoadCell.BACK_LEFT);
         assertEquals(load, resultLoad, 0);
     }
 

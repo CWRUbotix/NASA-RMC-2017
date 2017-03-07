@@ -39,9 +39,21 @@ public class DepositionStateModule implements Runnable {
                 return;
             }
             String sensorString = keys[2];
-
+            String loadCellString = keys[3];
             if (sensorString.equals("dump_load")) {
-                handleDumpLoadUpdate(body);
+                DepositionState.LoadCell loadcell;
+                if(loadCellString.equals("front_left")){
+                    loadcell = DepositionState.LoadCell.FRONT_LEFT;
+                } else if (loadCellString.equals("front_right")){
+                    loadcell = DepositionState.LoadCell.FRONT_RIGHT;
+                } else if (loadCellString.equals("back_left")){
+                    loadcell = DepositionState.LoadCell.BACK_LEFT;
+                } else if (loadCellString.equals("back_right")) {
+                    loadcell = DepositionState.LoadCell.BACK_RIGHT;
+                } else {
+                    return;
+                }
+                handleDumpLoadUpdate(loadcell, body);
 			}  else if (sensorString.equals("arm_pos")) {
                 handleDumpPosUpdate(body);
             } else if (sensorString.equals("dump_limit_extended")) {
@@ -52,12 +64,12 @@ public class DepositionStateModule implements Runnable {
         }
     };
     
-    private void handleDumpLoadUpdate(byte[] body) throws IOException {
+    private void handleDumpLoadUpdate(DepositionState.LoadCell cell, byte[] body) throws IOException {
         LoadUpdate message = LoadUpdate.parseFrom(body);
         float load = message.getLoad();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateDumpLoad(load, time);
+            state.updateDumpLoad(cell, load, time);
         } catch (RobotFaultException e) {
             DepositionStateModule.this.sendFault(e.getFaultCode(), time);
         }

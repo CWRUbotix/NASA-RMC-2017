@@ -61,11 +61,11 @@ public class DepositionStateModuleTest {
         loadUpdateFactory.setLoad(5F);
         loadUpdateFactory.setTimestamp(instantToUnixTime(Instant.now()));
         LoadUpdate message = loadUpdateFactory.build();
-        channel.basicPublish("amq.topic", "sensor.deposition.dump_load", null, message.toByteArray());
+        channel.basicPublish("amq.topic", "sensor.deposition.dump_load.back_left", null, message.toByteArray());
 
         Thread.sleep(1000);
 
-        float result = state.getDumpLoad();
+        float result = state.getDumpLoad(DepositionState.LoadCell.BACK_LEFT);
 
         assertEquals(42F, result, 0);
     }
