@@ -39,8 +39,8 @@ public class DepositionState {
     /* Data members */
     private Configuration configuration;
     private EnumMap <LoadCell, Float> loadCellValue;
+    private float totalLoad;
 	private float dumpPos;
-	private float dumpingSpeed; //probably not needed but i'm not sure
 	
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
@@ -64,8 +64,8 @@ public class DepositionState {
         loadCellValue.put(LoadCell.FRONT_RIGHT, (float)0);
         loadCellValue.put(LoadCell.BACK_LEFT, (float)0);
         loadCellValue.put(LoadCell.BACK_RIGHT, (float)0);
+
 		dumpPos = 0;
-		dumpingSpeed = 0;
 
     }
     /* Update methods */
