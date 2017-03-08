@@ -1,4 +1,0 @@
-server-addr: 192.168.0.100
-server-user: usera
-server-pass: usera
-exchange-name: amq.topic
