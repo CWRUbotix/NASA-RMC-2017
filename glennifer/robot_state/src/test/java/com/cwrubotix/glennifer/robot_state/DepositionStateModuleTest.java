@@ -52,6 +52,7 @@ public class DepositionStateModuleTest {
      */
     @Test
     public void testRun() throws Exception {
+        Thread.sleep(1000);
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         Connection connection = factory.newConnection();

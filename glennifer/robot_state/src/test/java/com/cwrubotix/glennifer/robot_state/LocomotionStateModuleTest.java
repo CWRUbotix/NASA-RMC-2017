@@ -53,6 +53,7 @@ public class LocomotionStateModuleTest {
      */
     @Test
     public void testRun() throws Exception {
+        Thread.sleep(1000);
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
@@ -76,6 +77,7 @@ public class LocomotionStateModuleTest {
      */
     @Test
     public void testSubscribe() throws Exception {
+        Thread.sleep(1000);
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
