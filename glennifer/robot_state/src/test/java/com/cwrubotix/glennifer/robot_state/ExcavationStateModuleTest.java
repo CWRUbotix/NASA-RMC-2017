@@ -37,7 +37,7 @@ public class ExcavationStateModuleTest {
     @Before
     public void setUp() {
         state = new ExcavationState();
-        module = new ExcavationStateModule(state);
+        module = new ExcavationStateModule(state, "amq.topic");
         thread = new Thread(module);
         thread.start();
     }

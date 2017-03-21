@@ -52,7 +52,7 @@ public class LocomotionStateModule implements Runnable {
                         .build();
                 byte[] data = msg.toByteArray();
                 try {
-                    LocomotionStateModule.this.channel.basicPublish("amq.topic", returnKey, null, data);
+                    LocomotionStateModule.this.channel.basicPublish(exchangeName, returnKey, null, data);
                     Thread.sleep(interval_ms);
                 } catch (IOException e) {
                     go = false;
@@ -165,10 +165,16 @@ public class LocomotionStateModule implements Runnable {
     
     /* Data Members */
     private LocomotionState state;
-    private Channel channel;
+    private String exchangeName;
+    public Channel channel;
     
     public LocomotionStateModule(LocomotionState state) {
+        this(state, "amq.topic");
+    }
+
+    public LocomotionStateModule(LocomotionState state, String exchangeName) {
         this.state = state;
+        this.exchangeName = exchangeName;
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -183,7 +189,7 @@ public class LocomotionStateModule implements Runnable {
         faultBuilder.setFaultCode(faultCode);
         faultBuilder.setTimestamp(instantToUnixTime(time));
         Fault message = faultBuilder.build();
-        channel.basicPublish("amq.topic", "fault", null, message.toByteArray());
+        channel.basicPublish(exchangeName, "fault", null, message.toByteArray());
     }
     
     public void runWithExceptions() throws IOException, TimeoutException {
@@ -195,12 +201,12 @@ public class LocomotionStateModule implements Runnable {
 
         // Subscribe to sensor updates
         String queueName = channel.queueDeclare().getQueue();
-        channel.queueBind(queueName, "amq.topic", "sensor.locomotion.#");
+        channel.queueBind(queueName, exchangeName, "sensor.locomotion.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
 
         // Listen for requests to subscribe to state updates
         queueName = channel.queueDeclare().getQueue();
-        channel.queueBind(queueName, "amq.topic", "state.locomotion.subscribe");
+        channel.queueBind(queueName, exchangeName, "state.locomotion.subscribe");
         this.channel.basicConsume(queueName, true, new RequestConsumer(channel));
     }
     

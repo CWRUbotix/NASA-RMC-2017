@@ -37,7 +37,7 @@ public class DepositionStateModuleTest {
     @Before
     public void setUp() {
         state = new DepositionState();
-        module = new DepositionStateModule(state);
+        module = new DepositionStateModule(state, "amq.topic");
         thread = new Thread(module);
         thread.start();
     }

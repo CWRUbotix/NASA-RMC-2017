@@ -110,10 +110,16 @@ public class DepositionStateModule implements Runnable {
 	
     /* Data Members */
     private DepositionState state;
+    private String exchangeName;
     private Channel channel;
     
     public DepositionStateModule(DepositionState state) {
+        this(state, "amq.topic");
+    }
+
+    public DepositionStateModule(DepositionState state, String exchangeName) {
         this.state = state;
+        this.exchangeName = exchangeName;
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -128,7 +134,7 @@ public class DepositionStateModule implements Runnable {
         faultBuilder.setFaultCode(faultCode);
         faultBuilder.setTimestamp(instantToUnixTime(time));
         Fault message = faultBuilder.build();
-        channel.basicPublish("amq.topic", "fault", null, message.toByteArray());
+        channel.basicPublish(exchangeName, "fault", null, message.toByteArray());
     }
     
     public void runWithExceptions() throws IOException, TimeoutException {
@@ -137,7 +143,7 @@ public class DepositionStateModule implements Runnable {
         Connection connection = factory.newConnection();
         this.channel = connection.createChannel();
         String queueName = channel.queueDeclare().getQueue();
-        channel.queueBind(queueName, "amq.topic", "sensor.deposition.#");
+        channel.queueBind(queueName, exchangeName, "sensor.deposition.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
     }
     

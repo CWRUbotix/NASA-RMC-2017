@@ -139,10 +139,16 @@ public class ExcavationStateModule implements Runnable {
     
     /* Data Members */
     private ExcavationState state;
-    private Channel channel;
+    private String exchangeName;
+    public Channel channel;
     
     public ExcavationStateModule(ExcavationState state) {
+        this(state, "amq.topic");
+    }
+
+    public ExcavationStateModule(ExcavationState state, String exchangeName) {
         this.state = state;
+        this.exchangeName = exchangeName;
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -157,7 +163,7 @@ public class ExcavationStateModule implements Runnable {
         faultBuilder.setFaultCode(faultCode);
         faultBuilder.setTimestamp(instantToUnixTime(time));
         Fault message = faultBuilder.build();
-        channel.basicPublish("amq.topic", "fault", null, message.toByteArray());
+        channel.basicPublish(exchangeName, "fault", null, message.toByteArray());
     }
     
     public void runWithExceptions() throws IOException, TimeoutException {
@@ -166,7 +172,7 @@ public class ExcavationStateModule implements Runnable {
         Connection connection = factory.newConnection();
         this.channel = connection.createChannel();
         String queueName = channel.queueDeclare().getQueue();
-        channel.queueBind(queueName, "amq.topic", "sensor.excavation.#");
+        channel.queueBind(queueName, exchangeName, "sensor.excavation.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
     }
     

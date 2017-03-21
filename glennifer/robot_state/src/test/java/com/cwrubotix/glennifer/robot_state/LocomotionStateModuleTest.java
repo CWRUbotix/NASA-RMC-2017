@@ -38,7 +38,7 @@ public class LocomotionStateModuleTest {
     @Before
     public void setUp() {
         state = new LocomotionState();
-        module = new LocomotionStateModule(state);
+        module = new LocomotionStateModule(state, "amq.topic");
         thread = new Thread(module);
         thread.start();
     }
