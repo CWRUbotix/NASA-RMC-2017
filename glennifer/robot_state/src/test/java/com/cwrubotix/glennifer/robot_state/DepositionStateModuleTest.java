@@ -64,10 +64,12 @@ public class DepositionStateModuleTest {
         LoadUpdate message = loadUpdateFactory.build();
         channel.basicPublish("amq.topic", "sensor.deposition.dump_load.back_left", null, message.toByteArray());
 
+        channel.close();
+        connection.close();
+
         Thread.sleep(1000);
 
         float result = state.getDumpLoad(DepositionState.LoadCell.BACK_LEFT);
-
         assertEquals(5F, result, 0);
     }
 

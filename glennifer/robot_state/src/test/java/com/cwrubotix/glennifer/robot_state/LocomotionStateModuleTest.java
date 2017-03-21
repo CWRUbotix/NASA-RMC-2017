@@ -64,11 +64,13 @@ public class LocomotionStateModuleTest {
         rpmUpdateFactory.setTimestamp(instantToUnixTime(Instant.now()));
         RpmUpdate message = rpmUpdateFactory.build();
         channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_rpm", null, message.toByteArray());
-        
+
+        channel.close();
+        connection.close();
+
         Thread.sleep(1000);
-        
+
         float result = state.getWheelRpm(LocomotionState.Wheel.BACK_LEFT);
-        
         assertEquals(42F, result, 0);
     }
 
@@ -104,6 +106,8 @@ public class LocomotionStateModuleTest {
 
         GetResponse response = channel.basicGet(queueName, true);
         assertNotNull("Failed to get message from state subscription", response);
+        channel.close();
+        connection.close();
         byte[] body = response.getBody();
         Messages.LocomotionState s = Messages.LocomotionState.parseFrom(body);
         System.out.println(s);

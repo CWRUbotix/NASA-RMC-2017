@@ -64,10 +64,12 @@ public class ExcavationStateModuleTest {
         RpmUpdate message = rpmUpdateFactory.build();
         channel.basicPublish("amq.topic", "sensor.excavation.conveyor_rpm", null, message.toByteArray());
 
+        channel.close();
+        connection.close();
+
         Thread.sleep(1000);
 
         float result = state.getConveyorRpm();
-
         assertEquals(42F, result, 0);
     }
 
