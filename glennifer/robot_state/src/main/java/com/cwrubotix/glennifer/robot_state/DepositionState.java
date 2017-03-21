@@ -108,9 +108,4 @@ public class DepositionState {
     public float getDumpPos() {
         return dumpPos;
     }
-	
-	public float getDumpingSpeed() {
-        // TODO: use physical constants, real or made up, to get speed
-        return dumpingSpeed;
-    }
 }	
