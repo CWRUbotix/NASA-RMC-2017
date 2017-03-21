@@ -23,6 +23,7 @@ Messages.java
 *.autosave
 conanbuildinfo.*
 conaninfo.txt
+conan_imports_manifest.txt
 .classpath
 target/
 
@@ -34,3 +35,10 @@ tasks.xml
 *.project
 *.class
 *.classpath
+
+.idea
+.project
+.settings
+nbproject/
+*.iml
+*.pyproj
