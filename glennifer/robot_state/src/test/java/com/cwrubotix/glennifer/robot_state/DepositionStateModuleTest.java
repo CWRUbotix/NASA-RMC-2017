@@ -67,7 +67,7 @@ public class DepositionStateModuleTest {
 
         float result = state.getDumpLoad(DepositionState.LoadCell.BACK_LEFT);
 
-        assertEquals(42F, result, 0);
+        assertEquals(5F, result, 0);
     }
 
 }
