@@ -1,4 +1,4 @@
-image: registry.acm.case.edu/mls278/nasa-rmc-2017:latest
+image: registry.acm.case.edu/cwrubotix/nasa-rmc-2017:latest
 
 variables:
   MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2

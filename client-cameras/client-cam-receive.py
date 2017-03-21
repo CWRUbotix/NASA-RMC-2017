@@ -4,8 +4,8 @@ import numpy as np
 
 #Change demo to guest or local host, or another user, password tuple
 #Change ip address to the one for the server running the receive code
-credentials = pika.PlainCredentials('demo', 'demo')
-parameters = pika.ConnectionParameters('172.20.93.234', 5672,  '/', credentials=credentials)
+credentials = pika.PlainCredentials('guest', 'guest')
+parameters = pika.ConnectionParameters('192.168.0.103', 5672,  '/', credentials=credentials)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 channel.queue_declare(queue = 'cam1')
@@ -26,45 +26,45 @@ def callback1(ch,  method,  properties, body):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam1', img)
-        cv2.waitKey(15)
+        cv2.waitKey(1)
         
 def callback2(ch,  method,  properties, body):
     if (body is None):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam2', img)
-        cv2.waitKey(15)
+        cv2.waitKey(1)
         
 def callback3(ch,  method,  properties, body):
     if (body is None):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam3', img)
-        cv2.waitKey(15)      
+        cv2.waitKey(1)      
       
 def callback4(ch,  method,  properties, body):
     if (body is None):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam4', img)
-        cv2.waitKey(15)
+        cv2.waitKey(1)
         
 def callback5(ch,  method,  properties, body):
     if (body is None):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam5', img)
-        cv2.waitKey(15)
+        cv2.waitKey(1)
     
 #Consume
 channel.basic_consume(callback1,  queue = 'cam1',  no_ack = True)
