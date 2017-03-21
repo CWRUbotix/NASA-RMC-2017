@@ -7,8 +7,8 @@ amqp_server_addr = input('Robot address: ')
 
 with open('config/connection.yml') as connection_config_file:
     connection_config = yaml.safe_load(connection_config_file)
-	if not amqp_server_addr:
-		amqp_server_addr = connection_config['server-addr']
+    if not amqp_server_addr:
+        amqp_server_addr = connection_config['server-addr']
     amqp_server_user = connection_config['server-user']
     amqp_server_pass = connection_config['server-pass']
     amqp_exchange_name = connection_config['exchange-name']
