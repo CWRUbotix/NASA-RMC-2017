@@ -1,4 +1,4 @@
 server-addr: localhost
-server-user: cwrubotix
-server-pass: cwrubotix
+server-user: guest
+server-pass: guest
 exchange-name: amq.topic
