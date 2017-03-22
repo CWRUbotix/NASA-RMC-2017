@@ -26,15 +26,6 @@ public class DepositionState {
         BACK_LEFT,
         BACK_RIGHT
     }
-
-    /**
-     * The Configuration enum is used to represent the deposition subsystem's
-     * current dumping configuration
-     */
-    public enum Configuration {
-        STORED,
-        DUMPING
-    }
     
     /* Data members */
     private EnumMap <LoadCell, Float> loadCellValue;
@@ -91,13 +82,9 @@ public class DepositionState {
     
     /* State getter methods */
     
-    public Configuration getConfiguration() {
-        // TODO: use physical constants, real or made up, to get configuration
-        if (retracted) {
-            return Configuration.STORED;
-        } else {
-            return Configuration.DUMPING;
-        }
+    public boolean isStored() {
+        // TODO: use position too
+        return retracted;
     }
     
     public float getDumpLoad(LoadCell cell) {
