@@ -32,16 +32,16 @@ public class DepositionState {
      * current dumping configuration
      */
     public enum Configuration {
-        EXTENDED,
-		RETRACTED
+        STORED,
+        DUMPING
     }
     
     /* Data members */
-    private Configuration configuration;
     private EnumMap <LoadCell, Float> loadCellValue;
-    private float totalLoad;
-	private float dumpPos;
-	
+    private float dumpPos;
+    private boolean extended;
+    private boolean retracted;
+
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
     // need to do it for each sensor I think.
@@ -57,7 +57,6 @@ public class DepositionState {
          */
         
         // TODO: handle no input from sensor
-        configuration = Configuration.RETRACTED;
 
         loadCellValue = new EnumMap<>(LoadCell.class);
         loadCellValue.put(LoadCell.FRONT_LEFT, (float)0);
@@ -65,7 +64,7 @@ public class DepositionState {
         loadCellValue.put(LoadCell.BACK_LEFT, (float)0);
         loadCellValue.put(LoadCell.BACK_RIGHT, (float)0);
 
-		dumpPos = 0;
+        dumpPos = 0;
 
     }
     /* Update methods */
@@ -79,31 +78,31 @@ public class DepositionState {
     public void updateDumpPos (float pos, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
-        // TODO: consider updating stored configuration
         dumpPos = pos;
     }
     
     public void updateDumpLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
-        // TODO: use limit switches
-        configuration = Configuration.EXTENDED;
+        extended = pressed;
     }
     
     public void updateDumpLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
-        // TODO: use limit switches
-        configuration = Configuration.RETRACTED;
+        retracted = pressed;
     }
     
     /* State getter methods */
     
     public Configuration getConfiguration() {
         // TODO: use physical constants, real or made up, to get configuration
-		// probably update with limit switches, not sure right now
-        return configuration;
+        if (retracted) {
+            return Configuration.STORED;
+        } else {
+            return Configuration.DUMPING;
+        }
     }
     
     public float getDumpLoad(LoadCell cell) {
-		return loadCellValue.get(cell);
-	}
+        return loadCellValue.get(cell);
+    }
     
     public float getDumpPos() {
         return dumpPos;
