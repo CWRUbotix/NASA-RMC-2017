@@ -14,15 +14,6 @@ import java.time.Instant;
  */
 public class ExcavationState {
     
-    /**
-     * The Configuration enum is used to represent the excavation subsystem's
-     * current arm configuration
-     */
-    public enum Configuration {
-        EXTENDED,
-		RETRACTED
-    }
-    
     /* Data members */
 	private float conveyorRpm;
 	private float conveyorTranslationDisplacement;
@@ -100,11 +91,17 @@ public class ExcavationState {
     
     /* State getter methods */
     
-    public Configuration getConfiguration() {
-        // TODO: use physical constants, real or made up, to get configuration
-		// probably update with limit switches, not sure right now
-        //return configuration;
-        return Configuration.EXTENDED;
+    public boolean isClearOfStoredHopper() {
+        // TODO: Formula for excavation being clear of stored hopper
+        return false;
+    }
+    public boolean isClearOfDumpingHopper() {
+        // TODO: Formula for excavation being clear of dumping hopper
+        return false;
+    }
+    public boolean isInGround() {
+        // TODO: Formula for excavation being clear of stored hopper
+        return false;
     }
     
     public float getConveyorTranslationDisplacement() {
