@@ -40,7 +40,7 @@ public class LocomotionStateModuleTest {
     }
     
     @After
-    public void tearDown() throws IOException, TimeoutException {
+    public void tearDown() throws IOException, TimeoutException, InterruptedException {
         module.stop();
     }
 

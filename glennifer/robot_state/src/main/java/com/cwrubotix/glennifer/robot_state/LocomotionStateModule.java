@@ -248,9 +248,12 @@ public class LocomotionStateModule implements Runnable {
         thread.start();
     }
 
-    public void stop() throws IOException, TimeoutException {
+    public void stop() throws IOException, TimeoutException, InterruptedException {
         for (Thread t : subscriptionThreads) {
             t.interrupt();
+        }
+        for (Thread t : subscriptionThreads) {
+            t.join();
         }
         channel.close();
         connection.close();
