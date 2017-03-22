@@ -60,7 +60,7 @@ public class ExcavationStateModule implements Runnable {
                 handleConveyorTranslationLimitRetractedUpdate(body);
             }
         }
-    };
+    }
     
     private void handleConveyorRpmUpdate(byte[] body) throws IOException {
         RpmUpdate message = RpmUpdate.parseFrom(body);

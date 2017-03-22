@@ -123,7 +123,7 @@ public class LocomotionStateModule implements Runnable {
             subscriptionThreads.add(t);
             t.start();
         }
-    };
+    }
     
     private void handleWheelRpmUpdate(LocomotionState.Wheel wheel, byte[] body) throws IOException {
         RpmUpdate message = RpmUpdate.parseFrom(body);

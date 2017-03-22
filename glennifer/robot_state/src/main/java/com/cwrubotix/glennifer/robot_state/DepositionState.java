@@ -24,7 +24,7 @@ public class DepositionState {
         FRONT_LEFT,
         FRONT_RIGHT,
         BACK_LEFT,
-        BACK_RIGHT;
+        BACK_RIGHT
     }
 
     /**
@@ -51,7 +51,7 @@ public class DepositionState {
     public DepositionState() {
         /* Implementation note: In this constructor, all data members are
          * initialized to 0 because this class does not currently consider the
-         * case where it has never recieved input from a particular sensor. In
+         * case where it has never received input from a particular sensor. In
          * order to handle that case, initialization would need to be done
          * differently.
          */

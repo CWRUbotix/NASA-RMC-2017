@@ -30,7 +30,7 @@ public class LocomotionState {
         FRONT_LEFT,
         FRONT_RIGHT,
         BACK_LEFT,
-        BACK_RIGHT;
+        BACK_RIGHT
     }
     
     /**
@@ -41,7 +41,7 @@ public class LocomotionState {
         INTERMEDIATE,
         STRAIGHT,
         TURN,
-        STRAFE;
+        STRAFE
     }
     
     /* Data members */
@@ -58,7 +58,7 @@ public class LocomotionState {
     public LocomotionState() {
         /* Implementation note: In this constructor, all data members are
          * initialized to 0 because this class does not currently consider the
-         * case where it has never recieved input from a particular sensor. In
+         * case where it has never received input from a particular sensor. In
          * order to handle that case, initialization would need to be done
          * differently.
          */

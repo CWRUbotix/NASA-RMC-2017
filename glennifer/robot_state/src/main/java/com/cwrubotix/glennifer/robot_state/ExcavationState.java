@@ -1,7 +1,6 @@
 package com.cwrubotix.glennifer.robot_state;
 
 import java.time.Instant;
-import java.util.EnumMap;
 
 /**
  * A ExcavationState object encapsulates the current state of the robot's
@@ -40,7 +39,7 @@ public class ExcavationState {
     public ExcavationState() {
         /* Implementation note: In this constructor, all data members are
          * initialized to 0 because this class does not currently consider the
-         * case where it has never recieved input from a particular sensor. In
+         * case where it has never received input from a particular sensor. In
          * order to handle that case, initialization would need to be done
          * differently.
          */
