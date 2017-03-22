@@ -35,6 +35,20 @@ public class DepositionStateTest {
         assertEquals(dumpPos, resultDumpPos, 0);
     }
 
+    @Test
+    public void testLimitSwitches() throws Exception {
+        Instant time = Instant.now();
+        DepositionState instance = new DepositionState();
+        instance.updateDumpLimitExtended(true, time);
+        assertTrue(instance.getDumpExtended());
+        instance.updateDumpLimitExtended(false, time);
+        assertFalse(instance.getDumpExtended());
+        instance.updateDumpLimitRetracted(true, time);
+        assertTrue(instance.getDumpRetracted());
+        instance.updateDumpLimitRetracted(false, time);
+        assertFalse(instance.getDumpRetracted());
+    }
+
     /**
      * Test of updateArmLimitExtended, UpdateArmLimitRetracted methods, of class DepositionState.
      */

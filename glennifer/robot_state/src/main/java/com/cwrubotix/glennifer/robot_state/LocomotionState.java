@@ -183,4 +183,12 @@ public class LocomotionState {
     public float getWheelPodPos(Wheel wheel) {
         return wheelPodPos.get(wheel);
     }
+
+    public boolean getWheelPodLimitRetracted(Wheel wheel) {
+        return wheelPodLimitRetracted.get(wheel);
+    }
+
+    public boolean getWheelPodLimitExtended(Wheel wheel) {
+        return wheelPodLimitExtended.get(wheel);
+    }
 }

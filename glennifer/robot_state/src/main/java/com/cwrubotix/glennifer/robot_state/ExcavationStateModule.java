@@ -78,7 +78,7 @@ public class ExcavationStateModule implements Runnable {
         float displacement = message.getDisplacement();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorTranslationDisplacement(displacement, time);
+            state.updateTranslationDisplacement(displacement, time);
         } catch (RobotFaultException e) {
             ExcavationStateModule.this.sendFault(e.getFaultCode(), time);
         }
@@ -122,7 +122,7 @@ public class ExcavationStateModule implements Runnable {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorTranslationLimitExtended(pressed, time);
+            state.updateTranslationLimitExtended(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -133,7 +133,7 @@ public class ExcavationStateModule implements Runnable {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorTranslationLimitRetracted(pressed, time);
+            state.updateTranslationLimitRetracted(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }

@@ -16,7 +16,7 @@ public class ExcavationState {
     
     /* Data members */
 	private float conveyorRpm;
-	private float conveyorTranslationDisplacement;
+	private float translationDisplacement;
 	private float armPos;
 	private boolean armRetracted;
     private boolean armExtended;
@@ -39,7 +39,7 @@ public class ExcavationState {
         
         // TODO: handle no input from sensor
         conveyorRpm = 0;
-        conveyorTranslationDisplacement = 0;
+        translationDisplacement = 0;
 		armPos = 0;
         armRetracted = false;
         armExtended = false;
@@ -64,11 +64,11 @@ public class ExcavationState {
         armPos = pos;
     }
 	
-	public void updateConveyorTranslationDisplacement (float displacement, Instant time) throws RobotFaultException {
+	public void updateTranslationDisplacement(float displacement, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
         // TODO: consider updating stored configuration
-        conveyorTranslationDisplacement = displacement;
+        translationDisplacement = displacement;
     }
     
     public void updateArmLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
@@ -81,11 +81,11 @@ public class ExcavationState {
         armRetracted = pressed;
     }
 	
-	public void updateConveyorTranslationLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
+	public void updateTranslationLimitExtended(boolean pressed, Instant time) throws RobotFaultException {
         translationExtended = pressed;
     }
     
-    public void updateConveyorTranslationLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
+    public void updateTranslationLimitRetracted(boolean pressed, Instant time) throws RobotFaultException {
         translationRetracted = pressed;
     }
     
@@ -104,8 +104,8 @@ public class ExcavationState {
         return false;
     }
     
-    public float getConveyorTranslationDisplacement() {
-		return conveyorTranslationDisplacement;
+    public float getTranslationDisplacement() {
+		return translationDisplacement;
 	}
         
     public float getConveyorRpm() {
@@ -115,4 +115,12 @@ public class ExcavationState {
     public float getArmPos() {
         return armPos;
     }
+
+    public boolean getArmRetracted() { return armRetracted; }
+
+    public boolean getArmExtended() { return armExtended; }
+
+    public boolean getTranslationRetracted() { return translationRetracted; }
+
+    public boolean getTranslationExtended() { return translationExtended; }
 }	

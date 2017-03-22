@@ -94,4 +94,8 @@ public class DepositionState {
     public float getDumpPos() {
         return dumpPos;
     }
+
+    public boolean getDumpExtended() { return extended; }
+
+    public boolean getDumpRetracted() { return retracted; }
 }	
