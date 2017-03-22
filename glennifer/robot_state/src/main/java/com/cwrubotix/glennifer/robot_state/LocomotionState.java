@@ -12,8 +12,15 @@ import java.util.EnumMap;
  * 
  * This class does not deal with messages or wire formats. It works purely at
  * the logical level.
+ *
+ *
  */
 public class LocomotionState {
+
+    private static final float WHEEL_POD_POS_MAX_STRAIGHT = 10f;
+    private static final float WHEEL_POD_POS_MIN_TURN = 40f;
+    private static final float WHEEL_POD_POS_MAX_TURN = 50f;
+    private static final float WHEEL_POD_POS_MIN_STRAFE = 80f;
     
     /**
      * The Wheel enum is used to specify one of the locomotion subsystem's 4
@@ -40,10 +47,8 @@ public class LocomotionState {
     /* Data members */
     private EnumMap <Wheel, Float> wheelRpm;
     private EnumMap <Wheel, Float> wheelPodPos;
-    private float forwardSpeed;
-    private float turnSpeed;
-    private float strafeSpeed;
-    private Configuration configuration = Configuration.STRAIGHT;
+    private EnumMap <Wheel, Boolean> wheelPodLimitRetracted;
+    private EnumMap <Wheel, Boolean> wheelPodLimitExtended;
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
     // need to do it for each sensor I think.
@@ -71,10 +76,18 @@ public class LocomotionState {
         wheelPodPos.put(Wheel.FRONT_RIGHT, (float)0);
         wheelPodPos.put(Wheel.BACK_LEFT, (float)0);
         wheelPodPos.put(Wheel.BACK_RIGHT, (float)0);
-        
-        forwardSpeed = 0;
-        turnSpeed = 0;
-        strafeSpeed = 0;
+
+        wheelPodLimitRetracted = new EnumMap<>(Wheel.class);
+        wheelPodLimitRetracted.put(Wheel.FRONT_LEFT, false);
+        wheelPodLimitRetracted.put(Wheel.FRONT_RIGHT, false);
+        wheelPodLimitRetracted.put(Wheel.BACK_LEFT, false);
+        wheelPodLimitRetracted.put(Wheel.BACK_RIGHT, false);
+
+        wheelPodLimitExtended = new EnumMap<>(Wheel.class);
+        wheelPodLimitExtended.put(Wheel.FRONT_LEFT, false);
+        wheelPodLimitExtended.put(Wheel.FRONT_RIGHT, false);
+        wheelPodLimitExtended.put(Wheel.BACK_LEFT, false);
+        wheelPodLimitExtended.put(Wheel.BACK_RIGHT, false);
     }
     
     /* Update methods */
@@ -83,28 +96,11 @@ public class LocomotionState {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
         wheelRpm.put(wheel, rpm);
-
-        //update speed
-        //currently speed is just the average of the rpm of the 4 wheels
-        //TODO: Use real constants to make this actually accurate
-        float speed = (wheelRpm.get(Wheel.FRONT_LEFT) + wheelRpm.get(Wheel.FRONT_RIGHT) + wheelRpm.get(Wheel.BACK_LEFT) + wheelRpm.get(Wheel.BACK_RIGHT))/4;
-        switch(configuration){
-            case STRAIGHT:
-                forwardSpeed = speed;
-                break;
-            case TURN:
-                turnSpeed = speed;
-                break;
-            case STRAFE:
-                strafeSpeed = speed;
-                break;
-        }
     }
     
     public void updateWheelPodPos (Wheel wheel, float pos, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
-        // TODO: consider updating stored configuration
         wheelPodPos.put(wheel, pos);
     }
     
@@ -116,38 +112,68 @@ public class LocomotionState {
         //When it is fully extended, we know we are in STRAFE
         //Turning configuration is somewhere in between, we can't tell with the limit switches.
         //For all situations, we should apparently use the potentiometer to double check
-
-        //For now, when we are extended, we are probably in STRAFE
-        configuration = Configuration.STRAFE;
+        wheelPodLimitExtended.put(wheel, pressed);
     }
     
     public void updateWheelPodLimitRetracted (Wheel wheel, boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
-
-        //For now, when we are retracted, we are probably in STRAIGHT
-        configuration = Configuration.STRAIGHT;
+        wheelPodLimitRetracted.put(wheel, pressed);
     }
     
     /* State getter methods */
     
     public Configuration getConfiguration() {
-        // TODO: use physical constants, real or made up, to get configuration
-        return configuration;
+        // TODO: use real physical constants to get configuration
+        Configuration lastConfig = null;
+        for (Wheel wheel : Wheel.values()) {
+
+            // Determined the current wheel's individual config
+            float podPos = wheelPodPos.get(wheel);
+            boolean retracted = wheelPodLimitRetracted.get(wheel);
+            boolean extended = wheelPodLimitExtended.get(wheel);
+            Configuration currentConfig = Configuration.INTERMEDIATE;
+            if (retracted) {
+                currentConfig = Configuration.STRAIGHT;
+            } else if (extended) {
+                currentConfig = Configuration.STRAFE;
+            } else if (podPos <= WHEEL_POD_POS_MAX_STRAIGHT) {
+                currentConfig = Configuration.STRAIGHT;
+            } else if (podPos >= WHEEL_POD_POS_MIN_STRAFE) {
+                currentConfig = Configuration.STRAFE;
+            } else if (podPos <= WHEEL_POD_POS_MAX_TURN && podPos >= WHEEL_POD_POS_MIN_TURN) {
+                currentConfig = Configuration.TURN;
+            }
+
+            // Compare to last config
+            if (currentConfig == Configuration.INTERMEDIATE) {
+                return currentConfig;
+            }
+            if (lastConfig != null) {
+                if (currentConfig != lastConfig) {
+                    return Configuration.INTERMEDIATE;
+                }
+            }
+            lastConfig = currentConfig;
+        }
+        return lastConfig;
     }
     
     public float getStraightSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        return forwardSpeed;
+        // All wheels are positive
+        return (wheelRpm.get(Wheel.FRONT_LEFT) + wheelRpm.get(Wheel.FRONT_RIGHT) + wheelRpm.get(Wheel.BACK_LEFT) + wheelRpm.get(Wheel.BACK_RIGHT))/4;
     }
     
     public float getTurnSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        return turnSpeed;
+        // Left wheels are positive, right wheels are negative
+        return (wheelRpm.get(Wheel.FRONT_LEFT) - wheelRpm.get(Wheel.FRONT_RIGHT) + wheelRpm.get(Wheel.BACK_LEFT) - wheelRpm.get(Wheel.BACK_RIGHT))/4;
     }
     
     public float getStrafeSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        return strafeSpeed;
+        // FL and BR are positive, FR and BL are negative
+        return (wheelRpm.get(Wheel.FRONT_LEFT) - wheelRpm.get(Wheel.FRONT_RIGHT) - wheelRpm.get(Wheel.BACK_LEFT) + wheelRpm.get(Wheel.BACK_RIGHT))/4;
     }
     
     public float getWheelRpm(Wheel wheel) {
