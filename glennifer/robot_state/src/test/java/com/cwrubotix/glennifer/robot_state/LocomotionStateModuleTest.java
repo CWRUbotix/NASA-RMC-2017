@@ -11,7 +11,10 @@ import com.cwrubotix.glennifer.Messages.PositionUpdate;
 import com.cwrubotix.glennifer.Messages.Fault;
 import com.cwrubotix.glennifer.Messages.UnixTime;
 import com.rabbitmq.client.GetResponse;
+
+import java.io.IOException;
 import java.time.Instant;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -39,14 +42,13 @@ public class LocomotionStateModuleTest {
     public void setUp() throws InterruptedException {
         state = new LocomotionState();
         module = new LocomotionStateModule(state, "amq.topic");
-        thread = new Thread(module);
-        thread.start();
+        module.start();
         module.awaitReady();
     }
     
     @After
-    public void tearDown() {
-        thread.stop();
+    public void tearDown() throws IOException, TimeoutException {
+        module.stop();
     }
 
     /**

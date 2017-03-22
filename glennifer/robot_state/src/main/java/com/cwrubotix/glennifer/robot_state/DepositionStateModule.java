@@ -113,6 +113,7 @@ public class DepositionStateModule implements Runnable {
     /* Data Members */
     private DepositionState state;
     private String exchangeName;
+    private Connection connection;
     private Channel channel;
     private CountDownLatch ready;
     
@@ -144,7 +145,7 @@ public class DepositionStateModule implements Runnable {
     public void runWithExceptions() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        Connection connection = factory.newConnection();
+        connection = factory.newConnection();
         this.channel = connection.createChannel();
         String queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, exchangeName, "sensor.deposition.#");
@@ -172,7 +173,17 @@ public class DepositionStateModule implements Runnable {
             System.out.println(e.getMessage());
         }
     }
-    
+
+    public void start() {
+        Thread thread = new Thread(this);
+        thread.start();
+    }
+
+    public void stop() throws IOException, TimeoutException {
+        channel.close();
+        connection.close();
+    }
+
     public static void main(String[] args) {
         DepositionState state = new DepositionState();
         DepositionStateModule module = new DepositionStateModule(state);

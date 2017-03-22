@@ -168,6 +168,7 @@ public class LocomotionStateModule implements Runnable {
     /* Data Members */
     private LocomotionState state;
     private String exchangeName;
+    private Connection connection;
     public Channel channel;
     private CountDownLatch ready;
     
@@ -200,7 +201,7 @@ public class LocomotionStateModule implements Runnable {
         // Setup connection
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        Connection connection = factory.newConnection();
+        connection = factory.newConnection();
         this.channel = connection.createChannel();
 
         // Subscribe to sensor updates
@@ -235,6 +236,16 @@ public class LocomotionStateModule implements Runnable {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
+    }
+
+    public void start() {
+        Thread thread = new Thread(this);
+        thread.start();
+    }
+
+    public void stop() throws IOException, TimeoutException {
+        channel.close();
+        connection.close();
     }
     
     public static void main(String[] args) {
