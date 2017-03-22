@@ -6,8 +6,8 @@ import time
 
 #Change demo to guest or local host, or another user, password tuple
 #Change ip address to the one for the server running the receive code
-credentials = pika.PlainCredentials('demo', 'demo')
-parameters = pika.ConnectionParameters('172.20.93.234',  5672, '/', credentials=credentials)
+credentials = pika.PlainCredentials('guest', 'guest')
+parameters = pika.ConnectionParameters('192.168.0.103',  5672, '/', credentials=credentials)
 
 #Sends a message
 def send1(msg):
@@ -117,3 +117,4 @@ while(True):
     getCam4()
     #Camera Five Update
     getCam5()
+    time.sleep(1)
