@@ -173,7 +173,7 @@ public class LocomotionStateModule implements Runnable {
     private LocomotionState state;
     private String exchangeName;
     private Connection connection;
-    public Channel channel;
+    private Channel channel;
     private CountDownLatch ready;
     private Queue<Thread> subscriptionThreads = new LinkedList<>();
     
