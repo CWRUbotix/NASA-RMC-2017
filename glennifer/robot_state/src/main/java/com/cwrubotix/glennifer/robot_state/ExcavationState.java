@@ -24,12 +24,14 @@ public class ExcavationState {
     }
     
     /* Data members */
-    private Configuration configuration;
 	private float conveyorRpm;
 	private float conveyorTranslationDisplacement;
 	private float armPos;
-	
-	private float conveyorSpeed;
+	private boolean armRetracted;
+    private boolean armExtended;
+    private boolean translationRetracted;
+    private boolean translationExtended;
+
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
     // need to do it for each sensor I think.
@@ -45,11 +47,13 @@ public class ExcavationState {
          */
         
         // TODO: handle no input from sensor
-        configuration = Configuration.RETRACTED;
         conveyorRpm = 0;
         conveyorTranslationDisplacement = 0;
 		armPos = 0;
-		conveyorSpeed = 0;
+        armRetracted = false;
+        armExtended = false;
+        translationRetracted = false;
+        translationExtended = false;
 
     }
     
@@ -78,20 +82,20 @@ public class ExcavationState {
     
     public void updateArmLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
-        configuration = Configuration.EXTENDED;
+        armExtended = pressed;
     }
     
     public void updateArmLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
-        configuration = Configuration.RETRACTED;
+        armRetracted = pressed;
     }
 	
 	public void updateConveyorTranslationLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
-        // TODO: use limit switches
+        translationExtended = pressed;
     }
     
     public void updateConveyorTranslationLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
-        // TODO: use limit switches
+        translationRetracted = pressed;
     }
     
     /* State getter methods */
@@ -99,7 +103,8 @@ public class ExcavationState {
     public Configuration getConfiguration() {
         // TODO: use physical constants, real or made up, to get configuration
 		// probably update with limit switches, not sure right now
-        return configuration;
+        //return configuration;
+        return Configuration.EXTENDED;
     }
     
     public float getConveyorTranslationDisplacement() {
@@ -112,10 +117,5 @@ public class ExcavationState {
     
     public float getArmPos() {
         return armPos;
-    }
-	
-	public float getConveyorSpeed() {
-        // TODO: use physical constants, real or made up, to get speed
-        return conveyorSpeed;
     }
 }	
