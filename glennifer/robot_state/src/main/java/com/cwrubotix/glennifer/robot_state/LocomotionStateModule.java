@@ -22,6 +22,8 @@ import com.cwrubotix.glennifer.Messages.UnixTime;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -117,7 +119,9 @@ public class LocomotionStateModule implements Runnable {
             float interval = msg.getInterval();
             int interval_ms = (int)(interval / 1000);
             String replyKey = msg.getReplyKey();
-            new Thread(new SubscriptionRunnable(replyKey, interval_ms)).start();
+            Thread t = new Thread(new SubscriptionRunnable(replyKey, interval_ms));
+            subscriptionThreads.add(t);
+            t.start();
         }
     };
     
@@ -171,6 +175,7 @@ public class LocomotionStateModule implements Runnable {
     private Connection connection;
     public Channel channel;
     private CountDownLatch ready;
+    private Queue<Thread> subscriptionThreads = new LinkedList<>();
     
     public LocomotionStateModule(LocomotionState state) {
         this(state, "amq.topic");
@@ -244,6 +249,9 @@ public class LocomotionStateModule implements Runnable {
     }
 
     public void stop() throws IOException, TimeoutException {
+        for (Thread t : subscriptionThreads) {
+            t.interrupt();
+        }
         channel.close();
         connection.close();
     }
