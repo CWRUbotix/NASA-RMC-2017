@@ -1,24 +1,17 @@
 package com.cwrubotix.glennifer.robot_state;
 
+import com.cwrubotix.glennifer.Messages;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-
-import com.cwrubotix.glennifer.Messages.LoadUpdate;
-import com.cwrubotix.glennifer.Messages.LimitUpdate;
-import com.cwrubotix.glennifer.Messages.PositionUpdate;
-import com.cwrubotix.glennifer.Messages.Fault;
-import com.cwrubotix.glennifer.Messages.UnixTime;
-import com.rabbitmq.client.GetResponse;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -30,8 +23,8 @@ public class DepositionStateModuleTest {
 
     public DepositionStateModuleTest() { }
 
-    private UnixTime instantToUnixTime(Instant time) {
-        UnixTime.Builder unixTimeBuilder = UnixTime.newBuilder();
+    private Messages.UnixTime instantToUnixTime(Instant time) {
+        Messages.UnixTime.Builder unixTimeBuilder = Messages.UnixTime.newBuilder();
         unixTimeBuilder.setTimeInt(time.getEpochSecond());
         unixTimeBuilder.setTimeFrac(time.getNano() / 1000000000F);
         return unixTimeBuilder.build();
@@ -60,10 +53,10 @@ public class DepositionStateModuleTest {
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
-        LoadUpdate.Builder loadUpdateFactory = LoadUpdate.newBuilder();
+        Messages.LoadUpdate.Builder loadUpdateFactory = Messages.LoadUpdate.newBuilder();
         loadUpdateFactory.setLoad(5F);
         loadUpdateFactory.setTimestamp(instantToUnixTime(Instant.now()));
-        LoadUpdate message = loadUpdateFactory.build();
+        Messages.LoadUpdate message = loadUpdateFactory.build();
         channel.basicPublish("amq.topic", "sensor.deposition.dump_load.back_left", null, message.toByteArray());
 
         channel.close();
