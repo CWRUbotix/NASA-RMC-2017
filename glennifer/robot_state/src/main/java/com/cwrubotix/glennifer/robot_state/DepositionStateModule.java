@@ -15,6 +15,8 @@ import com.cwrubotix.glennifer.Messages.UnixTime;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -112,6 +114,7 @@ public class DepositionStateModule implements Runnable {
     private DepositionState state;
     private String exchangeName;
     private Channel channel;
+    private CountDownLatch ready;
     
     public DepositionStateModule(DepositionState state) {
         this(state, "amq.topic");
@@ -120,6 +123,7 @@ public class DepositionStateModule implements Runnable {
     public DepositionStateModule(DepositionState state, String exchangeName) {
         this.state = state;
         this.exchangeName = exchangeName;
+        this.ready = new CountDownLatch(1);
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -145,6 +149,15 @@ public class DepositionStateModule implements Runnable {
         String queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, exchangeName, "sensor.deposition.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
+        ready.countDown();
+    }
+
+    public void awaitReady() throws InterruptedException {
+        ready.await();
+    }
+
+    public void awaitReady(long val, TimeUnit timeUnit) throws InterruptedException {
+        ready.await(val, timeUnit);
     }
     
     @Override

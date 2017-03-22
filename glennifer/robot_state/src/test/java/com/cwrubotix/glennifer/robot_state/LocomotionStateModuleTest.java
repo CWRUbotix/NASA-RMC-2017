@@ -36,11 +36,12 @@ public class LocomotionStateModuleTest {
     }
     
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
         state = new LocomotionState();
         module = new LocomotionStateModule(state, "amq.topic");
         thread = new Thread(module);
         thread.start();
+        module.awaitReady();
     }
     
     @After
@@ -53,7 +54,6 @@ public class LocomotionStateModuleTest {
      */
     @Test
     public void testRun() throws Exception {
-        Thread.sleep(1000);
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         Connection connection = factory.newConnection();

@@ -17,6 +17,8 @@ import com.cwrubotix.glennifer.Messages.UnixTime;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -141,6 +143,7 @@ public class ExcavationStateModule implements Runnable {
     private ExcavationState state;
     private String exchangeName;
     public Channel channel;
+    private CountDownLatch ready;
     
     public ExcavationStateModule(ExcavationState state) {
         this(state, "amq.topic");
@@ -149,6 +152,7 @@ public class ExcavationStateModule implements Runnable {
     public ExcavationStateModule(ExcavationState state, String exchangeName) {
         this.state = state;
         this.exchangeName = exchangeName;
+        this.ready = new CountDownLatch(1);
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -174,6 +178,15 @@ public class ExcavationStateModule implements Runnable {
         String queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, exchangeName, "sensor.excavation.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
+        ready.countDown();
+    }
+
+    public void awaitReady() throws InterruptedException {
+        ready.await();
+    }
+
+    public void awaitReady(long val, TimeUnit timeUnit) throws InterruptedException {
+        ready.await(val, timeUnit);
     }
     
     @Override

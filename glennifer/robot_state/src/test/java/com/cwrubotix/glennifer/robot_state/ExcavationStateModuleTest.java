@@ -35,11 +35,12 @@ public class ExcavationStateModuleTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
         state = new ExcavationState();
         module = new ExcavationStateModule(state, "amq.topic");
         thread = new Thread(module);
         thread.start();
+        module.awaitReady();
     }
 
     @After
@@ -52,7 +53,6 @@ public class ExcavationStateModuleTest {
      */
     @Test
     public void testRun() throws Exception {
-        Thread.sleep(1000);
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         Connection connection = factory.newConnection();

@@ -22,6 +22,8 @@ import com.cwrubotix.glennifer.Messages.UnixTime;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -167,6 +169,7 @@ public class LocomotionStateModule implements Runnable {
     private LocomotionState state;
     private String exchangeName;
     public Channel channel;
+    private CountDownLatch ready;
     
     public LocomotionStateModule(LocomotionState state) {
         this(state, "amq.topic");
@@ -175,6 +178,7 @@ public class LocomotionStateModule implements Runnable {
     public LocomotionStateModule(LocomotionState state, String exchangeName) {
         this.state = state;
         this.exchangeName = exchangeName;
+        this.ready = new CountDownLatch(1);
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -208,6 +212,16 @@ public class LocomotionStateModule implements Runnable {
         queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, exchangeName, "state.locomotion.subscribe");
         this.channel.basicConsume(queueName, true, new RequestConsumer(channel));
+
+        ready.countDown();
+    }
+
+    public void awaitReady() throws InterruptedException {
+        ready.await();
+    }
+
+    public void awaitReady(long val, TimeUnit timeUnit) throws InterruptedException {
+        ready.await(val, timeUnit);
     }
     
     @Override
