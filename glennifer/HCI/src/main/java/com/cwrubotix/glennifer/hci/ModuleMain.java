@@ -24,7 +24,7 @@ public class ModuleMain {
 	public static void runWithConnectionExceptions() throws IOException, TimeoutException {
 		//Connect and Configure AMPQ
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("192.168.0.100"); //replace local host with host name
+		factory.setHost("localhost"); //replace local host with host name
 		factory.setUsername("usera");
 		factory.setPassword("usera");
 		Connection connection = factory.newConnection(); // throws
@@ -96,13 +96,20 @@ public class ModuleMain {
 			e.printStackTrace();
 		}
 		hci = new HardwareControlInterface(sport);
+
 		// Initialize sensors
 
-
+		SensorConfig sc = new SensorConfig();
+		sc.name = "Sensor 0 name";
+		sc.description = "Sensor 0 description";
+		sc.ID = 0;
+		sc.limitSwitch = false;
+		sc.scale = 1;
+		Sensor s0 = new Sensor(sc);
 
 		// Add sensors
 
-
+		hci.addSenor(s0, 0);
 
 		// Initialize actuators
 		ActuatorConfig configLBM = new ActuatorConfig();
@@ -233,6 +240,19 @@ public class ModuleMain {
 			}
 		};
 		channel.basicConsume(queueName, true, consumer);
+
+		// Main loop to get sensor data
+		try {
+			while (true) {
+				Sensor s = hci.getSensorFromID(0);
+				if (s.data.isEmpty()) {
+					System.out.println("empty");
+				} else {
+					System.out.println(s.data.get(0));
+				}
+				Thread.sleep(100);
+			}
+		} catch (InterruptedException e) { }
 	}
 
 	private static int sign(double x) {
