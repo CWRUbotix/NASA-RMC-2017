@@ -24,7 +24,7 @@ public class ModuleMain {
 	public static void runWithConnectionExceptions() throws IOException, TimeoutException {
 		//Connect and Configure AMPQ
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("192.168.0.100"); //replace local host with host name
+		factory.setHost("localhost"); //replace local host with host name
 		factory.setUsername("usera");
 		factory.setPassword("usera");
 		Connection connection = factory.newConnection(); // throws
@@ -96,6 +96,7 @@ public class ModuleMain {
 			e.printStackTrace();
 		}
 		hci = new HardwareControlInterface(sport);
+                
 		// Initialize sensors
                 
                 /* Locomotion */
@@ -338,6 +339,7 @@ public class ModuleMain {
                 hci.addSensor(new Sensor(configDEPOSBH), configDEPOSBH.ID);
                 
                 // Initialize actuators
+                
 		ActuatorConfig configLBM = new ActuatorConfig();
 		configLBM.ID = 0;
 		configLBM.name = "Left Rear Drive Motor";
@@ -466,6 +468,19 @@ public class ModuleMain {
 			}
 		};
 		channel.basicConsume(queueName, true, consumer);
+
+		// Main loop to get sensor data
+		try {
+			while (true) {
+				Sensor s = hci.getSensorFromID(0);
+				if (s.data.isEmpty()) {
+					System.out.println("empty");
+				} else {
+					System.out.println(s.data.get(0));
+				}
+				Thread.sleep(100);
+			}
+		} catch (InterruptedException e) { }
 	}
 
 	private static int sign(double x) {
