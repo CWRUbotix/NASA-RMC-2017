@@ -7,13 +7,16 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 import jssc.SerialPortTimeoutException;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public class ModuleMain {
 	public static final int baud = 9600;
-	public static final String EXCHANGE_NAME = "amq.topic";
 	
 	/* Listen for Topics */
 	//Motor Controls
@@ -22,11 +25,21 @@ public class ModuleMain {
 	private static HardwareControlInterface hci;
 
 	public static void runWithConnectionExceptions() throws IOException, TimeoutException {
+		// Read connection config
+		InputStream input = new FileInputStream("config/connection.yml");
+		Yaml yaml = new Yaml();
+		Object connectionConfigObj = yaml.load(input);
+		Map<String, String> connectionConfig = (Map<String, String>)connectionConfigObj;
+		String serverAddress = connectionConfig.get("server-addr");
+		String serverUsername = connectionConfig.get("server-user");
+		String serverPassword = connectionConfig.get("server-pass");
+		String exchangeName = connectionConfig.get("exchangeName");
+
 		//Connect and Configure AMPQ
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("192.168.0.100"); //replace local host with host name
-		factory.setUsername("usera");
-		factory.setPassword("usera");
+		factory.setHost(serverAddress); //replace local host with host name
+		factory.setUsername(serverUsername);
+		factory.setPassword(serverPassword);
 		Connection connection = factory.newConnection(); // throws
 		Channel channel = connection.createChannel(); // throws
 		String queueName = channel.queueDeclare().getQueue();
@@ -190,7 +203,7 @@ public class ModuleMain {
 		//Listen for messages
 		//if
 
-		channel.queueBind(queueName, EXCHANGE_NAME, motorTopic);
+		channel.queueBind(queueName, exchangeName, motorTopic);
 
 
 		//Print waiting for messages

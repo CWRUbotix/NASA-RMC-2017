@@ -3,11 +3,17 @@ import numpy as np
 import pika
 import sys
 import time
+import yaml
 
-#Change demo to guest or local host, or another user, password tuple
-#Change ip address to the one for the server running the receive code
-credentials = pika.PlainCredentials('guest', 'guest')
-parameters = pika.ConnectionParameters('192.168.0.103',  5672, '/', credentials=credentials)
+with open('config/connection.yml') as connection_config_file:
+    connection_config = yaml.safe_load(connection_config_file)
+    amqp_server_addr = connection_config['server-addr']
+    amqp_server_user = connection_config['server-user']
+    amqp_server_pass = connection_config['server-pass']
+    amqp_exchange_name = connection_config['exchange-name']
+
+credentials = pika.PlainCredentials(amqp_server_user, amqp_server_pass)
+parameters = pika.ConnectionParameters(amqp_server_addr,  5672, '/', credentials=credentials)
 
 #Sends a message
 def send1(msg):
