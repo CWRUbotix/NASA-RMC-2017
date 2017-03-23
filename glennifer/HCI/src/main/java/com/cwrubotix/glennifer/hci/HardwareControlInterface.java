@@ -97,7 +97,7 @@ public class HardwareControlInterface implements Runnable {
 	 * @param id The ID of the sensor
 	 * @return 0 if success, 1 if that ID is already registered
 	 */
-	public int addSenor(Sensor sensor, int id) {
+	public int addSensor(Sensor sensor, int id) {
 		if(sensors.containsKey(id)) {
 			return 1;
 		} else {
