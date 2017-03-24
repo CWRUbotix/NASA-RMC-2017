@@ -20,7 +20,6 @@ public class LocomotionStateModuleTest {
     
     private LocomotionState state; // TODO: mock this
     private LocomotionStateModule module;
-    private Thread thread;
     
     public LocomotionStateModuleTest() { }
     
@@ -36,7 +35,6 @@ public class LocomotionStateModuleTest {
         state = new LocomotionState();
         module = new LocomotionStateModule(state, "amq.topic");
         module.start();
-        module.awaitReady();
     }
     
     @After

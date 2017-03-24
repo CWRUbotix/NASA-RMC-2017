@@ -24,15 +24,13 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
  *
  * @author Michael
  */
-public class LocomotionStateModule implements Runnable {
+public class LocomotionStateModule {
 
     class SubscriptionRunnable implements Runnable {
 
@@ -174,7 +172,6 @@ public class LocomotionStateModule implements Runnable {
     private String exchangeName;
     private Connection connection;
     private Channel channel;
-    private CountDownLatch ready;
     private Queue<Thread> subscriptionThreads = new LinkedList<>();
     
     public LocomotionStateModule(LocomotionState state) {
@@ -184,7 +181,6 @@ public class LocomotionStateModule implements Runnable {
     public LocomotionStateModule(LocomotionState state, String exchangeName) {
         this.state = state;
         this.exchangeName = exchangeName;
-        this.ready = new CountDownLatch(1);
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -218,20 +214,9 @@ public class LocomotionStateModule implements Runnable {
         queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, exchangeName, "state.locomotion.subscribe");
         this.channel.basicConsume(queueName, true, new RequestConsumer(channel));
-
-        ready.countDown();
     }
 
-    public void awaitReady() throws InterruptedException {
-        ready.await();
-    }
-
-    public void awaitReady(long val, TimeUnit timeUnit) throws InterruptedException {
-        ready.await(val, timeUnit);
-    }
-    
-    @Override
-    public void run() {
+    public void start() {
         try {
             runWithExceptions();
         } catch (Exception e) {
@@ -241,11 +226,6 @@ public class LocomotionStateModule implements Runnable {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
-    }
-
-    public void start() {
-        Thread thread = new Thread(this);
-        thread.start();
     }
 
     public void stop() throws IOException, TimeoutException, InterruptedException {
@@ -262,10 +242,6 @@ public class LocomotionStateModule implements Runnable {
     public static void main(String[] args) {
         LocomotionState state = new LocomotionState();
         LocomotionStateModule module = new LocomotionStateModule(state);
-        try {
-            module.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        module.start();
     }
 }

@@ -17,15 +17,13 @@ import com.cwrubotix.glennifer.Messages.UnixTime;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
  *
  * @author Michael
  */
-public class ExcavationStateModule implements Runnable {
+public class ExcavationStateModule {
     
     /* Consumer callback class and methods */
     
@@ -144,7 +142,6 @@ public class ExcavationStateModule implements Runnable {
     private String exchangeName;
     private Connection connection;
     public Channel channel;
-    private CountDownLatch ready;
     
     public ExcavationStateModule(ExcavationState state) {
         this(state, "amq.topic");
@@ -153,7 +150,6 @@ public class ExcavationStateModule implements Runnable {
     public ExcavationStateModule(ExcavationState state, String exchangeName) {
         this.state = state;
         this.exchangeName = exchangeName;
-        this.ready = new CountDownLatch(1);
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -179,19 +175,9 @@ public class ExcavationStateModule implements Runnable {
         String queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, exchangeName, "sensor.excavation.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
-        ready.countDown();
     }
 
-    public void awaitReady() throws InterruptedException {
-        ready.await();
-    }
-
-    public void awaitReady(long val, TimeUnit timeUnit) throws InterruptedException {
-        ready.await(val, timeUnit);
-    }
-    
-    @Override
-    public void run() {
+    public void start() {
         try {
             runWithExceptions();
         } catch (Exception e) {
@@ -203,11 +189,6 @@ public class ExcavationStateModule implements Runnable {
         }
     }
 
-    public void start() {
-        Thread thread = new Thread(this);
-        thread.start();
-    }
-
     public void stop() throws IOException, TimeoutException {
         channel.close();
         connection.close();
@@ -216,10 +197,6 @@ public class ExcavationStateModule implements Runnable {
     public static void main(String[] args) {
         ExcavationState state = new ExcavationState();
         ExcavationStateModule module = new ExcavationStateModule(state);
-        try {
-            module.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        module.start();
     }
 }
