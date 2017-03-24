@@ -36,11 +36,13 @@ RoboClaw roboclaw(&Serial1,10000);
 void setup() {
   roboclaw.begin(38400);
   SerialUSB.begin(9600);
+  pinMode(13, OUTPUT);
 }
 
 void loop() {
   while(SerialUSB.available()) {
     message ms = hciRead();
+    digitalWrite(13, !digitalRead(13));
     execute(ms);
   }
 }
