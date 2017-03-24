@@ -19,7 +19,6 @@ public class ExcavationStateModuleTest {
 
     private ExcavationState state; // TODO: mock this
     private ExcavationStateModule module;
-    private Thread thread;
 
     public ExcavationStateModuleTest() { }
 
@@ -35,7 +34,6 @@ public class ExcavationStateModuleTest {
         state = new ExcavationState();
         module = new ExcavationStateModule(state, "amq.topic");
         module.start();
-        module.awaitReady();
     }
 
     @After

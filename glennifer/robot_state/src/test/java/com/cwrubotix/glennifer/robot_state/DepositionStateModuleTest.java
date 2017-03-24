@@ -19,7 +19,6 @@ public class DepositionStateModuleTest {
 
     private DepositionState state; // TODO: mock this
     private DepositionStateModule module;
-    private Thread thread;
 
     public DepositionStateModuleTest() { }
 
@@ -35,7 +34,6 @@ public class DepositionStateModuleTest {
         state = new DepositionState();
         module = new DepositionStateModule(state, "amq.topic");
         module.start();
-        module.awaitReady();
     }
 
     @After
