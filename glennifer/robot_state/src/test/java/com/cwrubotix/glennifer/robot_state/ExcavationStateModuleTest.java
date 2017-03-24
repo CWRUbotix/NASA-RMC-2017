@@ -1,21 +1,17 @@
 package com.cwrubotix.glennifer.robot_state;
 
+import com.cwrubotix.glennifer.Messages;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-import com.cwrubotix.glennifer.Messages.RpmUpdate;
-import com.cwrubotix.glennifer.Messages.LimitUpdate;
-import com.cwrubotix.glennifer.Messages.PositionUpdate;
-import com.cwrubotix.glennifer.Messages.Fault;
-import com.cwrubotix.glennifer.Messages.UnixTime;
-import com.rabbitmq.client.GetResponse;
+import java.io.IOException;
 import java.time.Instant;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -27,24 +23,24 @@ public class ExcavationStateModuleTest {
 
     public ExcavationStateModuleTest() { }
 
-    private UnixTime instantToUnixTime(Instant time) {
-        UnixTime.Builder unixTimeBuilder = UnixTime.newBuilder();
+    private Messages.UnixTime instantToUnixTime(Instant time) {
+        Messages.UnixTime.Builder unixTimeBuilder = Messages.UnixTime.newBuilder();
         unixTimeBuilder.setTimeInt(time.getEpochSecond());
         unixTimeBuilder.setTimeFrac(time.getNano() / 1000000000F);
         return unixTimeBuilder.build();
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
         state = new ExcavationState();
-        module = new ExcavationStateModule(state);
-        thread = new Thread(module);
-        thread.start();
+        module = new ExcavationStateModule(state, "amq.topic");
+        module.start();
+        module.awaitReady();
     }
 
     @After
-    public void tearDown() {
-        thread.stop();
+    public void tearDown() throws IOException, TimeoutException {
+        module.stop();
     }
 
     /**
@@ -57,16 +53,18 @@ public class ExcavationStateModuleTest {
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
-        RpmUpdate.Builder rpmUpdateFactory = RpmUpdate.newBuilder();
+        Messages.RpmUpdate.Builder rpmUpdateFactory = Messages.RpmUpdate.newBuilder();
         rpmUpdateFactory.setRpm(42F);
         rpmUpdateFactory.setTimestamp(instantToUnixTime(Instant.now()));
-        RpmUpdate message = rpmUpdateFactory.build();
+        Messages.RpmUpdate message = rpmUpdateFactory.build();
         channel.basicPublish("amq.topic", "sensor.excavation.conveyor_rpm", null, message.toByteArray());
+
+        channel.close();
+        connection.close();
 
         Thread.sleep(1000);
 
         float result = state.getConveyorRpm();
-
         assertEquals(42F, result, 0);
     }
 

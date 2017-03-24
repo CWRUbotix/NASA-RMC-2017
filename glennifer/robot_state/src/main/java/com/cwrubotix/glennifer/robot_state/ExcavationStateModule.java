@@ -17,6 +17,8 @@ import com.cwrubotix.glennifer.Messages.UnixTime;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -139,10 +141,19 @@ public class ExcavationStateModule implements Runnable {
     
     /* Data Members */
     private ExcavationState state;
-    private Channel channel;
+    private String exchangeName;
+    private Connection connection;
+    public Channel channel;
+    private CountDownLatch ready;
     
     public ExcavationStateModule(ExcavationState state) {
+        this(state, "amq.topic");
+    }
+
+    public ExcavationStateModule(ExcavationState state, String exchangeName) {
         this.state = state;
+        this.exchangeName = exchangeName;
+        this.ready = new CountDownLatch(1);
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -157,17 +168,26 @@ public class ExcavationStateModule implements Runnable {
         faultBuilder.setFaultCode(faultCode);
         faultBuilder.setTimestamp(instantToUnixTime(time));
         Fault message = faultBuilder.build();
-        channel.basicPublish("amq.topic", "fault", null, message.toByteArray());
+        channel.basicPublish(exchangeName, "fault", null, message.toByteArray());
     }
     
     public void runWithExceptions() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        Connection connection = factory.newConnection();
+        connection = factory.newConnection();
         this.channel = connection.createChannel();
         String queueName = channel.queueDeclare().getQueue();
-        channel.queueBind(queueName, "amq.topic", "sensor.excavation.#");
+        channel.queueBind(queueName, exchangeName, "sensor.excavation.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
+        ready.countDown();
+    }
+
+    public void awaitReady() throws InterruptedException {
+        ready.await();
+    }
+
+    public void awaitReady(long val, TimeUnit timeUnit) throws InterruptedException {
+        ready.await(val, timeUnit);
     }
     
     @Override
@@ -181,6 +201,16 @@ public class ExcavationStateModule implements Runnable {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
+    }
+
+    public void start() {
+        Thread thread = new Thread(this);
+        thread.start();
+    }
+
+    public void stop() throws IOException, TimeoutException {
+        channel.close();
+        connection.close();
     }
     
     public static void main(String[] args) {
