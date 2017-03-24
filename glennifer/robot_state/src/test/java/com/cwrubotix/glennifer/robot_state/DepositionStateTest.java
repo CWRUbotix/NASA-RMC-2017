@@ -35,6 +35,20 @@ public class DepositionStateTest {
         assertEquals(dumpPos, resultDumpPos, 0);
     }
 
+    @Test
+    public void testLimitSwitches() throws Exception {
+        Instant time = Instant.now();
+        DepositionState instance = new DepositionState();
+        instance.updateDumpLimitExtended(true, time);
+        assertTrue(instance.getDumpExtended());
+        instance.updateDumpLimitExtended(false, time);
+        assertFalse(instance.getDumpExtended());
+        instance.updateDumpLimitRetracted(true, time);
+        assertTrue(instance.getDumpRetracted());
+        instance.updateDumpLimitRetracted(false, time);
+        assertFalse(instance.getDumpRetracted());
+    }
+
     /**
      * Test of updateArmLimitExtended, UpdateArmLimitRetracted methods, of class DepositionState.
      */
@@ -42,12 +56,10 @@ public class DepositionStateTest {
     public void testLimitSwitchConfigurations() throws Exception {
         Instant time = Instant.now();
         DepositionState instance = new DepositionState();
-        DepositionState.Configuration extendedConfiguration = DepositionState.Configuration.EXTENDED;
-        DepositionState.Configuration retractedConfiguration = DepositionState.Configuration.RETRACTED;
-        instance.updateDumpLimitExtended(true, time); //enter arm EXTENDED configuration
-        assertEquals(extendedConfiguration, instance.getConfiguration());
-        instance.updateDumpLimitRetracted(true, time); //enter arm RETRACTED configuration
-        assertEquals(retractedConfiguration, instance.getConfiguration());
+        instance.updateDumpLimitRetracted(true, time); // Retracted
+        assertTrue(instance.isStored());
+        instance.updateDumpLimitRetracted(false, time); // Not retracted
+        assertFalse(instance.isStored());
     }
 }
 

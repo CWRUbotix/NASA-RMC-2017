@@ -43,26 +43,29 @@ public class LocomotionStateTest {
         assertEquals(rpmFrontRight, resultFrontRight, 0);
         assertEquals(rpmBackLeft, resultBackLeft, 0);
         assertEquals(rpmBackRight, resultBackRight, 0);
-        float averageRpm = (rpmFrontLeft + rpmFrontRight + rpmBackLeft + rpmBackRight) / 4;
-        LocomotionState.Configuration resultConfiguration = instance.getConfiguration();
-        float resultAverageStraightRpm = instance.getStraightSpeed();
-        assertEquals(rpmFrontLeft, resultFrontLeft, 0);
-        assertEquals(rpmFrontRight, resultFrontRight, 0);
-        assertEquals(rpmBackLeft, resultBackLeft, 0);
-        assertEquals(rpmBackRight, resultBackRight, 0);
-        assertEquals(LocomotionState.Configuration.STRAIGHT, instance.getConfiguration());
-        assertEquals(averageRpm, resultAverageStraightRpm, 0);
-        //TODO: test that this code works for TURN configuration
-        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT, true, time); //enter STRAFE configuration
-        instance.updateWheelRpm(LocomotionState.Wheel.BACK_LEFT, rpmBackLeft, time); //update STRAFE speed (won't happen like this in reality)
-        resultConfiguration = instance.getConfiguration();
-        float resultAverageStrafeRpm = instance.getStrafeSpeed();
-        assertEquals(rpmFrontLeft, resultFrontLeft, 0);
-        assertEquals(rpmFrontRight, resultFrontRight, 0);
-        assertEquals(rpmBackLeft, resultBackLeft, 0);
-        assertEquals(rpmBackRight, resultBackRight, 0);
-        assertEquals(LocomotionState.Configuration.STRAFE, instance.getConfiguration());
-        assertEquals(averageRpm, resultAverageStrafeRpm, 0);
+    }
+
+    @Test
+    public void testSpeed() throws Exception {
+        float rpmFrontLeft = 4.2F;
+        Instant time = Instant.now();
+        LocomotionState instance = new LocomotionState();
+        instance.updateWheelRpm(LocomotionState.Wheel.FRONT_LEFT, rpmFrontLeft, time);
+        float rpmFrontRight = 5.2F;
+        instance.updateWheelRpm(LocomotionState.Wheel.FRONT_RIGHT, rpmFrontRight, time);
+        float rpmBackLeft = -6.2F;
+        instance.updateWheelRpm(LocomotionState.Wheel.BACK_LEFT, rpmBackLeft, time);
+        float rpmBackRight = -1.2F;
+        instance.updateWheelRpm(LocomotionState.Wheel.BACK_RIGHT, rpmBackRight, time);
+        float averageStraightRpm = (rpmFrontLeft + rpmFrontRight + rpmBackLeft + rpmBackRight) / 4;
+        float averageTurnRpm = (rpmFrontLeft - rpmFrontRight + rpmBackLeft - rpmBackRight) / 4;
+        float averageStrafeRpm = (rpmFrontLeft - rpmFrontRight - rpmBackLeft + rpmBackRight) / 4;
+        float resultAverageStraightSpeed = instance.getStraightSpeed();
+        float resultAverageTurnSpeed = instance.getTurnSpeed();
+        float resultAverageStrafeSpeed = instance.getStrafeSpeed();
+        assertEquals(averageStraightRpm, resultAverageStraightSpeed, 0);
+        assertEquals(averageTurnRpm, resultAverageTurnSpeed, 0);
+        assertEquals(averageStrafeRpm, resultAverageStrafeSpeed, 0);
     }
 
     /**
@@ -102,6 +105,47 @@ public class LocomotionStateTest {
         assertEquals(podPosBackRight, resultBackRight, 0);
     }
 
+    @Test
+    public void testLimitSwitches() throws Exception {
+        Instant time = Instant.now();
+        LocomotionState instance = new LocomotionState();
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT, true, time);
+        assertTrue(instance.getWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT));
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_RIGHT, true, time);
+        assertTrue(instance.getWheelPodLimitExtended(LocomotionState.Wheel.BACK_RIGHT));
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.FRONT_LEFT, true, time);
+        assertTrue(instance.getWheelPodLimitExtended(LocomotionState.Wheel.FRONT_LEFT));
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.FRONT_RIGHT, true, time);
+        assertTrue(instance.getWheelPodLimitExtended(LocomotionState.Wheel.FRONT_RIGHT));
+
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT, false, time);
+        assertFalse(instance.getWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT));
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_RIGHT, false, time);
+        assertFalse(instance.getWheelPodLimitExtended(LocomotionState.Wheel.BACK_RIGHT));
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.FRONT_LEFT, false, time);
+        assertFalse(instance.getWheelPodLimitExtended(LocomotionState.Wheel.FRONT_LEFT));
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.FRONT_RIGHT, false, time);
+        assertFalse(instance.getWheelPodLimitExtended(LocomotionState.Wheel.FRONT_RIGHT));
+
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.BACK_LEFT, true, time);
+        assertTrue(instance.getWheelPodLimitRetracted(LocomotionState.Wheel.BACK_LEFT));
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.BACK_RIGHT, true, time);
+        assertTrue(instance.getWheelPodLimitRetracted(LocomotionState.Wheel.BACK_RIGHT));
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_LEFT, true, time);
+        assertTrue(instance.getWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_LEFT));
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_RIGHT, true, time);
+        assertTrue(instance.getWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_RIGHT));
+
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.BACK_LEFT, false, time);
+        assertFalse(instance.getWheelPodLimitRetracted(LocomotionState.Wheel.BACK_LEFT));
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.BACK_RIGHT, false, time);
+        assertFalse(instance.getWheelPodLimitRetracted(LocomotionState.Wheel.BACK_RIGHT));
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_LEFT, false, time);
+        assertFalse(instance.getWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_LEFT));
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_RIGHT, false, time);
+        assertFalse(instance.getWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_RIGHT));
+    }
+
     /**
      * Test of updateWheelPodLimitExtended and UpdateWheelPodLimitRetracted methods, of class LocomotionState.
      */
@@ -109,11 +153,49 @@ public class LocomotionStateTest {
     public void testLimitSwitchConfigurations() throws Exception {
         Instant time = Instant.now();
         LocomotionState instance = new LocomotionState();
-        LocomotionState.Configuration straightConfiguration = LocomotionState.Configuration.STRAIGHT;
-        LocomotionState.Configuration strafeConfiguration = LocomotionState.Configuration.STRAFE;
-        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT, true, time); //enter STRAFE configuration
-        assertEquals(strafeConfiguration, instance.getConfiguration());
-        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.BACK_LEFT, true, time); //enter STRAIGHT configuration
-        assertEquals(straightConfiguration, instance.getConfiguration());
+        // Start in STRAIGHT configuration
+        assertEquals(LocomotionState.Configuration.STRAIGHT, instance.getConfiguration());
+        // Enter STRAFE configuration
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT, true, time);
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_RIGHT, true, time);
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.FRONT_LEFT, true, time);
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.FRONT_RIGHT, true, time);
+        assertEquals(LocomotionState.Configuration.STRAFE, instance.getConfiguration());
+        // Enter STRAIGHT configuration
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_LEFT, false, time);
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.BACK_RIGHT, false, time);
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.FRONT_LEFT, false, time);
+        instance.updateWheelPodLimitExtended(LocomotionState.Wheel.FRONT_RIGHT, false, time);
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.BACK_LEFT, true, time);
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.BACK_RIGHT, true, time);
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_LEFT, true, time);
+        instance.updateWheelPodLimitRetracted(LocomotionState.Wheel.FRONT_RIGHT, true, time);
+        assertEquals(LocomotionState.Configuration.STRAIGHT, instance.getConfiguration());
+    }
+
+    @Test
+    public void testPodPosConfigurations() throws Exception {
+        Instant time = Instant.now();
+        LocomotionState instance = new LocomotionState();
+        // Start in STRAIGHT configuration
+        assertEquals(LocomotionState.Configuration.STRAIGHT, instance.getConfiguration());
+        // Enter STRAFE configuration
+        instance.updateWheelPodPos(LocomotionState.Wheel.BACK_LEFT, 85f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.BACK_RIGHT, 85f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.FRONT_LEFT, 85f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.FRONT_RIGHT, 85f, time);
+        assertEquals(LocomotionState.Configuration.STRAFE, instance.getConfiguration());
+        // Enter TURN configuration
+        instance.updateWheelPodPos(LocomotionState.Wheel.BACK_LEFT, 45f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.BACK_RIGHT, 45f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.FRONT_LEFT, 45f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.FRONT_RIGHT, 45f, time);
+        assertEquals(LocomotionState.Configuration.TURN, instance.getConfiguration());
+        // Enter STRAIGHT configuration
+        instance.updateWheelPodPos(LocomotionState.Wheel.BACK_LEFT, 5f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.BACK_RIGHT, 5f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.FRONT_LEFT, 5f, time);
+        instance.updateWheelPodPos(LocomotionState.Wheel.FRONT_RIGHT, 5f, time);
+        assertEquals(LocomotionState.Configuration.STRAIGHT, instance.getConfiguration());
     }
 }

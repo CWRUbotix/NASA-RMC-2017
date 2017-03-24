@@ -35,32 +35,37 @@ public class ExcavationStateTest {
     }
 
     /**
-     * Test of updateConveyorTranslationDisplacement method, of class ExcavationState.
+     * Test of updateTranslationDisplacement method, of class ExcavationState.
      */
     @Test
     public void testConveyorTranslationDisplacement() throws Exception {
         float disp = 3.5F;
         Instant time = Instant.now();
         ExcavationState instance = new ExcavationState();
-        instance.updateConveyorTranslationDisplacement(disp, time);
-        float resultDisplacement = instance.getConveyorTranslationDisplacement();
+        instance.updateTranslationDisplacement(disp, time);
+        float resultDisplacement = instance.getTranslationDisplacement();
         assertEquals(disp, resultDisplacement, 0);
     }
 
-    /**
-     * Test of updateArmLimitExtended, UpdateArmLimitRetracted methods,
-     * UpdateConveyorTranslationLimitExtended, and UpdateConveyorTranslationLimitRetracted of class ExcavationState.
-     */
     @Test
-    public void testLimitSwitchConfigurations() throws Exception {
+    public void testLimitSwitches() throws Exception {
         Instant time = Instant.now();
         ExcavationState instance = new ExcavationState();
-        ExcavationState.Configuration extendedConfiguration = ExcavationState.Configuration.EXTENDED;
-        ExcavationState.Configuration retractedConfiguration = ExcavationState.Configuration.RETRACTED;
-        instance.updateArmLimitExtended(true, time); //enter arm EXTENDED configuration
-        assertEquals(extendedConfiguration, instance.getConfiguration());
-        instance.updateArmLimitRetracted(true, time); //enter arm RETRACTED configuration
-        assertEquals(retractedConfiguration, instance.getConfiguration());
-        //TODO: Add configuration states for both types of limit switches in excavation
+        instance.updateArmLimitExtended(true, time);
+        assertTrue(instance.getArmExtended());
+        instance.updateArmLimitExtended(false, time);
+        assertFalse(instance.getArmExtended());
+        instance.updateArmLimitRetracted(true, time);
+        assertTrue(instance.getArmRetracted());
+        instance.updateArmLimitRetracted(false, time);
+        assertFalse(instance.getArmRetracted());
+        instance.updateTranslationLimitExtended(true, time);
+        assertTrue(instance.getTranslationExtended());
+        instance.updateTranslationLimitExtended(false, time);
+        assertFalse(instance.getTranslationExtended());
+        instance.updateTranslationLimitRetracted(true, time);
+        assertTrue(instance.getTranslationRetracted());
+        instance.updateTranslationLimitRetracted(false, time);
+        assertFalse(instance.getTranslationRetracted());
     }
 }

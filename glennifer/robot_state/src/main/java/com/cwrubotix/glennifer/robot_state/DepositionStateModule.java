@@ -64,7 +64,7 @@ public class DepositionStateModule implements Runnable {
                 handleDumpLimitRetractedUpdate(body);
             }
         }
-    };
+    }
     
     private void handleDumpLoadUpdate(DepositionState.LoadCell cell, byte[] body) throws IOException {
         LoadUpdate message = LoadUpdate.parseFrom(body);
