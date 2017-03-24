@@ -14,7 +14,19 @@ import java.util.EnumMap;
  * the logical level.
  */
 public class DepositionState {
-    
+
+
+    /**
+     * The LoadCell enum is used to specify one of the deposition subsystem's 4
+     * load cells.
+     */
+    public enum LoadCell {
+        FRONT_LEFT,
+        FRONT_RIGHT,
+        BACK_LEFT,
+        BACK_RIGHT;
+    }
+
     /**
      * The Configuration enum is used to represent the deposition subsystem's
      * current dumping configuration
@@ -26,9 +38,9 @@ public class DepositionState {
     
     /* Data members */
     private Configuration configuration;
-	private float dumpLoad;
+    private EnumMap <LoadCell, Float> loadCellValue;
+    private float totalLoad;
 	private float dumpPos;
-	private float dumpingSpeed; //probably not needed but i'm not sure
 	
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
@@ -46,17 +58,22 @@ public class DepositionState {
         
         // TODO: handle no input from sensor
         configuration = Configuration.RETRACTED;
-        dumpLoad = 0;
+
+        loadCellValue = new EnumMap<>(LoadCell.class);
+        loadCellValue.put(LoadCell.FRONT_LEFT, (float)0);
+        loadCellValue.put(LoadCell.FRONT_RIGHT, (float)0);
+        loadCellValue.put(LoadCell.BACK_LEFT, (float)0);
+        loadCellValue.put(LoadCell.BACK_RIGHT, (float)0);
+
 		dumpPos = 0;
-		dumpingSpeed = 0;
 
     }
     /* Update methods */
     
-    public void updateDumpLoad (float load, Instant time) throws RobotFaultException {
+    public void updateDumpLoad (LoadCell cell, float load, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
-        dumpLoad = load;
+        loadCellValue.put(cell, load);
     }
     
     public void updateDumpPos (float pos, Instant time) throws RobotFaultException {
@@ -68,10 +85,12 @@ public class DepositionState {
     
     public void updateDumpLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
+        configuration = Configuration.EXTENDED;
     }
     
     public void updateDumpLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
+        configuration = Configuration.RETRACTED;
     }
     
     /* State getter methods */
@@ -82,16 +101,11 @@ public class DepositionState {
         return configuration;
     }
     
-    public float getDumpLoad() {
-		return dumpLoad;
+    public float getDumpLoad(LoadCell cell) {
+		return loadCellValue.get(cell);
 	}
     
     public float getDumpPos() {
         return dumpPos;
-    }
-	
-	public float getDumpingSpeed() {
-        // TODO: use physical constants, real or made up, to get speed
-        return dumpingSpeed;
     }
 }	

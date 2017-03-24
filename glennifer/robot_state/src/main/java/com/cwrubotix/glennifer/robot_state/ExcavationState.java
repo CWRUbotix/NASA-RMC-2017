@@ -79,10 +79,12 @@ public class ExcavationState {
     
     public void updateArmLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
+        configuration = Configuration.EXTENDED;
     }
     
     public void updateArmLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
+        configuration = Configuration.RETRACTED;
     }
 	
 	public void updateConveyorTranslationLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
