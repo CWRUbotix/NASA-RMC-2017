@@ -1,6 +1,6 @@
 package com.cwrubotix.glennifer.robot_state;
 
-import com.cwrubotix.glennifer.Messages;
+
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -8,9 +8,12 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.AMQP;
 
+import com.cwrubotix.glennifer.Messages;
+import com.cwrubotix.glennifer.Messages.LoadUpdate;
 import com.cwrubotix.glennifer.Messages.RpmUpdate;
 import com.cwrubotix.glennifer.Messages.LimitUpdate;
 import com.cwrubotix.glennifer.Messages.PositionUpdate;
+import com.cwrubotix.glennifer.Messages.DisplacementUpdate;
 import com.cwrubotix.glennifer.Messages.Fault;
 import com.cwrubotix.glennifer.Messages.UnixTime;
 
@@ -48,13 +51,11 @@ public class StateModule {
                         .setTimestamp(instantToUnixTime(now))
                         .build();
                 Messages.ExcavationState excavationMsg = Messages.ExcavationState.newBuilder()
-                        .setConfig(Messages.ExcavationState.Configuration.valueOf(StateModule.this.excavationState.getConfiguration().ordinal()))
-                        .setSpeed(StateModule.this.excavationState.getStraightSpeed())
+                        .setRpm(StateModule.this.excavationState.getConveyorRpm())
                         .setTimestamp(instantToUnixTime(now))
                         .build();
                 Messages.DepositionState depositionMsg = Messages.DepositionState.newBuilder()
-                        .setConfig(Messages.DepositionState.Configuration.valueOf(StateModule.this.depositionState.getConfiguration().ordinal()))
-                        .setSpeed(StateModule.this.depositionState.getStraightSpeed())
+                        .setPos(StateModule.this.depositionState.getDumpPos())
                         .setTimestamp(instantToUnixTime(now))
                         .build();
                 byte[] locomotionData = locomotionMsg.toByteArray();
@@ -196,9 +197,9 @@ public class StateModule {
         float rpm = message.getRpm();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateWheelRpm(wheel, rpm, time);
+            locomotionState.updateWheelRpm(wheel, rpm, time);
         } catch (RobotFaultException e) {
-            LocomotionStateModule.this.sendFault(e.getFaultCode(), time);
+            sendFault(e.getFaultCode(), time);
         }
     }
     
@@ -207,9 +208,9 @@ public class StateModule {
         float pos = message.getPosition();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateWheelPodPos(wheel, pos, time);
+            locomotionState.updateWheelPodPos(wheel, pos, time);
         } catch (RobotFaultException e) {
-            LocomotionStateModule.this.sendFault(e.getFaultCode(), time);
+            sendFault(e.getFaultCode(), time);
         }
     }
         
@@ -218,7 +219,7 @@ public class StateModule {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateWheelPodLimitExtended(wheel, pressed, time);
+            locomotionState.updateWheelPodLimitExtended(wheel, pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -229,7 +230,7 @@ public class StateModule {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateWheelPodLimitRetracted(wheel, pressed, time);
+            locomotionState.updateWheelPodLimitRetracted(wheel, pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -240,9 +241,9 @@ public class StateModule {
         float rpm = message.getRpm();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorRpm(rpm, time);
+            excavationState.updateConveyorRpm(rpm, time);
         } catch (RobotFaultException e) {
-            ExcavationStateModule.this.sendFault(e.getFaultCode(), time);
+            sendFault(e.getFaultCode(), time);
         }
     }
 
@@ -251,9 +252,9 @@ public class StateModule {
         float displacement = message.getDisplacement();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateTranslationDisplacement(displacement, time);
+            excavationState.updateTranslationDisplacement(displacement, time);
         } catch (RobotFaultException e) {
-            ExcavationStateModule.this.sendFault(e.getFaultCode(), time);
+            sendFault(e.getFaultCode(), time);
         }
     }
 
@@ -262,9 +263,9 @@ public class StateModule {
         float pos = message.getPosition();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateArmPos(pos, time);
+            excavationState.updateArmPos(pos, time);
         } catch (RobotFaultException e) {
-            ExcavationStateModule.this.sendFault(e.getFaultCode(), time);
+            sendFault(e.getFaultCode(), time);
         }
     }
 
@@ -273,7 +274,7 @@ public class StateModule {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateArmLimitExtended(pressed, time);
+            excavationState.updateArmLimitExtended(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -284,7 +285,7 @@ public class StateModule {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateArmLimitRetracted(pressed, time);
+            excavationState.updateArmLimitRetracted(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -295,7 +296,7 @@ public class StateModule {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateTranslationLimitExtended(pressed, time);
+            excavationState.updateTranslationLimitExtended(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -306,7 +307,7 @@ public class StateModule {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateTranslationLimitRetracted(pressed, time);
+            excavationState.updateTranslationLimitRetracted(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -317,9 +318,9 @@ public class StateModule {
         float load = message.getLoad();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateDumpLoad(cell, load, time);
+            depositionState.updateDumpLoad(cell, load, time);
         } catch (RobotFaultException e) {
-            DepositionStateModule.this.sendFault(e.getFaultCode(), time);
+            sendFault(e.getFaultCode(), time);
         }
     }
 
@@ -328,9 +329,9 @@ public class StateModule {
         float pos = message.getPosition();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateDumpPos(pos, time);
+            depositionState.updateDumpPos(pos, time);
         } catch (RobotFaultException e) {
-            DepositionStateModule.this.sendFault(e.getFaultCode(), time);
+            sendFault(e.getFaultCode(), time);
         }
     }
 
@@ -339,7 +340,7 @@ public class StateModule {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateDumpLimitExtended(pressed, time);
+            depositionState.updateDumpLimitExtended(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -350,7 +351,7 @@ public class StateModule {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateDumpLimitRetracted(pressed, time);
+            depositionState.updateDumpLimitRetracted(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }

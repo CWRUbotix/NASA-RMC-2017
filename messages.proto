@@ -199,7 +199,10 @@ message ExcavationStateSubscribe {
 	optional UnixTime startTime = 3;
 }
 
-message ExcavationState { }
+message ExcavationState { 
+	required float rpm = 1;
+	required UnixTime timestamp = 2;
+}
 
 // state.deposition.subscribe
 message DepositionStateSubscribe {
@@ -208,4 +211,7 @@ message DepositionStateSubscribe {
 	optional UnixTime startTime = 3;
 }
 
-message DepositionState { }
+message DepositionState { 
+	required float pos = 1;
+	required UnixTime timestamp = 2;
+}
