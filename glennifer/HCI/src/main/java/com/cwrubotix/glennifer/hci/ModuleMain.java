@@ -31,9 +31,21 @@ public class ModuleMain {
 		Object connectionConfigObj = yaml.load(input);
 		Map<String, String> connectionConfig = (Map<String, String>)connectionConfigObj;
 		String serverAddress = connectionConfig.get("server-addr");
+		if (serverAddress == null) {
+			throw new RuntimeException("Config file missing server-addr");
+		}
 		String serverUsername = connectionConfig.get("server-user");
+		if (serverUsername == null) {
+			throw new RuntimeException("Config file missing server-user");
+		}
 		String serverPassword = connectionConfig.get("server-pass");
+		if (serverPassword == null) {
+			throw new RuntimeException("Config file missing server-pass");
+		}
 		String exchangeName = connectionConfig.get("exchange-name");
+		if (exchangeName == null) {
+			throw new RuntimeException("Config file missing exchange-name");
+		}
 
 		//Connect and Configure AMPQ
 		ConnectionFactory factory = new ConnectionFactory();
