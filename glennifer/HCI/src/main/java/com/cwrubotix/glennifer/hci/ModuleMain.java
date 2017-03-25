@@ -33,7 +33,7 @@ public class ModuleMain {
 		String serverAddress = connectionConfig.get("server-addr");
 		String serverUsername = connectionConfig.get("server-user");
 		String serverPassword = connectionConfig.get("server-pass");
-		String exchangeName = connectionConfig.get("exchangeName");
+		String exchangeName = connectionConfig.get("exchange-name");
 
 		//Connect and Configure AMPQ
 		ConnectionFactory factory = new ConnectionFactory();
