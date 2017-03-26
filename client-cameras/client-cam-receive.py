@@ -1,11 +1,20 @@
 import cv2
 import pika
 import numpy as np
+import yaml
 
-#Change demo to guest or local host, or another user, password tuple
-#Change ip address to the one for the server running the receive code
-credentials = pika.PlainCredentials('demo', 'demo')
-parameters = pika.ConnectionParameters('172.20.93.234', 5672,  '/', credentials=credentials)
+amqp_server_addr = input('Robot address: ')
+
+with open('config/connection.yml') as connection_config_file:
+    connection_config = yaml.safe_load(connection_config_file)
+    if not amqp_server_addr:
+        amqp_server_addr = connection_config['server-addr']
+    amqp_server_user = connection_config['server-user']
+    amqp_server_pass = connection_config['server-pass']
+    amqp_exchange_name = connection_config['exchange-name']
+
+credentials = pika.PlainCredentials(amqp_server_user, amqp_server_pass)
+parameters = pika.ConnectionParameters(amqp_server_addr, 5672,  '/', credentials=credentials)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 channel.queue_declare(queue = 'cam1')
@@ -26,45 +35,45 @@ def callback1(ch,  method,  properties, body):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam1', img)
-        cv2.waitKey(15)
+        cv2.waitKey(1)
         
 def callback2(ch,  method,  properties, body):
     if (body is None):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam2', img)
-        cv2.waitKey(15)
+        cv2.waitKey(1)
         
 def callback3(ch,  method,  properties, body):
     if (body is None):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam3', img)
-        cv2.waitKey(15)      
+        cv2.waitKey(1)      
       
 def callback4(ch,  method,  properties, body):
     if (body is None):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam4', img)
-        cv2.waitKey(15)
+        cv2.waitKey(1)
         
 def callback5(ch,  method,  properties, body):
     if (body is None):
         return None
     else: 
         nparr = np.fromstring(body,  np.uint8)
-        img = cv2.imdecode(nparr,  cv2.CV_LOAD_IMAGE_COLOR)
+        img = cv2.imdecode(nparr,  cv2.IMREAD_COLOR)
         cv2.imshow('Cam5', img)
-        cv2.waitKey(15)
+        cv2.waitKey(1)
     
 #Consume
 channel.basic_consume(callback1,  queue = 'cam1',  no_ack = True)

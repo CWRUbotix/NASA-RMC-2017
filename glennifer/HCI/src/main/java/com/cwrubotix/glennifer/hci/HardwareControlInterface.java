@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeoutException;
 
+import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import jssc.SerialPortTimeoutException;
 
 public class HardwareControlInterface implements Runnable {
 	public static final byte COMMAND_READ_SENSORS = 0x01;
 	public static final byte COMMAND_SET_OUTPUTS = 0x02;
+	private static final int SERIAL_TIMEOUT_MS = 500;
 	
 	// The types of actuations and constraints that can be made
 	enum ActuationType {
@@ -137,7 +141,7 @@ public class HardwareControlInterface implements Runnable {
 				setOutputs();
 				System.out.println(Long.toString(System.currentTimeMillis()-t));
 			}
-		} catch(SerialPortException e) {
+		} catch(SerialPortException | SerialPortTimeoutException e) {
 			e.printStackTrace();
 		}
 	}
@@ -192,7 +196,7 @@ public class HardwareControlInterface implements Runnable {
 		}
 	}
 	
-	private boolean setOutputs() throws SerialPortException {
+	private boolean setOutputs() throws SerialPortException, SerialPortTimeoutException {
 		if(activeActuations.isEmpty()) {
 			return true;
 		}
@@ -222,7 +226,7 @@ public class HardwareControlInterface implements Runnable {
 		return true;
 	}
 	
-	private boolean readSensors() throws SerialPortException {
+	private boolean readSensors() throws SerialPortException, SerialPortTimeoutException {
 		if(sensors.isEmpty()) {
 			return true;
 		}
@@ -263,10 +267,10 @@ public class HardwareControlInterface implements Runnable {
 		return true;
 	}
 	
-	private SerialPacket readMessage() throws SerialPortException {
-		byte[] r_head = port.readBytes(2);
+	private SerialPacket readMessage() throws SerialPortException, SerialPortTimeoutException {
+		byte[] r_head = port.readBytes(2, SERIAL_TIMEOUT_MS);
 		int len = r_head[1];
-		byte[] r_body = port.readBytes(len);
+		byte[] r_body = port.readBytes(len, SERIAL_TIMEOUT_MS);
 		SerialPacket response = new SerialPacket(r_head[0],r_body);
 		return response;
 	}
