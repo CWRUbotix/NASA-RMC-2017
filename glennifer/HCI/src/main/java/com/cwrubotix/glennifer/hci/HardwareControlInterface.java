@@ -26,9 +26,7 @@ public class HardwareControlInterface implements Runnable {
 		PowerM, PowerH,
 		Temp;
 	}
-	
-	// Held true when the interface is running 
-	private volatile boolean running = false;
+
 	// Queue of actuations to be checked in
 	private LinkedBlockingQueue<Actuation> actuationQueue = new LinkedBlockingQueue<Actuation>();
 	// Queue of coordinated actuations to be checked in
@@ -58,18 +56,6 @@ public class HardwareControlInterface implements Runnable {
 	 */
 	public void queueCoordinatedActuation(CoordinatedActuation coordinatedActuation) {
 		coordinatedActuationQueue.add(coordinatedActuation);
-	}
-	
-	/**
-	 * Halts the interface
-	 * @return 0 if success, 1 if it was not running
-	 */
-	public int halt() {
-		if(running) {
-			running = false;
-			return 0;
-		}
-		return 1;
 	}
 	
 	/**
@@ -113,9 +99,8 @@ public class HardwareControlInterface implements Runnable {
 	
 	@Override
 	public void run() {
-		running = true;
 		try {
-			while(running) {
+			while(true) {
 				long t = System.currentTimeMillis();
 				// Read sensors
 				readSensors();
@@ -141,6 +126,11 @@ public class HardwareControlInterface implements Runnable {
 				// Set outputs
 				setOutputs();
 				System.out.println(Long.toString(System.currentTimeMillis()-t));
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					return;
+				}
 			}
 		} catch(SerialPortException | SerialPortTimeoutException e) {
 			e.printStackTrace();

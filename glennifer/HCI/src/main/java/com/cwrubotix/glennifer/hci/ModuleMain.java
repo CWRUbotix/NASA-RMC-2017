@@ -428,7 +428,6 @@ public class ModuleMain {
 			a.actuatorID = 0;
 			hci.queueActuation(a);
 			Thread.sleep(3000);
-			hci.halt();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
