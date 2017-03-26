@@ -271,6 +271,9 @@ public class HardwareControlInterface implements Runnable {
 	private SerialPacket readMessage() throws SerialPortException, SerialPortTimeoutException {
 		byte[] r_head = port.readBytes(2, SERIAL_TIMEOUT_MS);
 		int len = r_head[1];
+		if (len < 0) {
+			len += 256;
+		}
 		byte[] r_body = port.readBytes(len, SERIAL_TIMEOUT_MS);
 		SerialPacket response = new SerialPacket(r_head[0],r_body);
 		return response;
