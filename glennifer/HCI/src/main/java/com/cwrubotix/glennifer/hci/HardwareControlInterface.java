@@ -12,6 +12,7 @@ import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
 
 public class HardwareControlInterface implements Runnable {
+	public static final int baud = 9600;
 	public static final byte COMMAND_READ_SENSORS = 0x01;
 	public static final byte COMMAND_SET_OUTPUTS = 0x02;
 	private static final int SERIAL_TIMEOUT_MS = 500;
@@ -279,8 +280,31 @@ public class HardwareControlInterface implements Runnable {
 		port.writeBytes(p.asPacket());
 	}
 	
-	public HardwareControlInterface(SerialPort sp) {
-		port = sp;
+	public HardwareControlInterface(String spName) {
+
+		// Open the found arduino port
+		port = new SerialPort(spName);
+		// Try open port
+		try {
+			port.openPort();
+			Thread.sleep(1000);
+			port.setParams(baud, 8, 1, 0);
+			port.setDTR(false);
+		} catch (SerialPortException e) {
+			e.printStackTrace();
+			return;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static String bytesToHex(byte[] in) {
+		final StringBuilder builder = new StringBuilder();
+		for(byte b : in) {
+			builder.append(String.format("%02x ", b));
+		}
+		return builder.toString();
 	}
 	
 }
