@@ -46,12 +46,35 @@ void loop() {
 }
 
 void execute(message m) {
+  byte response_data[MAX_SENSORS * 4]; // max-sized response buffer
   switch(m.command) {
     case COMMAND_HCI_TEST:
       SerialUSB.write(RESPONSE_HCI_TEST);
       break;
     case COMMAND_READ_SENSORS:
-      
+      for(int i = 0; i < m.len/2; i++) {
+        short id =  (m.data[i*2+0] << 8) | m.data[i*2+1];
+        
+        uint8_t status;
+        bool valid;
+        // short val = (short)roboclaw.ReadEncM1(id, &status, &valid); // This line causes everything to fail
+        short val = 99;
+        
+        if (!valid){
+          val = 0; // TODO: handle this
+        }
+        
+        response_data[i*4+0] = (byte)(id >> 8);
+        response_data[i*4+1] = (byte)id;
+        response_data[i*4+2] = (byte)(val >> 8);
+        response_data[i*4+3] = (byte)val;
+
+        message resp;
+        resp.command = COMMAND_READ_SENSORS;
+        resp.len = m.len/2 * 4;
+        resp.data = response_data;
+        hciSend(resp);
+      }
       break;
     case COMMAND_SET_OUTPUTS:
       for(int i = 0; i < m.len/4; i++) {
@@ -62,9 +85,8 @@ void execute(message m) {
       message resp;
       resp.command = COMMAND_SET_OUTPUTS;
       resp.len = 1;
-      byte dat[1];
-      dat[0] = 0;
-      resp.data = dat;
+      response_data[0] = 0;
+      resp.data = response_data;
       hciSend(resp);
   }
 }
