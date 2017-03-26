@@ -57,14 +57,14 @@ void execute(message m) {
       for(int i = 0; i < m.len/2; i++) {
         short id =  (m.data[i*2+0] << 8) | m.data[i*2+1];
         
-        uint8_t status;
-        bool valid;
+        //uint8_t status;
+        //bool valid;
         // short val = (short)roboclaw.ReadEncM1(id, &status, &valid); // This line causes everything to fail
+        //if (!valid){
+        //  val = 0; // TODO: handle this
+        //}
         short val = 99;
         
-        if (!valid){
-          val = 0; // TODO: handle this
-        }
         
         response_data[i*4+0] = (byte)(id >> 8);
         response_data[i*4+1] = (byte)id;
