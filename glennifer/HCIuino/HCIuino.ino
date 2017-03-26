@@ -71,7 +71,7 @@ void execute(message m) {
 
         message resp;
         resp.command = COMMAND_READ_SENSORS;
-        resp.len = m.len/2 * 4;
+        resp.len = (m.len/2) * 4;
         resp.data = response_data;
         hciSend(resp);
       }
