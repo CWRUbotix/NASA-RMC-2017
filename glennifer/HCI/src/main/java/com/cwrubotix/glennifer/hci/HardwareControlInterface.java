@@ -200,10 +200,10 @@ public class HardwareControlInterface implements Runnable {
 			Actuation activeActuation = activeActuations.get(i);
 			short actuatorIdShort = (short)activeActuation.actuatorID;
 			short currentOutputShort = (short)activeActuation.currentOutput;
-			data[3*i] = (byte)(actuatorIdShort >>> 8);
-			data[3*i+1] = (byte)(actuatorIdShort);
-			data[3*i+2] = (byte)(currentOutputShort >>> 8);
-			data[3*i+3] = (byte)(currentOutputShort);
+			data[4*i] = (byte)(actuatorIdShort >>> 8);
+			data[4*i+1] = (byte)(actuatorIdShort);
+			data[4*i+2] = (byte)(currentOutputShort >>> 8);
+			data[4*i+3] = (byte)(currentOutputShort);
 			System.out.println("Setting output: " + currentOutputShort + " actuator ID: " + actuatorIdShort);
 		}
 		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
