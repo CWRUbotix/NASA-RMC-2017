@@ -312,8 +312,6 @@ public class ModuleMain {
                
 		// Add sensors
                 hci.addSensor(new Sensor(configFLRPM), configFLRPM.ID);
-                // Too many sensors causes serial port hang
-                /*
                 hci.addSensor(new Sensor(configFRRPM), configFRRPM.ID);
                 hci.addSensor(new Sensor(configBLRPM), configBLRPM.ID);
                 hci.addSensor(new Sensor(configBRRPM), configBRRPM.ID);
@@ -349,7 +347,6 @@ public class ModuleMain {
                 hci.addSensor(new Sensor(configDEPOSB), configDEPOSB.ID);
                 hci.addSensor(new Sensor(configDEPOSBL), configDEPOSBL.ID);
                 hci.addSensor(new Sensor(configDEPOSBH), configDEPOSBH.ID);
-                */
 
                 // Initialize actuators
                 
@@ -488,7 +485,7 @@ public class ModuleMain {
 				if (s.data.isEmpty()) {
 					System.out.println("empty");
 				} else {
-					System.out.println(s.data.get(0));
+					System.out.println("Sensor #0 = " + s.data.get(0).data);
 				}
 				Thread.sleep(100);
 			}

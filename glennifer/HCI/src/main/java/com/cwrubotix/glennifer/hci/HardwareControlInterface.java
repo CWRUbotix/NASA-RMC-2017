@@ -241,9 +241,9 @@ public class HardwareControlInterface implements Runnable {
 				return false;
 			}
 			// Parse the sensor IDs
-			int sens = ((int)response.data[i*4]) << 8 | response.data[i*4+1];
+			int sens = ((int)response.data[0]) << 8 | response.data[1];
 			// Parse the sensor values
-			int dat = ((int)response.data[i*4+2]) << 8 | response.data[i*4+3];
+			int dat = ((int)response.data[2]) << 8 | response.data[3];
 			// If the sensor is not in the hashmap, ignore it
 			if(!sensors.containsKey(sens)) {
 				System.out.println("Sensor not loaded (ID = " + sens + ")");
