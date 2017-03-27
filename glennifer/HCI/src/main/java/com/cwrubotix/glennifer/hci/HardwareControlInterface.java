@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeoutException;
 
+import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import jssc.SerialPortTimeoutException;
 
 public class HardwareControlInterface implements Runnable {
+	public static final int baud = 9600;
 	public static final byte COMMAND_READ_SENSORS = 0x01;
 	public static final byte COMMAND_SET_OUTPUTS = 0x02;
+	private static final int SERIAL_TIMEOUT_MS = 500;
 	
 	// The types of actuations and constraints that can be made
 	enum ActuationType {
@@ -21,9 +26,7 @@ public class HardwareControlInterface implements Runnable {
 		PowerM, PowerH,
 		Temp;
 	}
-	
-	// Held true when the interface is running 
-	private volatile boolean running = false;
+
 	// Queue of actuations to be checked in
 	private LinkedBlockingQueue<Actuation> actuationQueue = new LinkedBlockingQueue<Actuation>();
 	// Queue of coordinated actuations to be checked in
@@ -56,18 +59,6 @@ public class HardwareControlInterface implements Runnable {
 	}
 	
 	/**
-	 * Halts the interface
-	 * @return 0 if success, 1 if it was not running
-	 */
-	public int halt() {
-		if(running) {
-			running = false;
-			return 0;
-		}
-		return 1;
-	}
-	
-	/**
 	 * Get the sensor object from its ID
 	 * @param ID The sensor ID
 	 * @return The sensor object
@@ -97,7 +88,7 @@ public class HardwareControlInterface implements Runnable {
 	 * @param id The ID of the sensor
 	 * @return 0 if success, 1 if that ID is already registered
 	 */
-	public int addSenor(Sensor sensor, int id) {
+	public int addSensor(Sensor sensor, int id) {
 		if(sensors.containsKey(id)) {
 			return 1;
 		} else {
@@ -108,9 +99,8 @@ public class HardwareControlInterface implements Runnable {
 	
 	@Override
 	public void run() {
-		running = true;
 		try {
-			while(running) {
+			while(true) {
 				long t = System.currentTimeMillis();
 				// Read sensors
 				readSensors();
@@ -135,9 +125,13 @@ public class HardwareControlInterface implements Runnable {
 				calcOutputs();
 				// Set outputs
 				setOutputs();
-				System.out.println(Long.toString(System.currentTimeMillis()-t));
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					return;
+				}
 			}
-		} catch(SerialPortException e) {
+		} catch(SerialPortException | SerialPortTimeoutException e) {
 			e.printStackTrace();
 		}
 	}
@@ -182,7 +176,6 @@ public class HardwareControlInterface implements Runnable {
 		// If no conflict or override, add it
 		activeActuations.add(act);
 		actuationQueue.remove(act);
-		System.out.println("Successfully added actuation on actuator ID: " + act.actuatorID);
 		return true;
 	}
 	
@@ -192,64 +185,61 @@ public class HardwareControlInterface implements Runnable {
 		}
 	}
 	
-	private boolean setOutputs() throws SerialPortException {
+	private boolean setOutputs() throws SerialPortException, SerialPortTimeoutException {
 		if(activeActuations.isEmpty()) {
 			return true;
 		}
-		// Allocate byte array for the data in the request
-		byte[] data = new byte[activeActuations.size()*4];
-		// Generate data array for request
-		// Each actuator ID is 2 bytes, each output is 2 bytes
-		// Conversion to short is not checked
+		// One request for each motor to avoid serial errors
 		for(int i = 0; i < activeActuations.size(); i++) {
+			// Allocate byte array for the data in the request
+			byte[] data = new byte[4];
+			// Generate data array for request
+			// Each actuator ID is 2 bytes, each output is 2 bytes
+			// Conversion to short is not checked
 			Actuation activeActuation = activeActuations.get(i);
 			short actuatorIdShort = (short)activeActuation.actuatorID;
 			short currentOutputShort = (short)activeActuation.currentOutput;
-			data[3*i] = (byte)(actuatorIdShort >>> 8);
-			data[3*i+1] = (byte)(actuatorIdShort);
-			data[3*i+2] = (byte)(currentOutputShort >>> 8);
-			data[3*i+3] = (byte)(currentOutputShort);
-			System.out.println("Setting output: " + currentOutputShort + " actuator ID: " + actuatorIdShort);
+			data[0] = (byte)(actuatorIdShort >>> 8);
+			data[1] = (byte)(actuatorIdShort);
+			data[2] = (byte)(currentOutputShort >>> 8);
+			data[3] = (byte)(currentOutputShort);
+			sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
+			// Get the response
+			SerialPacket response = readMessage();
+			if(response.command != COMMAND_SET_OUTPUTS) {
+				System.out.println("Failed to set outputs");
+				return false;
+			}
 		}
-		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
-		// Get the response
-		SerialPacket response = readMessage();
-		if(response.command != COMMAND_SET_OUTPUTS && response.data.length <= 0) {
-			System.out.println("Failed to set outputs");
-			return false;
-		}
-		System.out.println("Successfully set outputs");
 		return true;
 	}
 	
-	private boolean readSensors() throws SerialPortException {
+	private boolean readSensors() throws SerialPortException, SerialPortTimeoutException {
 		if(sensors.isEmpty()) {
 			return true;
 		}
 		// Get list of sensor IDs
 		Integer[] ids = sensors.keySet().toArray(new Integer[sensors.keySet().size()]);
-		// Allocate byte array for the data in the request
-		byte[] data = new byte[ids.length*2];
-		// Generate data array for request
-		// Each sensor ID is 2 bytes
+		// One request for each sensor to avoid serial errors
 		for(int i = 0; i < ids.length; i++) {
-			data[2*i] = (byte)(ids[i].intValue()>>8);
-			data[2*i+1] = (byte)ids[i].intValue();
-		}
-		// Send message, prepares it as per the interface
-		sendMessage(new SerialPacket(COMMAND_READ_SENSORS,data));
-		// Get the response
-		SerialPacket response = readMessage();
-		if(response.command != COMMAND_READ_SENSORS) {
-			System.out.println("Failed to read sensors");
-			return false;
-		}
-		// Parse the response
-		for(int i = 0; i < response.data.length/4; i++) {
+			// Allocate byte array for the data in the request
+			byte[] data = new byte[2];
+			// Generate data array for request
+			// Each sensor ID is 2 bytes
+			data[0] = (byte)(ids[i].intValue()>>8);
+			data[1] = (byte)ids[i].intValue();
+			// Send message, prepares it as per the interface
+			sendMessage(new SerialPacket(COMMAND_READ_SENSORS,data));
+			// Get the response
+			SerialPacket response = readMessage();
+			if(response.command != COMMAND_READ_SENSORS) {
+				System.out.println("Failed to read sensors");
+				return false;
+			}
 			// Parse the sensor IDs
-			int sens = ((int)response.data[i*4]) << 8 | response.data[i*4+1];
+			int sens = ((int)response.data[0]) << 8 | response.data[1];
 			// Parse the sensor values
-			int dat = ((int)response.data[i*4+2]) << 8 | response.data[i*4+3];
+			int dat = ((int)response.data[2]) << 8 | response.data[3];
 			// If the sensor is not in the hashmap, ignore it
 			if(!sensors.containsKey(sens)) {
 				System.out.println("Sensor not loaded (ID = " + sens + ")");
@@ -263,10 +253,13 @@ public class HardwareControlInterface implements Runnable {
 		return true;
 	}
 	
-	private SerialPacket readMessage() throws SerialPortException {
-		byte[] r_head = port.readBytes(2);
+	private SerialPacket readMessage() throws SerialPortException, SerialPortTimeoutException {
+		byte[] r_head = port.readBytes(2, SERIAL_TIMEOUT_MS);
 		int len = r_head[1];
-		byte[] r_body = port.readBytes(len);
+		if (len < 0) {
+			len += 256;
+		}
+		byte[] r_body = port.readBytes(len, SERIAL_TIMEOUT_MS);
 		SerialPacket response = new SerialPacket(r_head[0],r_body);
 		return response;
 	}
@@ -275,8 +268,22 @@ public class HardwareControlInterface implements Runnable {
 		port.writeBytes(p.asPacket());
 	}
 	
-	public HardwareControlInterface(SerialPort sp) {
-		port = sp;
+	public HardwareControlInterface(String spName) {
+
+		// Open the found arduino port
+		port = new SerialPort(spName);
+		// Try open port
+		try {
+			port.openPort();
+			Thread.sleep(1000);
+			port.setParams(baud, 8, 1, 0);
+			port.setDTR(false);
+		} catch (SerialPortException e) {
+			e.printStackTrace();
+			return;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
 }

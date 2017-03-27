@@ -58,22 +58,7 @@ public class Main {
 		} else {
 			System.out.println("Found arduino at " + port);
 		}
-		// Open the found arduino port
-		SerialPort sport = new SerialPort(port);
-		// Try open port
-		try {
-			sport.openPort();
-			Thread.sleep(1000);
-			sport.setParams(baud, 8, 1, 0);
-			sport.setDTR(false);
-		} catch (SerialPortException e) {
-			e.printStackTrace();
-			return;
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		hci = new HardwareControlInterface(sport);
+		hci = new HardwareControlInterface(port);
 		// Initialize sensors
 		
 		
@@ -156,7 +141,8 @@ public class Main {
 			a.actuatorID = 0;
 			hci.queueActuation(a);
 			Thread.sleep(3000);
-			hci.halt();
+			hciThread.interrupt();
+			hciThread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
