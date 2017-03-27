@@ -176,7 +176,6 @@ public class HardwareControlInterface implements Runnable {
 		// If no conflict or override, add it
 		activeActuations.add(act);
 		actuationQueue.remove(act);
-		System.out.println("Successfully added actuation on actuator ID: " + act.actuatorID);
 		return true;
 	}
 	
@@ -212,7 +211,6 @@ public class HardwareControlInterface implements Runnable {
 				return false;
 			}
 		}
-		System.out.println("Successfully set outputs");
 		return true;
 	}
 	
