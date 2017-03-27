@@ -74,7 +74,6 @@ public class ModuleMain {
 				// Read response bytes
 				byte[] b = sp.readBytes(1,1000);
 				// If response is 0xA5, it is the arduino
-				System.out.println(Byte.toString(b[0]));
 				if(b[0] == (byte)0xA5) {
 					// Capture the string of correct port
 					port = s;
@@ -436,25 +435,18 @@ public class ModuleMain {
 
 		channel.queueBind(queueName, exchangeName, motorTopic);
 
-
-		//Print waiting for messages
-
 		Consumer consumer = new DefaultConsumer(channel) {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope,
 									   AMQP.BasicProperties properties, byte[] body) throws IOException {
-				//String message = new String(body "UTF-8");
-				//Print Received Message
 				String routingKey = envelope.getRoutingKey();
 				String[] keys = routingKey.split("\\.");
-				System.out.println(routingKey);
 				if(keys.length < 4) {
 					System.out.println("Failed to interpret routing key");
 					return;
 				}
 				if (keys[3].equals("wheel_rpm")) {
 					Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
-					System.out.println(scc.getRpm());
 					Actuation a = new Actuation();
 					a.override = true;
 					a.hold = true;
@@ -465,7 +457,6 @@ public class ModuleMain {
 
 				} else if (keys[3].equals("wheel_pod_pos")) {
 					Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
-					System.out.println(pcc.getPosition());
 					Actuation a = new Actuation();
 					a.override = true;
 					a.hold = true;
@@ -483,7 +474,7 @@ public class ModuleMain {
 			while (true) {
 				Sensor s = hci.getSensorFromID(0);
 				if (s.data.isEmpty()) {
-					System.out.println("empty");
+					System.out.println("Sensor #0 has no data");
 				} else {
 					System.out.println("Sensor #0 = " + s.data.get(0).data);
 				}

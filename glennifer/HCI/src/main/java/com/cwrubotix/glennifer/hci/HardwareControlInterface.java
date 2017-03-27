@@ -125,7 +125,6 @@ public class HardwareControlInterface implements Runnable {
 				calcOutputs();
 				// Set outputs
 				setOutputs();
-				System.out.println(Long.toString(System.currentTimeMillis()-t));
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
@@ -205,7 +204,6 @@ public class HardwareControlInterface implements Runnable {
 			data[1] = (byte)(actuatorIdShort);
 			data[2] = (byte)(currentOutputShort >>> 8);
 			data[3] = (byte)(currentOutputShort);
-			System.out.println("Setting output: " + currentOutputShort + " actuator ID: " + actuatorIdShort);
 			sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
 			// Get the response
 			SerialPacket response = readMessage();
@@ -290,13 +288,4 @@ public class HardwareControlInterface implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
-	public static String bytesToHex(byte[] in) {
-		final StringBuilder builder = new StringBuilder();
-		for(byte b : in) {
-			builder.append(String.format("%02x ", b));
-		}
-		return builder.toString();
-	}
-	
 }
