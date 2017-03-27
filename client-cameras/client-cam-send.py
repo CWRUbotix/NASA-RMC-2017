@@ -123,3 +123,4 @@ while(True):
     getCam4()
     #Camera Five Update
     getCam5()
+    time.sleep(1)

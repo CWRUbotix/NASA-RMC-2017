@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author Michael
  */
-public class ExcavationStateModule implements Runnable {
+public class ExcavationStateModule {
     
     /* Consumer callback class and methods */
     
@@ -58,7 +58,7 @@ public class ExcavationStateModule implements Runnable {
                 handleConveyorTranslationLimitRetractedUpdate(body);
             }
         }
-    };
+    }
     
     private void handleConveyorRpmUpdate(byte[] body) throws IOException {
         RpmUpdate message = RpmUpdate.parseFrom(body);
@@ -76,7 +76,7 @@ public class ExcavationStateModule implements Runnable {
         float displacement = message.getDisplacement();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorTranslationDisplacement(displacement, time);
+            state.updateTranslationDisplacement(displacement, time);
         } catch (RobotFaultException e) {
             ExcavationStateModule.this.sendFault(e.getFaultCode(), time);
         }
@@ -120,7 +120,7 @@ public class ExcavationStateModule implements Runnable {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorTranslationLimitExtended(pressed, time);
+            state.updateTranslationLimitExtended(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -131,7 +131,7 @@ public class ExcavationStateModule implements Runnable {
         boolean pressed = message.getPressed();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateConveyorTranslationLimitRetracted(pressed, time);
+            state.updateTranslationLimitRetracted(pressed, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
@@ -139,10 +139,17 @@ public class ExcavationStateModule implements Runnable {
     
     /* Data Members */
     private ExcavationState state;
-    private Channel channel;
+    private String exchangeName;
+    private Connection connection;
+    public Channel channel;
     
     public ExcavationStateModule(ExcavationState state) {
+        this(state, "amq.topic");
+    }
+
+    public ExcavationStateModule(ExcavationState state, String exchangeName) {
         this.state = state;
+        this.exchangeName = exchangeName;
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -157,21 +164,20 @@ public class ExcavationStateModule implements Runnable {
         faultBuilder.setFaultCode(faultCode);
         faultBuilder.setTimestamp(instantToUnixTime(time));
         Fault message = faultBuilder.build();
-        channel.basicPublish("amq.topic", "fault", null, message.toByteArray());
+        channel.basicPublish(exchangeName, "fault", null, message.toByteArray());
     }
     
     public void runWithExceptions() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        Connection connection = factory.newConnection();
+        connection = factory.newConnection();
         this.channel = connection.createChannel();
         String queueName = channel.queueDeclare().getQueue();
-        channel.queueBind(queueName, "amq.topic", "sensor.excavation.#");
+        channel.queueBind(queueName, exchangeName, "sensor.excavation.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
     }
-    
-    @Override
-    public void run() {
+
+    public void start() {
         try {
             runWithExceptions();
         } catch (Exception e) {
@@ -182,14 +188,15 @@ public class ExcavationStateModule implements Runnable {
             System.out.println(e.getMessage());
         }
     }
+
+    public void stop() throws IOException, TimeoutException {
+        channel.close();
+        connection.close();
+    }
     
     public static void main(String[] args) {
         ExcavationState state = new ExcavationState();
         ExcavationStateModule module = new ExcavationStateModule(state);
-        try {
-            module.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        module.start();
     }
 }

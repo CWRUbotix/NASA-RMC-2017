@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author Michael
  */
-public class DepositionStateModule implements Runnable {
+public class DepositionStateModule {
     
     /* Consumer callback class and methods */
     
@@ -39,9 +39,21 @@ public class DepositionStateModule implements Runnable {
                 return;
             }
             String sensorString = keys[2];
-
+            String loadCellString = keys[3];
             if (sensorString.equals("dump_load")) {
-                handleDumpLoadUpdate(body);
+                DepositionState.LoadCell loadcell;
+                if(loadCellString.equals("front_left")){
+                    loadcell = DepositionState.LoadCell.FRONT_LEFT;
+                } else if (loadCellString.equals("front_right")){
+                    loadcell = DepositionState.LoadCell.FRONT_RIGHT;
+                } else if (loadCellString.equals("back_left")){
+                    loadcell = DepositionState.LoadCell.BACK_LEFT;
+                } else if (loadCellString.equals("back_right")) {
+                    loadcell = DepositionState.LoadCell.BACK_RIGHT;
+                } else {
+                    return;
+                }
+                handleDumpLoadUpdate(loadcell, body);
 			}  else if (sensorString.equals("arm_pos")) {
                 handleDumpPosUpdate(body);
             } else if (sensorString.equals("dump_limit_extended")) {
@@ -50,14 +62,14 @@ public class DepositionStateModule implements Runnable {
                 handleDumpLimitRetractedUpdate(body);
             }
         }
-    };
+    }
     
-    private void handleDumpLoadUpdate(byte[] body) throws IOException {
+    private void handleDumpLoadUpdate(DepositionState.LoadCell cell, byte[] body) throws IOException {
         LoadUpdate message = LoadUpdate.parseFrom(body);
         float load = message.getLoad();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            state.updateDumpLoad(load, time);
+            state.updateDumpLoad(cell, load, time);
         } catch (RobotFaultException e) {
             DepositionStateModule.this.sendFault(e.getFaultCode(), time);
         }
@@ -98,10 +110,17 @@ public class DepositionStateModule implements Runnable {
 	
     /* Data Members */
     private DepositionState state;
+    private String exchangeName;
+    private Connection connection;
     private Channel channel;
     
     public DepositionStateModule(DepositionState state) {
+        this(state, "amq.topic");
+    }
+
+    public DepositionStateModule(DepositionState state, String exchangeName) {
         this.state = state;
+        this.exchangeName = exchangeName;
     }
     
     private UnixTime instantToUnixTime(Instant time) {
@@ -116,21 +135,20 @@ public class DepositionStateModule implements Runnable {
         faultBuilder.setFaultCode(faultCode);
         faultBuilder.setTimestamp(instantToUnixTime(time));
         Fault message = faultBuilder.build();
-        channel.basicPublish("amq.topic", "fault", null, message.toByteArray());
+        channel.basicPublish(exchangeName, "fault", null, message.toByteArray());
     }
     
     public void runWithExceptions() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        Connection connection = factory.newConnection();
+        connection = factory.newConnection();
         this.channel = connection.createChannel();
         String queueName = channel.queueDeclare().getQueue();
-        channel.queueBind(queueName, "amq.topic", "sensor.deposition.#");
+        channel.queueBind(queueName, exchangeName, "sensor.deposition.#");
         this.channel.basicConsume(queueName, true, new UpdateConsumer(channel));
     }
-    
-    @Override
-    public void run() {
+
+    public void start() {
         try {
             runWithExceptions();
         } catch (Exception e) {
@@ -141,14 +159,15 @@ public class DepositionStateModule implements Runnable {
             System.out.println(e.getMessage());
         }
     }
-    
+
+    public void stop() throws IOException, TimeoutException {
+        channel.close();
+        connection.close();
+    }
+
     public static void main(String[] args) {
         DepositionState state = new DepositionState();
         DepositionStateModule module = new DepositionStateModule(state);
-        try {
-            module.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        module.start();
     }
 }
