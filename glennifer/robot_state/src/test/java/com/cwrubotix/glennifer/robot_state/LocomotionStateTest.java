@@ -55,9 +55,10 @@ public class LocomotionStateTest {
         float averageStraightRpm = 0.0F;
         float averageTurnRpm = 0.0F;
         float averageStrafeRpm = 0.0F;
-        assertEquals(averageStraightRpm, resultAverageStraightSpeed, 0);
-        assertEquals(averageTurnRpm, resultAverageTurnSpeed, 0);
-        assertEquals(averageStrafeRpm, resultAverageStrafeSpeed, 0);
+        //Expected behavior is now to expect a NaN if the wheels are not reporting
+        assertEquals(Float.NaN, resultAverageStraightSpeed, 0);
+        assertEquals(Float.NaN, resultAverageTurnSpeed, 0);
+        assertEquals(Float.NaN, resultAverageStrafeSpeed, 0);
         
       //Update 3 Wheels, Don't for wheel front right - Not sure if situation should be handled differently though.
         

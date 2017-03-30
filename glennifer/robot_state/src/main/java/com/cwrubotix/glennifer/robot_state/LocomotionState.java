@@ -47,7 +47,7 @@ public class LocomotionState {
     }
 
     /* Data members */
-    private EnumMap<Wheel, Float> wheelRpm;
+    private EnumMap<Wheel, Optional<Float>> wheelRpm;
     private EnumMap<Wheel, Float> wheelPodPos;
     private EnumMap<Wheel, Boolean> wheelPodLimitRetracted;
     private EnumMap<Wheel, Boolean> wheelPodLimitExtended;
@@ -72,12 +72,12 @@ public class LocomotionState {
          */
 
         // TODO: handle no input from sensor
-
+    	//Initialize with empty optionals, if that's a thing
         wheelRpm = new EnumMap<>(Wheel.class);
-        wheelRpm.put(Wheel.FRONT_LEFT, null);
-        wheelRpm.put(Wheel.FRONT_RIGHT, null);
-        wheelRpm.put(Wheel.BACK_LEFT, null);
-        wheelRpm.put(Wheel.BACK_RIGHT, null);
+        wheelRpm.put(Wheel.FRONT_LEFT, Optional.empty());
+        wheelRpm.put(Wheel.FRONT_RIGHT, Optional.empty());
+        wheelRpm.put(Wheel.BACK_LEFT, Optional.empty());
+        wheelRpm.put(Wheel.BACK_RIGHT, Optional.empty());
 
         wheelPodPos = new EnumMap<>(Wheel.class);
         wheelPodPos.put(Wheel.FRONT_LEFT, (float) 0);
@@ -99,17 +99,17 @@ public class LocomotionState {
     }
     
     /* Update methods */
-
+    //when this is called, rpm will never be null
     public void updateWheelRpm(Wheel wheel, float rpm, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
 
-        wheelRpm.put(wheel, rpm);
+        wheelRpm.put(wheel, Optional.of(rpm));
 
         //Check if time is null
         Optional<Instant> opTime = Optional.ofNullable(time);
         if ((opTime.isPresent()) && timeSinceWheelRPM != null) {
-            Duration duration = Duration.between(timeSinceWheelRPM, time);
+            Duration duration = Duration.between(time, timeSinceWheelRPM);
 
             //some given consistency value?
             if (duration.toMillis() > 2000) {
@@ -126,9 +126,8 @@ public class LocomotionState {
         // TODO: detect impossibly sudden changes
     	
     	if(timeSincePodPos != null && time != null){
-    	Duration duration = Duration.between(timeSincePodPos, time);
-    	
-    	//some hardcoded consistency value?
+    	Duration duration = Duration.between(time, timeSincePodPos);
+    	//Placeholder for now, but eventually see if values are ridiculous
     		if(duration.toMillis() > 2000){
     		//throw something?
     		}
@@ -201,22 +200,22 @@ public class LocomotionState {
         Float rpmTot = (float) 0;
         /// For TURN: Left wheels are positive, right wheels are negative
         /// For STRAFE: FL and BR are positive, FR and BL are negative
-        Optional<Float> rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.FRONT_LEFT));
+        Optional<Float> rpmWL = wheelRpm.get(Wheel.FRONT_LEFT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmTot += rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.FRONT_RIGHT));
+        rpmWL = wheelRpm.get(Wheel.FRONT_RIGHT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmTot += rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.BACK_LEFT));
+        rpmWL = wheelRpm.get(Wheel.BACK_LEFT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmTot += rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.BACK_RIGHT));
+        rpmWL = wheelRpm.get(Wheel.BACK_RIGHT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmTot += rpmWL.get();
@@ -233,22 +232,22 @@ public class LocomotionState {
         Float rpmTurn = (float) 0;
         /// For TURN: Left wheels are positive, right wheels are negative
         /// For STRAFE: FL and BR are positive, FR and BL are negative
-        Optional<Float> rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.FRONT_LEFT));
+        Optional<Float> rpmWL = wheelRpm.get(Wheel.FRONT_LEFT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmTurn += rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.FRONT_RIGHT));
+        rpmWL = wheelRpm.get(Wheel.FRONT_RIGHT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmTurn -= rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.BACK_LEFT));
+        rpmWL = wheelRpm.get(Wheel.BACK_LEFT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmTurn += rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.BACK_RIGHT));
+        rpmWL = wheelRpm.get(Wheel.BACK_RIGHT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmTurn -= rpmWL.get();
@@ -264,22 +263,22 @@ public class LocomotionState {
         int divNum = 0;
         Float rpmStrafe = (float) 0;
         /// For STRAFE: FL and BR are positive, FR and BL are negative
-        Optional<Float> rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.FRONT_LEFT));
+        Optional<Float> rpmWL = wheelRpm.get(Wheel.FRONT_LEFT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmStrafe += rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.FRONT_RIGHT));
+        rpmWL = wheelRpm.get(Wheel.FRONT_RIGHT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmStrafe -= rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.BACK_LEFT));
+        rpmWL = wheelRpm.get(Wheel.BACK_LEFT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmStrafe -= rpmWL.get();
         }
-        rpmWL = Optional.ofNullable(wheelRpm.get(Wheel.BACK_RIGHT));
+        rpmWL = wheelRpm.get(Wheel.BACK_RIGHT);
         if (rpmWL.isPresent()) {
             divNum++;
             rpmStrafe += rpmWL.get();
@@ -289,7 +288,7 @@ public class LocomotionState {
     }
     
     public float getWheelRpm(Wheel wheel) {
-        return wheelRpm.get(wheel);
+        return wheelRpm.get(wheel).get();
     }
     
     public float getWheelPodPos(Wheel wheel) {
