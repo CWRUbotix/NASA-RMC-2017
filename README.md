@@ -4,19 +4,23 @@ This is the entire codebase for Case Western Reserve University's 2017 NASA Robo
 
 ## Compatability ##
 
-The robot must be built and run on Ubuntu. The client may be built and run on either linux or windows.
+The robot must be built and run on Ubuntu to work completely, but almost all of its programs can also be built and run on any linux distro, or Windows. The client may be built and run on either linux or windows.
 
 ## Dependencies and environment setup ##
 
-All setup of the development environment for both the robot and the client is done with setup scripts.
+Some of the setup of the development environment for both the robot and the client is done with setup scripts.
 
-### For Glennifer ###
+### For Glennifer on Ubuntu ###
 
 To setup the dev environment for the robot on Ubuntu, run ./setup-devenv-glennifer.sh
 
 If this script fails, inspect the script and try to do what failed manually. If there is a problem with the script that should be fixed, please fix it!
 
-For reference, these are all the dependencies required to build and run Glennifer:
+### For Glennifer on other operating systems ###
+
+Install all of the dependencies using the links below.
+
+These are all the dependencies required to build and run Glennifer:
 
 * A modern linux operating system, such as Ubuntu: https://www.ubuntu.com/download
 * Python 3: https://www.python.org/downloads/
