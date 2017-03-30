@@ -1,5 +1,6 @@
-#include "RoboClaw.h"
-#include "math.h"
+#include <Sabertooth.h>
+#include <RoboClaw.h>
+#include <math.h>
 
 #define ID_LBM  0
 #define ID_RBM  1
@@ -28,8 +29,6 @@
 #define FAULT_INCOMPLETE_BODY (5)
 #define FAULT_CORRUPTED_BODY (6)
 #define FAULT_LOST_ROBOCLAW (6)
-
-RoboClaw roboclaw(&Serial1,10000);
 
 enum SensorHardware {
   SH_NONE,
@@ -70,10 +69,15 @@ typedef struct MotorInfo {
 SensorInfo sensor_infos[256]; // All initialized to SH_NONE
 MotorInfo motor_infos[256]; // All initialized to MH_NONE
 
-void setup() {
-  roboclaw.begin(38400);
-  SerialUSB.begin(9600);
+RoboClaw roboclaw(&Serial1,10000);
+Sabertooth sabretooth[4] = {
+  Sabertooth(0x80, Serial2),
+  Sabertooth(0x81, Serial2),
+  Sabertooth(0x82, Serial2),
+  Sabertooth(0x83, Serial2),
+};
 
+void setup() {
   sensor_infos[0].hardware = SH_RC_POT;
   sensor_infos[0].addr = ADDRESS_RC_3;
   sensor_infos[0].whichMotor = 0;
@@ -83,7 +87,8 @@ void setup() {
   
   sensor_infos[2].hardware = SH_PIN_LIMIT;
   sensor_infos[2].whichPin = 14;
-  
+
+  /*
   motor_infos[2].hardware = MH_RC_POS;
   motor_infos[2].addr = ADDRESS_RC_3;
   motor_infos[2].whichMotor = 0;
@@ -95,11 +100,29 @@ void setup() {
   motor_infos[2].minpos = 84;
   motor_infos[2].maxpos = 1676;
   motor_infos[2].accel = 9999999;
+  */
   
-  configure_roboclaw();
+  motor_infos[2].hardware = MH_ST_PWM;
+  motor_infos[2].addr = 0;
+  motor_infos[2].whichMotor = 1;
+
+  setup_comms();
+  setup_sabretooth();
+  setup_roboclaw();
+  configure_sensors();
+  configure_motors();
 }
 
-FAULT_T configure_roboclaw() {
+void setup_comms() {
+  SerialUSB.begin(9600);
+}
+
+void setup_sabretooth() {
+  Serial2.begin(9600);
+}
+
+FAULT_T setup_roboclaw() {
+  roboclaw.begin(38400);
   bool success;
   success = roboclaw.SetConfig(ADDRESS_RC_0, 0x8063);
   if (!success) {
@@ -117,7 +140,28 @@ FAULT_T configure_roboclaw() {
   if (!success) {
     return FAULT_LOST_ROBOCLAW;
   }
+  
+  success = roboclaw.WriteNVM(ADDRESS_RC_0);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.WriteNVM(ADDRESS_RC_1);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.WriteNVM(ADDRESS_RC_2);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.WriteNVM(ADDRESS_RC_3);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  return NO_FAULT;
+}
 
+FAULT_T configure_sensors() {
+  bool success;
   for (int i = 0; i < 256; i++) {
     SensorInfo sensor_info = sensor_infos[i];
     switch (sensor_info.hardware) {
@@ -148,11 +192,16 @@ FAULT_T configure_roboclaw() {
       break;
     }
   }
-  
+  return NO_FAULT;
+}
+
+FAULT_T configure_motors() {
+  bool success;
   for (int i = 0; i < 256; i++) {
     MotorInfo motor_info = motor_infos[i];
     switch (motor_info.hardware) {
     case MH_RC_PWM:
+      // Nothing to do, default config
       break;
     case MH_RC_VEL:
       if (motor_info.whichMotor) {
@@ -201,28 +250,11 @@ FAULT_T configure_roboclaw() {
       }
       break;
     case MH_ST_PWM:
-      // TODO
+      // Nothing to do, default config
       break;
     default:
       break;
     }
-  }
-  
-  success = roboclaw.WriteNVM(ADDRESS_RC_0);
-  if (!success) {
-    return FAULT_LOST_ROBOCLAW;
-  }
-  success = roboclaw.WriteNVM(ADDRESS_RC_1);
-  if (!success) {
-    return FAULT_LOST_ROBOCLAW;
-  }
-  success = roboclaw.WriteNVM(ADDRESS_RC_2);
-  if (!success) {
-    return FAULT_LOST_ROBOCLAW;
-  }
-  success = roboclaw.WriteNVM(ADDRESS_RC_3);
-  if (!success) {
-    return FAULT_LOST_ROBOCLAW;
   }
   return NO_FAULT;
 }
@@ -381,7 +413,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     }
     break;
   case MH_ST_PWM:
-    // TODO
+    sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
     break;
   default:
     break;
