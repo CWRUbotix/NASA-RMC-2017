@@ -26,6 +26,7 @@ conaninfo.txt
 conan_imports_manifest.txt
 .classpath
 target/
+*.log
 
 # IntelliJ user settings
 workspace.xml

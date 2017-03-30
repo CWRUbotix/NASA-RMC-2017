@@ -199,6 +199,7 @@ public class HardwareControlInterface implements Runnable {
 			Actuation activeActuation = activeActuations.get(i);
 			short actuatorIdShort = (short)activeActuation.actuatorID;
 			short currentOutputShort = (short)activeActuation.currentOutput;
+			System.out.println("Set motor #" + actuatorIdShort + " = " + currentOutputShort);
 			data[0] = (byte)(actuatorIdShort >>> 8);
 			data[1] = (byte)(actuatorIdShort);
 			data[2] = (byte)(currentOutputShort >>> 8);
@@ -237,18 +238,20 @@ public class HardwareControlInterface implements Runnable {
 				return false;
 			}
 			// Parse the sensor IDs
-			int sens = ((int)response.data[0]) << 8 | response.data[1];
+			int sens = ((int)response.data[0]) << 8 | (0xFF & response.data[1]);
 			// Parse the sensor values
-			int dat = ((int)response.data[2]) << 8 | response.data[3];
-			// If the sensor is not in the hashmap, ignore it
-			if(!sensors.containsKey(sens)) {
-				System.out.println("Sensor not loaded (ID = " + sens + ")");
-				continue;
+			int dat = ((int)response.data[2]) << 8 | (0xFF & response.data[3]);
+			if (dat != -32768) {
+				// If the sensor is not in the hashmap, ignore it
+				if(!sensors.containsKey(sens)) {
+					System.out.println("Sensor not loaded (ID = " + sens + ")");
+					continue;
+				}
+				// Get the sensor
+				Sensor s = sensors.get(sens);
+				// Update it with the data
+				s.updateRaw(dat);
 			}
-			// Get the sensor
-			Sensor s = sensors.get(sens);
-			// Update it with the data
-			s.updateRaw(dat);
 		}
 		return true;
 	}

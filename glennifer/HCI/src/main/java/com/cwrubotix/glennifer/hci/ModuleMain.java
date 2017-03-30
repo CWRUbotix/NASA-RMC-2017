@@ -476,7 +476,7 @@ public class ModuleMain {
 				if (s.data.isEmpty()) {
 					System.out.println("Sensor #0 has no data");
 				} else {
-					System.out.println("Sensor #0 = " + s.data.get(0).data);
+					System.out.println("Sensor #0 = " + s.data.get(s.data.size()-1).data);
 				}
 				Thread.sleep(100);
 			}
