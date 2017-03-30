@@ -35,7 +35,9 @@ public class StateModule {
         private String returnKey;
         private int interval_ms;
 
-        public SubscriptionRunnable(String returnKey, int interval_ms) {
+        public SubscriptionRunnable(String returnKey, int interval_ms, boolean loc_summary, boolean loc_detailed,
+                                                                        boolean exc_summary, boolean exc_detailed,
+                                                                        boolean dep_summary, boolean dep_detailed) {
             this.returnKey = returnKey;
             this.interval_ms = interval_ms;
         }
@@ -45,8 +47,8 @@ public class StateModule {
             boolean go = true;
             while (go) {
                 Instant now = Instant.now();
-                Messages.LocomotionState locomotionMsg = Messages.LocomotionState.newBuilder()
-                        .setConfig(Messages.LocomotionState.Configuration.valueOf(StateModule.this.locomotionState.getConfiguration().ordinal()))
+                Messages.LocomotionStateSummary locomotionMsg = Messages.LocomotionStateSummary.newBuilder()
+                        .setConfig(Messages.LocomotionStateSummary.Configuration.valueOf(StateModule.this.locomotionState.getConfiguration().ordinal()))
                         .setSpeed(StateModule.this.locomotionState.getStraightSpeed())
                         .setTimestamp(instantToUnixTime(now))
                         .build();
@@ -182,9 +184,15 @@ public class StateModule {
 
         @Override
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-            Messages.LocomotionStateSubscribe msg = Messages.LocomotionStateSubscribe.parseFrom(body);
+            Messages.StateSubscribe msg = Messages.StateSubscribe.parseFrom(body);
             float interval = msg.getInterval();
             int interval_ms = (int)(interval / 1000);
+            boolean loc_summary = true;
+            boolean loc_detailed = true;
+            boolean exc_summary = true;
+            boolean exc_detailed = true;
+            boolean dep_summary = true;
+            boolean dep_detailed = true;
             String replyKey = msg.getReplyKey();
             Thread t = new Thread(new SubscriptionRunnable(replyKey, interval_ms));
             subscriptionThreads.add(t);
@@ -406,7 +414,7 @@ public class StateModule {
 
         // Listen for requests to subscribe to state updates
         queueName = channel.queueDeclare().getQueue();
-        channel.queueBind(queueName, exchangeName, "state.*.subscribe");
+        channel.queueBind(queueName, exchangeName, "state.subscribe");
         this.channel.basicConsume(queueName, true, new RequestConsumer(channel));
     }
 
