@@ -27,21 +27,204 @@
 #define FAULT_CORRUPTED_HEADER (4)
 #define FAULT_INCOMPLETE_BODY (5)
 #define FAULT_CORRUPTED_BODY (6)
+#define FAULT_LOST_ROBOCLAW (6)
 
 RoboClaw roboclaw(&Serial1,10000);
+
+enum SensorHardware {
+  SH_NONE,
+  SH_RC_POT,
+  SH_RC_ENC,
+  SH_PIN_LIMIT
+};
+
+typedef struct SensorInfo {
+  SensorHardware hardware;
+  uint8_t addr; // When hardware = SH_RC_*
+  bool whichMotor; // When hardware = SH_RC_*
+  uint8_t whichPin; // When hardware = SH_PIN_*
+} SensorInfo;
+
+enum MotorHardware {
+  MH_NONE,
+  MH_RC_PWM,
+  MH_RC_VEL,
+  MH_RC_POS,
+  MH_ST_PWM
+};
+
+typedef struct MotorInfo {
+  MotorHardware hardware;
+  uint8_t addr;
+  bool whichMotor;
+  float kp; // When hardware = MH_RC_POS or MC_RC_VEL
+  float ki; // When hardware = MH_RC_POS or MC_RC_VEL
+  float kd; // When hardware = MH_RC_POS or MC_RC_VEL
+  uint32_t qpps; // When hardware = MH_RC_POS or MC_RC_VEL
+  uint32_t deadband; // When hardware = MH_RC_POS
+  uint32_t minpos; // When hardware = MH_RC_POS
+  uint32_t maxpos; // When hardware = MH_RC_POS
+  uint32_t accel;
+} MotorInfo;
+
+SensorInfo sensor_infos[256]; // All initialized to SH_NONE
+MotorInfo motor_infos[256]; // All initialized to MH_NONE
 
 void setup() {
   roboclaw.begin(38400);
   SerialUSB.begin(9600);
-  roboclaw.SetConfig(ADDRESS_RC_0, 0x8063);
-  roboclaw.SetConfig(ADDRESS_RC_1, 0x8163);
-  roboclaw.SetConfig(ADDRESS_RC_2, 0x8263);
-  roboclaw.SetConfig(ADDRESS_RC_3, 0x8363);
-  roboclaw.SetM1EncoderMode(ADDRESS_RC_1, 0x81);
-  roboclaw.WriteNVM(ADDRESS_RC_0);
-  roboclaw.WriteNVM(ADDRESS_RC_1);
-  roboclaw.WriteNVM(ADDRESS_RC_2);
-  roboclaw.WriteNVM(ADDRESS_RC_3);
+
+  sensor_infos[0].hardware = SH_RC_POT;
+  sensor_infos[0].addr = ADDRESS_RC_3;
+  sensor_infos[0].whichMotor = 0;
+  
+  sensor_infos[1].hardware = SH_PIN_LIMIT;
+  sensor_infos[1].whichPin = 13;
+  
+  sensor_infos[2].hardware = SH_PIN_LIMIT;
+  sensor_infos[2].whichPin = 14;
+  
+  motor_infos[2].hardware = MH_RC_POS;
+  motor_infos[2].addr = ADDRESS_RC_3;
+  motor_infos[2].whichMotor = 0;
+  motor_infos[2].kp = 31512.70535;
+  motor_infos[2].ki = 23.57707;
+  motor_infos[2].kd = 7019890.76290;
+  motor_infos[2].qpps = 330;
+  motor_infos[2].deadband = 10;
+  motor_infos[2].minpos = 84;
+  motor_infos[2].maxpos = 1676;
+  motor_infos[2].accel = 9999999;
+  
+  configure_roboclaw();
+}
+
+FAULT_T configure_roboclaw() {
+  bool success;
+  success = roboclaw.SetConfig(ADDRESS_RC_0, 0x8063);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.SetConfig(ADDRESS_RC_1, 0x8163);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.SetConfig(ADDRESS_RC_2, 0x8263);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.SetConfig(ADDRESS_RC_3, 0x8363);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+
+  for (int i = 0; i < 256; i++) {
+    SensorInfo sensor_info = sensor_infos[i];
+    switch (sensor_info.hardware) {
+    case SH_RC_POT:
+      if (sensor_info.whichMotor) {
+        success = roboclaw.SetM2EncoderMode(sensor_info.addr, 0x81);
+      } else {
+        success = roboclaw.SetM1EncoderMode(sensor_info.addr, 0x81);
+      }
+      if (!success) {
+        return FAULT_LOST_ROBOCLAW;
+      }
+      break;
+    case SH_RC_ENC:
+      if (sensor_info.whichMotor) {
+        success = roboclaw.SetM2EncoderMode(sensor_info.addr, 0x80);
+      } else {
+        success = roboclaw.SetM1EncoderMode(sensor_info.addr, 0x80);
+      }
+      if (!success) {
+        return FAULT_LOST_ROBOCLAW;
+      }
+      break;
+    case SH_PIN_LIMIT:
+      // TODO
+      break;
+    default:
+      break;
+    }
+  }
+  
+  for (int i = 0; i < 256; i++) {
+    MotorInfo motor_info = motor_infos[i];
+    switch (motor_info.hardware) {
+    case MH_RC_PWM:
+      break;
+    case MH_RC_VEL:
+      if (motor_info.whichMotor) {
+        success = roboclaw.SetM2VelocityPID(
+          motor_info.addr,
+          motor_info.kp,
+          motor_info.ki,
+          motor_info.kd,
+          motor_info.qpps);
+      } else {
+        success = roboclaw.SetM1VelocityPID(
+          motor_info.addr,
+          motor_info.kp,
+          motor_info.ki,
+          motor_info.kd,
+          motor_info.qpps);
+      }
+      if (!success) {
+        return FAULT_LOST_ROBOCLAW;
+      }
+      break;
+    case MH_RC_POS:
+      if (motor_info.whichMotor) {
+        success = roboclaw.SetM2PositionPID(
+          motor_info.addr,
+          motor_info.kp,
+          motor_info.ki,
+          motor_info.kd,
+          motor_info.qpps,
+          motor_info.deadband,
+          motor_info.minpos,
+          motor_info.maxpos);
+      } else {
+        success = roboclaw.SetM1PositionPID(
+          motor_info.addr,
+          motor_info.kp,
+          motor_info.ki,
+          motor_info.kd,
+          motor_info.qpps,
+          motor_info.deadband,
+          motor_info.minpos,
+          motor_info.maxpos);
+      }
+      if (!success) {
+        return FAULT_LOST_ROBOCLAW;
+      }
+      break;
+    case MH_ST_PWM:
+      // TODO
+      break;
+    default:
+      break;
+    }
+  }
+  
+  success = roboclaw.WriteNVM(ADDRESS_RC_0);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.WriteNVM(ADDRESS_RC_1);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.WriteNVM(ADDRESS_RC_2);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  success = roboclaw.WriteNVM(ADDRESS_RC_3);
+  if (!success) {
+    return FAULT_LOST_ROBOCLAW;
+  }
+  return NO_FAULT;
 }
 
 void loop() {
@@ -75,12 +258,9 @@ void execute(byte cmd[]) {
       num_sensors_requested = cmd_sense_num_sensors(cmd);
       for(int i = 0; i < num_sensors_requested; i++) {
         uint16_t id =  cmd_sense_sensor_id(cmd, i);
-        
-        uint8_t status;
-        bool valid = true;
-        int32_t val32 = roboclaw.ReadEncM1(ADDRESS_RC_1, &status, &valid);
-        int16_t val = (int16_t)val32;
-        if (!valid){
+        int16_t val;
+        FAULT_T retfault = getSensor(id, &val);
+        if (retfault != NO_FAULT) {
           val = 0x8000; // Error code
         }
         bool overflow = rpy_sense_add_sensor(rpy, id, val);
@@ -111,63 +291,102 @@ void execute(byte cmd[]) {
   }
 }
 
-void setActuator(short ID, short val) {
-  // Initialize variables for easier switching
+FAULT_T getSensor(uint16_t ID, int16_t *val) {
+  SensorInfo sensor_info = sensor_infos[ID];
+  uint8_t status;
+  bool valid;
+  int32_t val32;
+  switch (sensor_info.hardware) {
+  case SH_RC_POT:
+    if (sensor_info.whichMotor) {
+      val32 = roboclaw.ReadEncM2(sensor_info.addr, &status, &valid);
+    } else {
+      val32 = roboclaw.ReadEncM1(sensor_info.addr, &status, &valid);
+    }
+    if (!valid){
+      return FAULT_LOST_ROBOCLAW;
+    }
+    *val = (int16_t)val32;
+    break;
+  case SH_RC_ENC:
+    if (sensor_info.whichMotor) {
+      val32 = roboclaw.ReadSpeedM2(sensor_info.addr, &status, &valid);
+    } else {
+      val32 = roboclaw.ReadSpeedM1(sensor_info.addr, &status, &valid);
+    }
+    if (!valid){
+      return FAULT_LOST_ROBOCLAW;
+    }
+    *val = (int16_t)val32;
+    break;
+  case SH_PIN_LIMIT:
+    // TODO
+    break;
+  default:
+    break;
+  }
+  return NO_FAULT;
+}
+
+FAULT_T setActuator(uint16_t ID, int16_t val) {
+  bool success;
   // Direction of movement (true is forward)
   bool dir = (val > 0);
   // Absolute value (doesn't work for -128, which should be illegal)
+  int16_t mag;
   if (val < 0) {
-    val = -val;
+    mag = -val;
+  } else {
+    mag = val;
   }
-  // True if roboclaw controller
-  bool rc = false;
-  // True if sabertooth controller
-  bool st = false;
-  // Address
-  byte addr = 0;
-  // Channel on motor controllers
-  byte chan = 0;
-  switch(ID) {
-    case ID_LBM:
-      rc = true;
-      addr = ADDRESS_RC_0;
-      chan = 1;
-      break;
-    case ID_RBM:
-      rc = true;
-      addr = ADDRESS_RC_0;
-      chan = 2;
-      break;
-    case ID_LFM:
-      rc = true;
-      addr = ADDRESS_RC_1;
-      chan = 1;
-      break;
-    case ID_RFM:
-      rc = true;
-      addr = ADDRESS_RC_1;
-      chan = 2;
-      break;
-  }
-  // Handle roboclaw controllers
-  if(rc) {
-    // Separate directions
-    if(dir) {
-      // Separate channels
-      if(chan == 1) {
-        roboclaw.ForwardM1(addr,val);
-      } else {
-        roboclaw.ForwardM2(addr,val);
-      }
+  MotorInfo motor_info = motor_infos[ID];
+  switch (motor_info.hardware) {
+  case MH_RC_PWM:
+    if (motor_info.whichMotor) {
+      success = roboclaw.DutyM2(motor_info.addr, val);
     } else {
-      // Separate channels
-      if(chan == 1) {
-        roboclaw.BackwardM1(addr,val);
-      } else {
-        roboclaw.BackwardM2(addr,val);
-      }
+      success = roboclaw.DutyM1(motor_info.addr, val);
     }
+    break;
+  case MH_RC_VEL:
+    if (motor_info.whichMotor) {
+      success = roboclaw.SpeedM2(motor_info.addr, val);
+    } else {
+      success = roboclaw.SpeedM1(motor_info.addr, val);
+    }
+    if (!success) {
+      return FAULT_LOST_ROBOCLAW;
+    }
+    break;
+  case MH_RC_POS:
+    if (motor_info.whichMotor) {
+      success = roboclaw.SpeedAccelDeccelPositionM2(
+        motor_info.addr,
+        motor_info.accel,
+        motor_info.qpps,
+        motor_info.accel,
+        val,
+        0);
+    } else {
+      success = roboclaw.SpeedAccelDeccelPositionM1(
+        motor_info.addr,
+        motor_info.accel,
+        motor_info.qpps,
+        motor_info.accel,
+        val,
+        0);
+    }
+    if (!success) {
+      return FAULT_LOST_ROBOCLAW;
+    }
+    break;
+  case MH_ST_PWM:
+    // TODO
+    break;
+  default:
+    break;
   }
+  return NO_FAULT;
 }
 
 void hciWait() {

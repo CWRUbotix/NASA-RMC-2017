@@ -199,6 +199,7 @@ public class HardwareControlInterface implements Runnable {
 			Actuation activeActuation = activeActuations.get(i);
 			short actuatorIdShort = (short)activeActuation.actuatorID;
 			short currentOutputShort = (short)activeActuation.currentOutput;
+			System.out.println("Set motor #" + actuatorIdShort + " = " + currentOutputShort);
 			data[0] = (byte)(actuatorIdShort >>> 8);
 			data[1] = (byte)(actuatorIdShort);
 			data[2] = (byte)(currentOutputShort >>> 8);
