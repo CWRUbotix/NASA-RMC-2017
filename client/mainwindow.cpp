@@ -75,11 +75,10 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelStop);
     QObject::connect(ui->pushButton_BackRightWheelStop, &QPushButton::clicked,
                      this, &MainWindow::handleBackRightWheelStop);
-    /*
     QObject::connect(ui->pushButton_FrontLeftWheelPodStraight, &QPushButton::clicked,
                      this, &MainWindow::handleFrontLeftWheelPodStraight);
     QObject::connect(ui->pushButton_FrontRightWheelPodStraight, &QPushButton::clicked,
-                     this, &MainWindow::handleRightLeftWheelPodStraight);
+                     this, &MainWindow::handleFrontRightWheelPodStraight);
     QObject::connect(ui->pushButton_BackLeftWheelPodStraight, &QPushButton::clicked,
                      this, &MainWindow::handleBackLeftWheelPodStraight);
     QObject::connect(ui->pushButton_BackRightWheelPodStraight, &QPushButton::clicked,
@@ -87,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->pushButton_FrontLeftWheelPodTurn, &QPushButton::clicked,
                      this, &MainWindow::handleFrontLeftWheelPodTurn);
     QObject::connect(ui->pushButton_FrontRightWheelPodTurn, &QPushButton::clicked,
-                     this, &MainWindow::handleRightLeftWheelPodTurn);
+                     this, &MainWindow::handleFrontRightWheelPodTurn);
     QObject::connect(ui->pushButton_BackLeftWheelPodTurn, &QPushButton::clicked,
                      this, &MainWindow::handleBackLeftWheelPodTurn);
     QObject::connect(ui->pushButton_BackRightWheelPodTurn, &QPushButton::clicked,
@@ -95,12 +94,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->pushButton_FrontLeftWheelPodStrafe, &QPushButton::clicked,
                      this, &MainWindow::handleFrontLeftWheelPodStrafe);
     QObject::connect(ui->pushButton_FrontRightWheelPodStrafe, &QPushButton::clicked,
-                     this, &MainWindow::handleRightLeftWheelPodStrafe);
+                     this, &MainWindow::handleFrontRightWheelPodStrafe);
     QObject::connect(ui->pushButton_BackLeftWheelPodStrafe, &QPushButton::clicked,
                      this, &MainWindow::handleBackLeftWheelPodStrafe);
     QObject::connect(ui->pushButton_BackRightWheelPodStrafe, &QPushButton::clicked,
                      this, &MainWindow::handleBackRightWheelPodStrafe);
-    */
     QObject::connect(ui->slider_FrontLeftWheel, &QSlider::valueChanged,
                      this, &MainWindow::handleFrontLeftWheelSet);
     QObject::connect(ui->slider_FrontRightWheel, &QSlider::valueChanged,
@@ -109,7 +107,6 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelSet);
     QObject::connect(ui->slider_BackRightWheel, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelSet);
-    /*
     QObject::connect(ui->slider_FrontLeftWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleFrontLeftWheelPodSet);
     QObject::connect(ui->slider_FrontRightWheelPod, &QSlider::valueChanged,
@@ -118,7 +115,6 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelPodSet);
     QObject::connect(ui->slider_BackRightWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelPodSet);
-    */
 }
 
 MainWindow::MainWindow(AMQP *amqp, QWidget *parent) :
@@ -297,6 +293,130 @@ void MainWindow::handleBackRightWheelSet(int value) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleFrontLeftWheelPodStrafe() {
+    ui->slider_FrontLeftWheelPod->setValue(90);
+}
+
+void MainWindow::handleFrontLeftWheelPodTurn() {
+    ui->slider_FrontLeftWheelPod->setValue(45);
+}
+
+void MainWindow::handleFrontLeftWheelPodStraight() {
+    ui->slider_FrontLeftWheelPod->setValue(0);
+}
+
+void MainWindow::handleFrontLeftWheelPodSet(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_left.wheel_pod_pos");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleFrontRightWheelPodStrafe() {
+    ui->slider_FrontRightWheelPod->setValue(90);
+}
+
+void MainWindow::handleFrontRightWheelPodTurn() {
+    ui->slider_FrontRightWheelPod->setValue(45);
+}
+
+void MainWindow::handleFrontRightWheelPodStraight() {
+    ui->slider_FrontRightWheelPod->setValue(0);
+}
+
+void MainWindow::handleFrontRightWheelPodSet(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_right.wheel_pod_pos");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleBackLeftWheelPodStrafe() {
+    ui->slider_BackLeftWheelPod->setValue(90);
+}
+
+void MainWindow::handleBackLeftWheelPodTurn() {
+    ui->slider_BackLeftWheelPod->setValue(45);
+}
+
+void MainWindow::handleBackLeftWheelPodStraight() {
+    ui->slider_BackLeftWheelPod->setValue(0);
+}
+
+void MainWindow::handleBackLeftWheelPodSet(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_left.wheel_pod_pos");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleBackRightWheelPodStrafe() {
+    ui->slider_BackRightWheelPod->setValue(90);
+}
+
+void MainWindow::handleBackRightWheelPodTurn() {
+    ui->slider_BackRightWheelPod->setValue(45);
+}
+
+void MainWindow::handleBackRightWheelPodStraight() {
+    ui->slider_BackRightWheelPod->setValue(0);
+}
+
+void MainWindow::handleBackRightWheelPodSet(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
 
     free(msg_buff);
 }

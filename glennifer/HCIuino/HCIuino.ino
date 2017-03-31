@@ -29,7 +29,8 @@ enum SensorHardware {
   SH_NONE,
   SH_RC_POT,
   SH_RC_ENC,
-  SH_PIN_LIMIT
+  SH_PIN_LIMIT,
+  SH_PIN_POT
 };
 
 typedef struct SensorInfo {
@@ -44,7 +45,8 @@ enum MotorHardware {
   MH_RC_PWM,
   MH_RC_VEL,
   MH_RC_POS,
-  MH_ST_PWM
+  MH_ST_PWM,
+  MH_ST_POS
 };
 
 typedef struct MotorInfo {
@@ -63,6 +65,7 @@ typedef struct MotorInfo {
 
 SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
 MotorInfo motor_infos[256] = {}; // All initialized to MH_NONE
+int16_t motor_setpoints[256] = {}; // All initialized to 0
 
 RoboClaw roboclaw(&Serial1,10000);
 Sabertooth sabretooth[4] = {
@@ -93,6 +96,13 @@ void setup() {
   sensor_infos[2].addr = ADDRESS_RC_1;
   sensor_infos[2].whichMotor = 1;
 
+  // 1 is back left
+  // 2 is front right
+  // 3 is front left
+  // Back right wheel pod potentiometer
+  sensor_infos[7].hardware = SH_PIN_POT;
+  sensor_infos[7].whichPin = 1;
+
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_PWM;
   motor_infos[1].addr = ADDRESS_RC_0;
@@ -116,8 +126,11 @@ void setup() {
   // Actuator FL addr 0 motor 1
   // Actuator FR addr 0 motor 2
   // Actuator BL addr 1 motor 1
-  // Actuator BR addr 1 motor 2
-  
+  // Back right wheel pod actuator
+  motor_infos[7].hardware = MH_ST_POS;
+  motor_infos[7].addr = 1;
+  motor_infos[7].whichMotor = 1;
+  // Implied use same-id sensor
   
   /*
   motor_infos[2].hardware = MH_RC_POS;
@@ -237,6 +250,9 @@ FAULT_T configure_sensors() {
     case SH_PIN_LIMIT:
       // TODO
       break;
+    case SH_PIN_POT:
+      // Nothing to do here
+      break;
     default:
       break;
     }
@@ -299,6 +315,9 @@ FAULT_T configure_motors() {
       }
       break;
     case MH_ST_PWM:
+      // Nothing to do, default config
+      break;
+    case MH_ST_POS:
       // Nothing to do, default config
       break;
     default:
@@ -407,6 +426,9 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   case SH_PIN_LIMIT:
     // TODO
     break;
+  case SH_PIN_POT:
+    *val = (int16_t)analogRead(sensor_info.whichPin);
+    break;
   default:
     break;
   }
@@ -469,6 +491,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   case MH_ST_PWM:
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
     break;
+  case MH_ST_POS:
+    motor_setpoints[ID] = val;
+    break;
   default:
     break;
   }
@@ -476,7 +501,18 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
 }
 
 void hciWait() {
-  while(!SerialUSB.available()) {}
+  do {
+    int16_t podPos;
+    getSensor(7, &podPos); // TODO: detect fault
+    int16_t val = (motor_setpoints[7] - podPos);
+    if (val > 127) {
+      val = 127;
+    }
+    if (val < -127) {
+      val = -127;
+    }
+    sabretooth[motor_infos[7].addr].motor(motor_infos[7].whichMotor, val);
+  } while (!SerialUSB.available());
 }
 
 FAULT_T hciWrite(byte rpy[]) {

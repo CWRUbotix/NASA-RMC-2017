@@ -36,6 +36,22 @@ public slots:
     void handleBackLeftWheelSet(int value);
     void handleBackRightWheelStop();
     void handleBackRightWheelSet(int value);
+    void handleFrontLeftWheelPodStraight();
+    void handleFrontLeftWheelPodTurn();
+    void handleFrontLeftWheelPodStrafe();
+    void handleFrontLeftWheelPodSet(int value);
+    void handleFrontRightWheelPodStraight();
+    void handleFrontRightWheelPodTurn();
+    void handleFrontRightWheelPodStrafe();
+    void handleFrontRightWheelPodSet(int value);
+    void handleBackLeftWheelPodStraight();
+    void handleBackLeftWheelPodTurn();
+    void handleBackLeftWheelPodStrafe();
+    void handleBackLeftWheelPodSet(int value);
+    void handleBackRightWheelPodStraight();
+    void handleBackRightWheelPodTurn();
+    void handleBackRightWheelPodStrafe();
+    void handleBackRightWheelPodSet(int value);
 
 private:
     Ui::MainWindow *ui;
