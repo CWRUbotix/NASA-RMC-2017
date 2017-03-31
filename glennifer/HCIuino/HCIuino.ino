@@ -96,12 +96,18 @@ void setup() {
   sensor_infos[2].addr = ADDRESS_RC_1;
   sensor_infos[2].whichMotor = 1;
 
-  // 1 is back left
-  // 2 is front right
   // 3 is front left
-  // Back right wheel pod potentiometer
+  sensor_infos[4].hardware = SH_PIN_POT;
+  sensor_infos[4].whichPin = 3;
+  // 2 is front right
+  sensor_infos[5].hardware = SH_PIN_POT;
+  sensor_infos[5].whichPin = 2;
+  // Back left wheel pod potentiometer
+  sensor_infos[6].hardware = SH_PIN_POT;
+  sensor_infos[6].whichPin = 1;
+  // 0 is back right
   sensor_infos[7].hardware = SH_PIN_POT;
-  sensor_infos[7].whichPin = 1;
+  sensor_infos[7].whichPin = 0;
 
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_PWM;
@@ -124,12 +130,21 @@ void setup() {
   motor_infos[2].whichMotor = 1;
 
   // Actuator FL addr 0 motor 1
+  motor_infos[4].hardware = MH_ST_POS;
+  motor_infos[4].addr = 0;
+  motor_infos[4].whichMotor = 1;
   // Actuator FR addr 0 motor 2
+  motor_infos[5].hardware = MH_ST_POS;
+  motor_infos[5].addr = 0;
+  motor_infos[5].whichMotor = 2;
   // Actuator BL addr 1 motor 1
+  motor_infos[6].hardware = MH_ST_POS;
+  motor_infos[6].addr = 1;
+  motor_infos[6].whichMotor = 1;
   // Back right wheel pod actuator
   motor_infos[7].hardware = MH_ST_POS;
   motor_infos[7].addr = 1;
-  motor_infos[7].whichMotor = 1;
+  motor_infos[7].whichMotor = 2;
   // Implied use same-id sensor
   
   /*
@@ -502,16 +517,22 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
 
 void hciWait() {
   do {
-    int16_t podPos;
-    getSensor(7, &podPos); // TODO: detect fault
-    int16_t val = (motor_setpoints[7] - podPos);
-    if (val > 127) {
-      val = 127;
+    /*
+    for (int id = 4; id < 8; id++) {
+      int16_t podPos;
+      getSensor(id, &podPos); // TODO: detect fault
+      int16_t val = 10*(motor_setpoints[id] - podPos);
+      val = (val / 2) + 64;
+      if (val > 127) {
+        val = 127;
+      }
+      if (val < 0) {
+        val = 0;
+      }
+      sabretooth[motor_infos[id].addr].motor(motor_infos[id].whichMotor, val);
+      
     }
-    if (val < -127) {
-      val = -127;
-    }
-    sabretooth[motor_infos[7].addr].motor(motor_infos[7].whichMotor, val);
+    */
   } while (!SerialUSB.available());
 }
 

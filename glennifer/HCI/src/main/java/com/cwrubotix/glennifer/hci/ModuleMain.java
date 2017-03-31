@@ -492,7 +492,9 @@ public class ModuleMain {
 					Actuation a = new Actuation();
 					a.override = true;
 					a.hold = true;
-					a.targetValue = pcc.getPosition()*5 + 250;
+					//a.targetValue = pcc.getPosition()*5 + 250;
+					a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+					System.out.println(a.targetValue);
 					a.type = HardwareControlInterface.ActuationType.AngVel;
 					a.actuatorID = id;
 					hci.queueActuation(a);
@@ -504,11 +506,11 @@ public class ModuleMain {
 		// Main loop to get sensor data
 		try {
 			while (true) {
-				Sensor s = hci.getSensorFromID(7);
+				Sensor s = hci.getSensorFromID(6);
 				if (s.data.isEmpty()) {
-					System.out.println("Sensor #0 has no data");
+					System.out.println("Sensor #6 has no data");
 				} else {
-					System.out.println("Sensor #0 = " + s.data.get(s.data.size()-1).data);
+					System.out.println("Sensor #6 = " + s.data.get(s.data.size()-1).data);
 				}
 				Thread.sleep(100);
 			}
