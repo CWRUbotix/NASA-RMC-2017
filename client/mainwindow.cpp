@@ -157,10 +157,6 @@ void MainWindow::handleLocomotionRight() {
     free(msg_buff);
 }
 
-void MainWindow::on_spinBox_setWheelAngle_valueChanged(int value){
-    updateAngle(value);
-}
-
 void MainWindow::updateAngle(int x){
 
     rectangle1->setTransformOriginPoint(QPoint(-195,10));

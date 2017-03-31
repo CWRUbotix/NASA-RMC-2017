@@ -28,7 +28,6 @@ public slots:
     void handleLocomotionDown();
     void handleLocomotionLeft();
     void handleLocomotionRight();
-    void on_spinBox_setWheelAngle_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;
