@@ -30,6 +30,12 @@ public slots:
     void handleLocomotionRight();
     void handleFrontLeftWheelStop();
     void handleFrontLeftWheelSet(int value);
+    void handleFrontRightWheelStop();
+    void handleFrontRightWheelSet(int value);
+    void handleBackLeftWheelStop();
+    void handleBackLeftWheelSet(int value);
+    void handleBackRightWheelStop();
+    void handleBackRightWheelSet(int value);
 
 private:
     Ui::MainWindow *ui;

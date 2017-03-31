@@ -2,11 +2,6 @@
 #include <RoboClaw.h>
 #include <math.h>
 
-#define ID_LBM  0
-#define ID_RBM  1
-#define ID_LFM  2
-#define ID_RFM  3
-
 #define COMMAND_READ_SENSORS (0x01)
 #define COMMAND_SET_OUTPUTS (0x02)
 #define COMMAND_HCI_TEST    (0x5A)
@@ -78,16 +73,52 @@ Sabertooth sabretooth[4] = {
 };
 
 void setup() {
+  // Front left wheel encoder
+  sensor_infos[1].hardware = SH_RC_ENC;
+  sensor_infos[1].addr = ADDRESS_RC_0;
+  sensor_infos[1].whichMotor = 0;
+  
+  // Front right wheel encoder
   sensor_infos[0].hardware = SH_RC_ENC;
-  sensor_infos[0].addr = ADDRESS_RC_1;
-  sensor_infos[0].whichMotor = 0;
+  sensor_infos[0].addr = ADDRESS_RC_0;
+  sensor_infos[0].whichMotor = 1;
   
-  sensor_infos[1].hardware = SH_PIN_LIMIT;
-  sensor_infos[1].whichPin = 13;
+  // Back left wheel encoder
+  sensor_infos[3].hardware = SH_RC_ENC;
+  sensor_infos[3].addr = ADDRESS_RC_1;
+  sensor_infos[3].whichMotor = 0;
   
-  sensor_infos[2].hardware = SH_PIN_LIMIT;
-  sensor_infos[2].whichPin = 14;
+  // Back right wheel encoder
+  sensor_infos[2].hardware = SH_RC_ENC;
+  sensor_infos[2].addr = ADDRESS_RC_1;
+  sensor_infos[2].whichMotor = 1;
 
+  // Front left wheel motor
+  motor_infos[1].hardware = MH_RC_PWM;
+  motor_infos[1].addr = ADDRESS_RC_0;
+  motor_infos[1].whichMotor = 0;
+  
+  // Front right wheel motor
+  motor_infos[0].hardware = MH_RC_PWM;
+  motor_infos[0].addr = ADDRESS_RC_0;
+  motor_infos[0].whichMotor = 1;
+  
+  // Back left wheel motor
+  motor_infos[3].hardware = MH_RC_PWM;
+  motor_infos[3].addr = ADDRESS_RC_1;
+  motor_infos[3].whichMotor = 0;
+  
+  // Back right wheel motor
+  motor_infos[2].hardware = MH_RC_PWM;
+  motor_infos[2].addr = ADDRESS_RC_1;
+  motor_infos[2].whichMotor = 1;
+
+  // Actuator FL addr 0 motor 1
+  // Actuator FR addr 0 motor 2
+  // Actuator BL addr 1 motor 1
+  // Actuator BR addr 1 motor 2
+  
+  
   /*
   motor_infos[2].hardware = MH_RC_POS;
   motor_infos[2].addr = ADDRESS_RC_3;
@@ -108,10 +139,10 @@ void setup() {
   motor_infos[2].whichMotor = 1;
   */
 
-  motor_infos[2].hardware = MH_RC_PWM;
+  /*
+  motor_infos[2].hardware = MH_RC_VEL;
   motor_infos[2].addr = ADDRESS_RC_1;
   motor_infos[2].whichMotor = 0;
-  /*
   motor_infos[2].kp = 50;
   motor_infos[2].ki = 327;
   motor_infos[2].kd = 0;

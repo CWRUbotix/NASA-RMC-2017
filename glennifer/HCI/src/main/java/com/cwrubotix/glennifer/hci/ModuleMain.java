@@ -446,13 +446,30 @@ public class ModuleMain {
 					return;
 				}
 				if (keys[3].equals("wheel_rpm")) {
-					Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+				    int id = -1;
+				    if (keys[2].equals("front_left")) {
+				        id = 0;
+                    } else if (keys[2].equals("front_right")) {
+				        id = 1;
+                    } else if (keys[2].equals("back_left")) {
+				        id = 2;
+                    } else if (keys[2].equals("back_right")) {
+				        id = 3;
+                    } else {
+				        // TODO: handle this
+                    }
+                    Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
 					Actuation a = new Actuation();
 					a.override = true;
 					a.hold = true;
-					a.targetValue = scc.getRpm() * 32767.0F;
+					if (id % 2 == 0) {
+                        a.targetValue = scc.getRpm() * -32767.0F;
+                    } else {
+                        a.targetValue = scc.getRpm() * 32767.0F;
+                    }
 					a.type = HardwareControlInterface.ActuationType.AngVel;
-					a.actuatorID = 2;
+					a.actuatorID = id;
+					System.out.println("queueing actuaton for id = " + id);
 					hci.queueActuation(a);
 
 				} else if (keys[3].equals("wheel_pod_pos")) {

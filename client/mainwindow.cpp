@@ -6,7 +6,6 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QImage>
-#include <QDebug>
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -70,13 +69,13 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleLocomotionRight);
     QObject::connect(ui->pushButton_FrontLeftWheelStop, &QPushButton::clicked,
                      this, &MainWindow::handleFrontLeftWheelStop);
-    /*
     QObject::connect(ui->pushButton_FrontRightWheelStop, &QPushButton::clicked,
                      this, &MainWindow::handleFrontRightWheelStop);
     QObject::connect(ui->pushButton_BackLeftWheelStop, &QPushButton::clicked,
                      this, &MainWindow::handleBackLeftWheelStop);
     QObject::connect(ui->pushButton_BackRightWheelStop, &QPushButton::clicked,
                      this, &MainWindow::handleBackRightWheelStop);
+    /*
     QObject::connect(ui->pushButton_FrontLeftWheelPodStraight, &QPushButton::clicked,
                      this, &MainWindow::handleFrontLeftWheelPodStraight);
     QObject::connect(ui->pushButton_FrontRightWheelPodStraight, &QPushButton::clicked,
@@ -104,13 +103,13 @@ MainWindow::MainWindow(QWidget *parent) :
     */
     QObject::connect(ui->slider_FrontLeftWheel, &QSlider::valueChanged,
                      this, &MainWindow::handleFrontLeftWheelSet);
-    /*
     QObject::connect(ui->slider_FrontRightWheel, &QSlider::valueChanged,
                      this, &MainWindow::handleFrontRightWheelSet);
     QObject::connect(ui->slider_BackLeftWheel, &QSlider::valueChanged,
                      this, &MainWindow::handleBackLeftWheelSet);
     QObject::connect(ui->slider_BackRightWheel, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelSet);
+    /*
     QObject::connect(ui->slider_FrontLeftWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleFrontLeftWheelPodSet);
     QObject::connect(ui->slider_FrontRightWheelPod, &QSlider::valueChanged,
@@ -136,7 +135,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::handleLocomotionUp() {
     LocomotionControlCommandStraight msg;
-    msg.set_speed(123.0F);
+    msg.set_speed(ui->slider_LocomotionSpeed->value() / 100.0F);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -155,7 +154,7 @@ void MainWindow::handleLocomotionUp() {
 
 void MainWindow::handleLocomotionDown() {
     LocomotionControlCommandStraight msg;
-    msg.set_speed(-123.0F);
+    msg.set_speed(ui->slider_LocomotionSpeed->value() / -100.0F);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -174,7 +173,7 @@ void MainWindow::handleLocomotionDown() {
 
 void MainWindow::handleLocomotionLeft() {
     LocomotionControlCommandTurn msg;
-    msg.set_speed(-123.0F);
+    msg.set_speed(ui->slider_LocomotionSpeed->value() / -100.0F);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -193,7 +192,7 @@ void MainWindow::handleLocomotionLeft() {
 
 void MainWindow::handleLocomotionRight() {
     LocomotionControlCommandTurn msg;
-    msg.set_speed(123.0F);
+    msg.set_speed(ui->slider_LocomotionSpeed->value() / 100.0F);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -211,8 +210,12 @@ void MainWindow::handleLocomotionRight() {
 }
 
 void MainWindow::handleFrontLeftWheelStop() {
-    LocomotionControlCommandStraight msg;
-    msg.set_speed(0.0F);
+    ui->slider_FrontLeftWheel->setValue(0);
+}
+
+void MainWindow::handleFrontLeftWheelSet(int value) {
+    SpeedContolCommand msg;
+    msg.set_rpm((value / 100.0F));
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -224,15 +227,18 @@ void MainWindow::handleFrontLeftWheelStop() {
 
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
-    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.turn");
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_left.wheel_rpm");
 
     free(msg_buff);
 }
 
-void MainWindow::handleFrontLeftWheelSet(int value) {
-    qDebug() << value << " " << ((value / 100.0F));
-    LocomotionControlCommandStraight msg;
-    msg.set_speed((value / 100.0F));
+void MainWindow::handleFrontRightWheelStop() {
+    ui->slider_FrontRightWheel->setValue(0);
+}
+
+void MainWindow::handleFrontRightWheelSet(int value) {
+    SpeedContolCommand msg;
+    msg.set_rpm((value / 100.0F));
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -244,7 +250,53 @@ void MainWindow::handleFrontLeftWheelSet(int value) {
 
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
-    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.turn");
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_right.wheel_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleBackLeftWheelStop() {
+    ui->slider_BackLeftWheel->setValue(0);
+}
+
+void MainWindow::handleBackLeftWheelSet(int value) {
+    SpeedContolCommand msg;
+    msg.set_rpm((value / 100.0F));
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_left.wheel_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleBackRightWheelStop() {
+    ui->slider_BackRightWheel->setValue(0);
+}
+
+void MainWindow::handleBackRightWheelSet(int value) {
+    SpeedContolCommand msg;
+    msg.set_rpm((value / 100.0F));
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_rpm");
 
     free(msg_buff);
 }

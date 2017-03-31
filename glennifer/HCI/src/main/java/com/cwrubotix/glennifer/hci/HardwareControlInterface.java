@@ -75,6 +75,7 @@ public class HardwareControlInterface implements Runnable {
 	 */
 	public int addActuator(Actuator actuator, int id) {
 		if(actuators.containsKey(id)) {
+			System.out.println("Fail to add actuator #" + id);
 			return 1;
 		} else {
 			actuators.put(id, actuator);
