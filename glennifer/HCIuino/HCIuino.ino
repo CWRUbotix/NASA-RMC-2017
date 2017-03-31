@@ -66,8 +66,8 @@ typedef struct MotorInfo {
   uint32_t accel;
 } MotorInfo;
 
-SensorInfo sensor_infos[256]; // All initialized to SH_NONE
-MotorInfo motor_infos[256]; // All initialized to MH_NONE
+SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
+MotorInfo motor_infos[256] = {}; // All initialized to MH_NONE
 
 RoboClaw roboclaw(&Serial1,10000);
 Sabertooth sabretooth[4] = {
@@ -78,8 +78,8 @@ Sabertooth sabretooth[4] = {
 };
 
 void setup() {
-  sensor_infos[0].hardware = SH_RC_POT;
-  sensor_infos[0].addr = ADDRESS_RC_3;
+  sensor_infos[0].hardware = SH_RC_ENC;
+  sensor_infos[0].addr = ADDRESS_RC_1;
   sensor_infos[0].whichMotor = 0;
   
   sensor_infos[1].hardware = SH_PIN_LIMIT;
@@ -101,16 +101,30 @@ void setup() {
   motor_infos[2].maxpos = 1676;
   motor_infos[2].accel = 9999999;
   */
-  
+
+  /*
   motor_infos[2].hardware = MH_ST_PWM;
   motor_infos[2].addr = 0;
   motor_infos[2].whichMotor = 1;
+  */
 
+  motor_infos[2].hardware = MH_RC_PWM;
+  motor_infos[2].addr = ADDRESS_RC_1;
+  motor_infos[2].whichMotor = 0;
+  /*
+  motor_infos[2].kp = 50;
+  motor_infos[2].ki = 327;
+  motor_infos[2].kd = 0;
+  motor_infos[2].qpps = 737992;
+  motor_infos[2].accel = 500000;
+  */
+  
   setup_comms();
   setup_sabretooth();
   setup_roboclaw();
   configure_sensors();
   configure_motors();
+  save_roboclaw();
 }
 
 void setup_comms() {
@@ -140,7 +154,11 @@ FAULT_T setup_roboclaw() {
   if (!success) {
     return FAULT_LOST_ROBOCLAW;
   }
-  
+  return NO_FAULT;
+}
+
+FAULT_T save_roboclaw() {
+  bool success;
   success = roboclaw.WriteNVM(ADDRESS_RC_0);
   if (!success) {
     return FAULT_LOST_ROBOCLAW;
@@ -269,9 +287,10 @@ void loop() {
       // Enter sync mode
       // When done:
       continue;
+    } else {
+      // cmd is valid
+      execute(cmd);
     }
-    // cmd is valid
-    execute(cmd);
   }
 }
 
@@ -293,7 +312,7 @@ void execute(byte cmd[]) {
         int16_t val;
         FAULT_T retfault = getSensor(id, &val);
         if (retfault != NO_FAULT) {
-          val = 0x8000; // Error code
+          val = -500; // Error code
         }
         bool overflow = rpy_sense_add_sensor(rpy, id, val);
         if (overflow) {
@@ -328,6 +347,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   uint8_t status;
   bool valid;
   int32_t val32;
+  int16_t dummy;
   switch (sensor_info.hardware) {
   case SH_RC_POT:
     if (sensor_info.whichMotor) {
@@ -343,8 +363,10 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   case SH_RC_ENC:
     if (sensor_info.whichMotor) {
       val32 = roboclaw.ReadSpeedM2(sensor_info.addr, &status, &valid);
+      //roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
     } else {
       val32 = roboclaw.ReadSpeedM1(sensor_info.addr, &status, &valid);
+      //roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
     }
     if (!valid){
       return FAULT_LOST_ROBOCLAW;
@@ -361,6 +383,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
 }
 
 FAULT_T setActuator(uint16_t ID, int16_t val) {
+
   bool success;
   // Direction of movement (true is forward)
   bool dir = (val > 0);

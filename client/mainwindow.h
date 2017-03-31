@@ -28,6 +28,8 @@ public slots:
     void handleLocomotionDown();
     void handleLocomotionLeft();
     void handleLocomotionRight();
+    void handleFrontLeftWheelStop();
+    void handleFrontLeftWheelSet(int value);
 
 private:
     Ui::MainWindow *ui;

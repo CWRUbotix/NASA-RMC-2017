@@ -450,7 +450,7 @@ public class ModuleMain {
 					Actuation a = new Actuation();
 					a.override = true;
 					a.hold = true;
-					a.targetValue = sign(scc.getRpm());
+					a.targetValue = scc.getRpm() * 32767.0F;
 					a.type = HardwareControlInterface.ActuationType.AngVel;
 					a.actuatorID = 2;
 					hci.queueActuation(a);

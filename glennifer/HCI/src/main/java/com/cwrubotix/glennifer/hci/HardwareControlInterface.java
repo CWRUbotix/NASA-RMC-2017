@@ -181,7 +181,7 @@ public class HardwareControlInterface implements Runnable {
 	
 	private void calcOutputs() {
 		for(int i = 0; i < activeActuations.size(); i++) {
-			activeActuations.get(i).currentOutput = (int) (activeActuations.get(i).targetValue*actuators.get(activeActuations.get(i).actuatorID).config.maxOutput);
+			activeActuations.get(i).currentOutput = (int) (activeActuations.get(i).targetValue/**actuators.get(activeActuations.get(i).actuatorID).config.maxOutput*/);
 		}
 	}
 	
