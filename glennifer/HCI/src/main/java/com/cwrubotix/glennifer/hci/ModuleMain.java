@@ -506,13 +506,31 @@ public class ModuleMain {
 		// Main loop to get sensor data
 		try {
 			while (true) {
-				Sensor s = hci.getSensorFromID(6);
+				Sensor s = hci.getSensorFromID(4);
 				if (s.data.isEmpty()) {
-					System.out.println("Sensor #6 has no data");
+					System.out.println("Sensor #4 has no data");
 				} else {
-					System.out.println("Sensor #6 = " + s.data.get(s.data.size()-1).data);
+					System.out.println("Sensor #4 = " + s.data.get(s.data.size()-1).data);
 				}
-				Thread.sleep(100);
+                s = hci.getSensorFromID(5);
+                if (s.data.isEmpty()) {
+                    System.out.println("Sensor #5 has no data");
+                } else {
+                    System.out.println("Sensor #5 = " + s.data.get(s.data.size()-1).data);
+                }
+                s = hci.getSensorFromID(6);
+                if (s.data.isEmpty()) {
+                    System.out.println("Sensor #6 has no data");
+                } else {
+                    System.out.println("Sensor #6 = " + s.data.get(s.data.size()-1).data);
+                }
+                s = hci.getSensorFromID(7);
+                if (s.data.isEmpty()) {
+                    System.out.println("Sensor #7 has no data");
+                } else {
+                    System.out.println("Sensor #7 = " + s.data.get(s.data.size()-1).data);
+                }
+				Thread.sleep(1000);
 			}
 		} catch (InterruptedException e) { }
 	}
