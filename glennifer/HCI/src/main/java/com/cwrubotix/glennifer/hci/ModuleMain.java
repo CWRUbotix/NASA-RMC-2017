@@ -466,9 +466,9 @@ public class ModuleMain {
 					a.override = true;
 					a.hold = true;
 					if (id % 2 == 0) {
-                        a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096;
+                        a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
                     } else {
-                        a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096;
+                        a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
                     }
                     System.out.println("target value = " + a.targetValue);
 					a.type = HardwareControlInterface.ActuationType.AngVel;

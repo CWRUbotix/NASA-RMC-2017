@@ -53,6 +53,7 @@ typedef struct MotorInfo {
   MotorHardware hardware;
   uint8_t addr;
   uint8_t whichMotor;
+  uint16_t scale; // 1 unless needed
   float kp; // When hardware = MH_RC_POS or MC_RC_VEL
   float ki; // When hardware = MH_RC_POS or MC_RC_VEL
   float kd; // When hardware = MH_RC_POS or MC_RC_VEL
@@ -118,6 +119,7 @@ void setup() {
   motor_infos[1].ki = 0;
   motor_infos[1].kd = 0;
   motor_infos[1].qpps = 865000;
+  motor_infos[1].scale = 100;
   
   // Front right wheel motor
   motor_infos[0].hardware = MH_RC_VEL;
@@ -127,6 +129,7 @@ void setup() {
   motor_infos[0].ki = 0;
   motor_infos[0].kd = 0;
   motor_infos[0].qpps = 865000;
+  motor_infos[0].scale = 100;
   
   // Back left wheel motor
   motor_infos[3].hardware = MH_RC_VEL;
@@ -136,6 +139,7 @@ void setup() {
   motor_infos[3].ki = 0;
   motor_infos[3].kd = 0;
   motor_infos[3].qpps = 865000;
+  motor_infos[3].scale = 100;
   
   // Back right wheel motor
   motor_infos[2].hardware = MH_RC_VEL;
@@ -145,6 +149,7 @@ void setup() {
   motor_infos[2].ki = 0;
   motor_infos[2].kd = 0;
   motor_infos[2].qpps = 865000;
+  motor_infos[2].scale = 100;
 
   // Actuator FL addr 0 motor 1
   motor_infos[4].hardware = MH_ST_POS;
@@ -153,6 +158,7 @@ void setup() {
   motor_infos[4].feedbackSensorID = 4;
   motor_infos[4].kp = 2;
   motor_infos[4].deadband = 15;
+  motor_infos[4].scale = 1;
   // Actuator FR addr 0 motor 2
   motor_infos[5].hardware = MH_ST_POS;
   motor_infos[5].addr = 0;
@@ -160,6 +166,7 @@ void setup() {
   motor_infos[5].feedbackSensorID = 5;
   motor_infos[5].kp = -2;
   motor_infos[5].deadband = 15;
+  motor_infos[5].scale = 1;
   // Actuator BL addr 1 motor 1
   motor_infos[6].hardware = MH_ST_POS;
   motor_infos[6].addr = 1;
@@ -167,6 +174,7 @@ void setup() {
   motor_infos[6].feedbackSensorID = 6;
   motor_infos[6].kp = 2;
   motor_infos[6].deadband = 15;
+  motor_infos[6].scale = 1;
   // Back right wheel pod actuator
   motor_infos[7].hardware = MH_ST_POS;
   motor_infos[7].addr = 1;
@@ -174,6 +182,7 @@ void setup() {
   motor_infos[7].feedbackSensorID = 7;
   motor_infos[7].kp = -2;
   motor_infos[7].deadband = 15;
+  motor_infos[7].scale = 1;
   // Implied use same-id sensor
   
   /*
@@ -482,29 +491,21 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
 FAULT_T setActuator(uint16_t ID, int16_t val) {
 
   bool success;
-  // Direction of movement (true is forward)
-  bool dir = (val > 0);
-  // Absolute value (doesn't work for -128, which should be illegal)
-  int16_t mag;
-  if (val < 0) {
-    mag = -val;
-  } else {
-    mag = val;
-  }
   MotorInfo motor_info = motor_infos[ID];
+  int val_scaled = val * motor_infos[ID].scale;
   switch (motor_info.hardware) {
   case MH_RC_PWM:
     if (motor_info.whichMotor) {
-      success = roboclaw.DutyM2(motor_info.addr, val);
+      success = roboclaw.DutyM2(motor_info.addr, val_scaled);
     } else {
-      success = roboclaw.DutyM1(motor_info.addr, val);
+      success = roboclaw.DutyM1(motor_info.addr, val_scaled);
     }
     break;
   case MH_RC_VEL:
     if (motor_info.whichMotor) {
-      success = roboclaw.SpeedM2(motor_info.addr, val);
+      success = roboclaw.SpeedM2(motor_info.addr, val_scaled);
     } else {
-      success = roboclaw.SpeedM1(motor_info.addr, val);
+      success = roboclaw.SpeedM1(motor_info.addr, val_scaled);
     }
     if (!success) {
       return FAULT_LOST_ROBOCLAW;
@@ -517,7 +518,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
         motor_info.accel,
         motor_info.qpps,
         motor_info.accel,
-        val,
+        val_scaled,
         0);
     } else {
       success = roboclaw.SpeedAccelDeccelPositionM1(
@@ -525,7 +526,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
         motor_info.accel,
         motor_info.qpps,
         motor_info.accel,
-        val,
+        val_scaled,
         0);
     }
     if (!success) {
@@ -533,10 +534,10 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     }
     break;
   case MH_ST_PWM:
-    sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
+    sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
     break;
   case MH_ST_POS:
-    motor_setpoints[ID] = val;
+    motor_setpoints[ID] = val_scaled;
     break;
   default:
     break;
