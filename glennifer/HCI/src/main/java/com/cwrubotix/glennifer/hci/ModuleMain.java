@@ -317,6 +317,9 @@ public class ModuleMain {
                 hci.addSensor(new Sensor(configFLPOS), configFLPOS.ID);
                 hci.addSensor(new Sensor(configFLPOSEX), configFLPOSEX.ID);
                 hci.addSensor(new Sensor(configFLPOSRE), configFLPOSRE.ID);
+                hci.addSensor(new Sensor(configFLPOS), configFRPOS.ID);
+                hci.addSensor(new Sensor(configFLPOSEX), configFRPOSEX.ID);
+                hci.addSensor(new Sensor(configFLPOSRE), configFRPOSRE.ID);
                 hci.addSensor(new Sensor(configBLPOS), configBLPOS.ID);
                 hci.addSensor(new Sensor(configBLPOSEX), configBLPOSEX.ID);
                 hci.addSensor(new Sensor(configBLPOSRE), configBLPOSRE.ID);
@@ -394,7 +397,7 @@ public class ModuleMain {
 		configLFA.name = "Left Front Turning Actuator";
 
 		ActuatorConfig configRFA = configLBA.copy();
-		configRFA.ID = 5;
+		configRFA.ID = 7;
 		configRFA.name = "Right Front Turning Actuator";
 
 		// Add actuators
@@ -446,23 +449,54 @@ public class ModuleMain {
 					return;
 				}
 				if (keys[3].equals("wheel_rpm")) {
-					Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+				    int id = -1;
+				    if (keys[2].equals("front_left")) {
+				        id = 0;
+                    } else if (keys[2].equals("front_right")) {
+				        id = 1;
+                    } else if (keys[2].equals("back_left")) {
+				        id = 2;
+                    } else if (keys[2].equals("back_right")) {
+				        id = 3;
+                    } else {
+				        // TODO: handle this
+                    }
+                    Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
 					Actuation a = new Actuation();
 					a.override = true;
 					a.hold = true;
-					a.targetValue = sign(scc.getRpm());
+					if (id % 2 == 0) {
+                        a.targetValue = scc.getRpm() * -32767.0F;
+                    } else {
+                        a.targetValue = scc.getRpm() * 32767.0F;
+                    }
 					a.type = HardwareControlInterface.ActuationType.AngVel;
-					a.actuatorID = 2;
+					a.actuatorID = id;
+					System.out.println("queueing actuaton for id = " + id);
 					hci.queueActuation(a);
 
 				} else if (keys[3].equals("wheel_pod_pos")) {
+                    int id = -1;
+                    if (keys[2].equals("front_left")) {
+                        id = 4;
+                    } else if (keys[2].equals("front_right")) {
+                        id = 5;
+                    } else if (keys[2].equals("back_left")) {
+                        id = 6;
+                    } else if (keys[2].equals("back_right")) {
+                        id = 7;
+                    } else {
+                        // TODO: handle this
+                    }
 					Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
 					Actuation a = new Actuation();
 					a.override = true;
 					a.hold = true;
-					a.targetValue = sign(pcc.getPosition());
+					//a.targetValue = pcc.getPosition()*5 + 250;
+					a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+					System.out.println(a.targetValue);
 					a.type = HardwareControlInterface.ActuationType.AngVel;
-					a.actuatorID = 3;
+					a.actuatorID = id;
 					hci.queueActuation(a);
 				}
 			}
@@ -472,13 +506,31 @@ public class ModuleMain {
 		// Main loop to get sensor data
 		try {
 			while (true) {
-				Sensor s = hci.getSensorFromID(0);
+				Sensor s = hci.getSensorFromID(4);
 				if (s.data.isEmpty()) {
-					System.out.println("Sensor #0 has no data");
+					System.out.println("Sensor #4 has no data");
 				} else {
-					System.out.println("Sensor #0 = " + s.data.get(s.data.size()-1).data);
+					System.out.println("Sensor #4 = " + s.data.get(s.data.size()-1).data);
 				}
-				Thread.sleep(100);
+                s = hci.getSensorFromID(5);
+                if (s.data.isEmpty()) {
+                    System.out.println("Sensor #5 has no data");
+                } else {
+                    System.out.println("Sensor #5 = " + s.data.get(s.data.size()-1).data);
+                }
+                s = hci.getSensorFromID(6);
+                if (s.data.isEmpty()) {
+                    System.out.println("Sensor #6 has no data");
+                } else {
+                    System.out.println("Sensor #6 = " + s.data.get(s.data.size()-1).data);
+                }
+                s = hci.getSensorFromID(7);
+                if (s.data.isEmpty()) {
+                    System.out.println("Sensor #7 has no data");
+                } else {
+                    System.out.println("Sensor #7 = " + s.data.get(s.data.size()-1).data);
+                }
+				Thread.sleep(1000);
 			}
 		} catch (InterruptedException e) { }
 	}

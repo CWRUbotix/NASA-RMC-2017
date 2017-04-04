@@ -75,6 +75,7 @@ public class HardwareControlInterface implements Runnable {
 	 */
 	public int addActuator(Actuator actuator, int id) {
 		if(actuators.containsKey(id)) {
+			System.out.println("Fail to add actuator #" + id);
 			return 1;
 		} else {
 			actuators.put(id, actuator);
@@ -181,7 +182,7 @@ public class HardwareControlInterface implements Runnable {
 	
 	private void calcOutputs() {
 		for(int i = 0; i < activeActuations.size(); i++) {
-			activeActuations.get(i).currentOutput = (int) (activeActuations.get(i).targetValue*actuators.get(activeActuations.get(i).actuatorID).config.maxOutput);
+			activeActuations.get(i).currentOutput = (int) (activeActuations.get(i).targetValue/**actuators.get(activeActuations.get(i).actuatorID).config.maxOutput*/);
 		}
 	}
 	
@@ -199,7 +200,7 @@ public class HardwareControlInterface implements Runnable {
 			Actuation activeActuation = activeActuations.get(i);
 			short actuatorIdShort = (short)activeActuation.actuatorID;
 			short currentOutputShort = (short)activeActuation.currentOutput;
-			System.out.println("Set motor #" + actuatorIdShort + " = " + currentOutputShort);
+			//System.out.println("Set motor #" + actuatorIdShort + " = " + currentOutputShort);
 			data[0] = (byte)(actuatorIdShort >>> 8);
 			data[1] = (byte)(actuatorIdShort);
 			data[2] = (byte)(currentOutputShort >>> 8);

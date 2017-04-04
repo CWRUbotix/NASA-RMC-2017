@@ -2,11 +2,6 @@
 #include <RoboClaw.h>
 #include <math.h>
 
-#define ID_LBM  0
-#define ID_RBM  1
-#define ID_LFM  2
-#define ID_RFM  3
-
 #define COMMAND_READ_SENSORS (0x01)
 #define COMMAND_SET_OUTPUTS (0x02)
 #define COMMAND_HCI_TEST    (0x5A)
@@ -34,13 +29,14 @@ enum SensorHardware {
   SH_NONE,
   SH_RC_POT,
   SH_RC_ENC,
-  SH_PIN_LIMIT
+  SH_PIN_LIMIT,
+  SH_PIN_POT
 };
 
 typedef struct SensorInfo {
   SensorHardware hardware;
   uint8_t addr; // When hardware = SH_RC_*
-  bool whichMotor; // When hardware = SH_RC_*
+  uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
 } SensorInfo;
 
@@ -49,13 +45,14 @@ enum MotorHardware {
   MH_RC_PWM,
   MH_RC_VEL,
   MH_RC_POS,
-  MH_ST_PWM
+  MH_ST_PWM,
+  MH_ST_POS
 };
 
 typedef struct MotorInfo {
   MotorHardware hardware;
   uint8_t addr;
-  bool whichMotor;
+  uint8_t whichMotor;
   float kp; // When hardware = MH_RC_POS or MC_RC_VEL
   float ki; // When hardware = MH_RC_POS or MC_RC_VEL
   float kd; // When hardware = MH_RC_POS or MC_RC_VEL
@@ -64,10 +61,12 @@ typedef struct MotorInfo {
   uint32_t minpos; // When hardware = MH_RC_POS
   uint32_t maxpos; // When hardware = MH_RC_POS
   uint32_t accel;
+  uint16_t feedbackSensorID;
 } MotorInfo;
 
-SensorInfo sensor_infos[256]; // All initialized to SH_NONE
-MotorInfo motor_infos[256]; // All initialized to MH_NONE
+SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
+MotorInfo motor_infos[256] = {}; // All initialized to MH_NONE
+int16_t motor_setpoints[256] = {0,0,0,0,1000,1000,1000,1000}; // All others initialized to 0
 
 RoboClaw roboclaw(&Serial1,10000);
 Sabertooth sabretooth[4] = {
@@ -78,16 +77,89 @@ Sabertooth sabretooth[4] = {
 };
 
 void setup() {
-  sensor_infos[0].hardware = SH_RC_POT;
-  sensor_infos[0].addr = ADDRESS_RC_3;
-  sensor_infos[0].whichMotor = 0;
+  // Front left wheel encoder
+  sensor_infos[1].hardware = SH_RC_ENC;
+  sensor_infos[1].addr = ADDRESS_RC_0;
+  sensor_infos[1].whichMotor = 0;
   
-  sensor_infos[1].hardware = SH_PIN_LIMIT;
-  sensor_infos[1].whichPin = 13;
+  // Front right wheel encoder
+  sensor_infos[0].hardware = SH_RC_ENC;
+  sensor_infos[0].addr = ADDRESS_RC_0;
+  sensor_infos[0].whichMotor = 1;
   
-  sensor_infos[2].hardware = SH_PIN_LIMIT;
-  sensor_infos[2].whichPin = 14;
+  // Back left wheel encoder
+  sensor_infos[3].hardware = SH_RC_ENC;
+  sensor_infos[3].addr = ADDRESS_RC_1;
+  sensor_infos[3].whichMotor = 0;
+  
+  // Back right wheel encoder
+  sensor_infos[2].hardware = SH_RC_ENC;
+  sensor_infos[2].addr = ADDRESS_RC_1;
+  sensor_infos[2].whichMotor = 1;
 
+  // 3 is front left
+  sensor_infos[4].hardware = SH_PIN_POT;
+  sensor_infos[4].whichPin = 3;
+  // 2 is front right
+  sensor_infos[5].hardware = SH_PIN_POT;
+  sensor_infos[5].whichPin = 2;
+  // Back left wheel pod potentiometer
+  sensor_infos[6].hardware = SH_PIN_POT;
+  sensor_infos[6].whichPin = 1;
+  // 0 is back right
+  sensor_infos[7].hardware = SH_PIN_POT;
+  sensor_infos[7].whichPin = 0;
+
+  // Front left wheel motor
+  motor_infos[1].hardware = MH_RC_PWM;
+  motor_infos[1].addr = ADDRESS_RC_0;
+  motor_infos[1].whichMotor = 0;
+  
+  // Front right wheel motor
+  motor_infos[0].hardware = MH_RC_PWM;
+  motor_infos[0].addr = ADDRESS_RC_0;
+  motor_infos[0].whichMotor = 1;
+  
+  // Back left wheel motor
+  motor_infos[3].hardware = MH_RC_PWM;
+  motor_infos[3].addr = ADDRESS_RC_1;
+  motor_infos[3].whichMotor = 0;
+  
+  // Back right wheel motor
+  motor_infos[2].hardware = MH_RC_PWM;
+  motor_infos[2].addr = ADDRESS_RC_1;
+  motor_infos[2].whichMotor = 1;
+
+  // Actuator FL addr 0 motor 1
+  motor_infos[4].hardware = MH_ST_POS;
+  motor_infos[4].addr = 0;
+  motor_infos[4].whichMotor = 1;
+  motor_infos[4].feedbackSensorID = 4;
+  motor_infos[4].kp = 2;
+  motor_infos[4].deadband = 15;
+  // Actuator FR addr 0 motor 2
+  motor_infos[5].hardware = MH_ST_POS;
+  motor_infos[5].addr = 0;
+  motor_infos[5].whichMotor = 2;
+  motor_infos[5].feedbackSensorID = 5;
+  motor_infos[5].kp = -2;
+  motor_infos[5].deadband = 15;
+  // Actuator BL addr 1 motor 1
+  motor_infos[6].hardware = MH_ST_POS;
+  motor_infos[6].addr = 1;
+  motor_infos[6].whichMotor = 1;
+  motor_infos[6].feedbackSensorID = 6;
+  motor_infos[6].kp = 2;
+  motor_infos[6].deadband = 15;
+  // Back right wheel pod actuator
+  motor_infos[7].hardware = MH_ST_POS;
+  motor_infos[7].addr = 1;
+  motor_infos[7].whichMotor = 2;
+  motor_infos[7].feedbackSensorID = 7;
+  motor_infos[7].kp = -2;
+  motor_infos[7].deadband = 15;
+  // Implied use same-id sensor
+  
   /*
   motor_infos[2].hardware = MH_RC_POS;
   motor_infos[2].addr = ADDRESS_RC_3;
@@ -101,16 +173,30 @@ void setup() {
   motor_infos[2].maxpos = 1676;
   motor_infos[2].accel = 9999999;
   */
-  
+
+  /*
   motor_infos[2].hardware = MH_ST_PWM;
   motor_infos[2].addr = 0;
   motor_infos[2].whichMotor = 1;
+  */
 
+  /*
+  motor_infos[2].hardware = MH_RC_VEL;
+  motor_infos[2].addr = ADDRESS_RC_1;
+  motor_infos[2].whichMotor = 0;
+  motor_infos[2].kp = 50;
+  motor_infos[2].ki = 327;
+  motor_infos[2].kd = 0;
+  motor_infos[2].qpps = 737992;
+  motor_infos[2].accel = 500000;
+  */
+  
   setup_comms();
   setup_sabretooth();
   setup_roboclaw();
   configure_sensors();
   configure_motors();
+  save_roboclaw();
 }
 
 void setup_comms() {
@@ -140,7 +226,11 @@ FAULT_T setup_roboclaw() {
   if (!success) {
     return FAULT_LOST_ROBOCLAW;
   }
-  
+  return NO_FAULT;
+}
+
+FAULT_T save_roboclaw() {
+  bool success;
   success = roboclaw.WriteNVM(ADDRESS_RC_0);
   if (!success) {
     return FAULT_LOST_ROBOCLAW;
@@ -187,6 +277,9 @@ FAULT_T configure_sensors() {
       break;
     case SH_PIN_LIMIT:
       // TODO
+      break;
+    case SH_PIN_POT:
+      // Nothing to do here
       break;
     default:
       break;
@@ -252,6 +345,9 @@ FAULT_T configure_motors() {
     case MH_ST_PWM:
       // Nothing to do, default config
       break;
+    case MH_ST_POS:
+      // Nothing to do, default config
+      break;
     default:
       break;
     }
@@ -269,9 +365,10 @@ void loop() {
       // Enter sync mode
       // When done:
       continue;
+    } else {
+      // cmd is valid
+      execute(cmd);
     }
-    // cmd is valid
-    execute(cmd);
   }
 }
 
@@ -293,7 +390,7 @@ void execute(byte cmd[]) {
         int16_t val;
         FAULT_T retfault = getSensor(id, &val);
         if (retfault != NO_FAULT) {
-          val = 0x8000; // Error code
+          val = -500; // Error code
         }
         bool overflow = rpy_sense_add_sensor(rpy, id, val);
         if (overflow) {
@@ -328,6 +425,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   uint8_t status;
   bool valid;
   int32_t val32;
+  int16_t dummy;
   switch (sensor_info.hardware) {
   case SH_RC_POT:
     if (sensor_info.whichMotor) {
@@ -343,8 +441,10 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   case SH_RC_ENC:
     if (sensor_info.whichMotor) {
       val32 = roboclaw.ReadSpeedM2(sensor_info.addr, &status, &valid);
+      //roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
     } else {
       val32 = roboclaw.ReadSpeedM1(sensor_info.addr, &status, &valid);
+      //roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
     }
     if (!valid){
       return FAULT_LOST_ROBOCLAW;
@@ -354,6 +454,9 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   case SH_PIN_LIMIT:
     // TODO
     break;
+  case SH_PIN_POT:
+    *val = (int16_t)analogRead(sensor_info.whichPin);
+    break;
   default:
     break;
   }
@@ -361,6 +464,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
 }
 
 FAULT_T setActuator(uint16_t ID, int16_t val) {
+
   bool success;
   // Direction of movement (true is forward)
   bool dir = (val > 0);
@@ -415,6 +519,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   case MH_ST_PWM:
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
     break;
+  case MH_ST_POS:
+    motor_setpoints[ID] = val;
+    break;
   default:
     break;
   }
@@ -422,7 +529,36 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
 }
 
 void hciWait() {
-  while(!SerialUSB.available()) {}
+  do {
+    for (int id = 0; id < 256; id++) {
+      MotorInfo motor_info = motor_infos[id];
+      if (motor_info.hardware == MH_ST_POS) {
+        int16_t pos;
+        getSensor(id, &pos); // TODO: detect fault
+        int err = motor_setpoints[id] - pos;
+        if (err <= (signed)motor_info.deadband) {
+          if (err >= -(signed)motor_info.deadband) {
+            // In deadband
+            err = 0;
+          } else {
+            // Below deadband
+            //err += motor_info.deadband;
+          }
+        } else {
+          // Above deadband
+          //err -= motor_info.deadband;
+        }
+        int val = motor_info.kp * err;
+        if (val > 127) {
+          val = 127;
+        }
+        if (val < -127) {
+          val = -127;
+        }
+        sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
+      }
+    }
+  } while (!SerialUSB.available());
 }
 
 FAULT_T hciWrite(byte rpy[]) {

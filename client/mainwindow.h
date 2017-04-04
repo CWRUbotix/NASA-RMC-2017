@@ -28,7 +28,30 @@ public slots:
     void handleLocomotionDown();
     void handleLocomotionLeft();
     void handleLocomotionRight();
-    void on_spinBox_setWheelAngle_valueChanged(int value);
+    void handleFrontLeftWheelStop();
+    void handleFrontLeftWheelSet(int value);
+    void handleFrontRightWheelStop();
+    void handleFrontRightWheelSet(int value);
+    void handleBackLeftWheelStop();
+    void handleBackLeftWheelSet(int value);
+    void handleBackRightWheelStop();
+    void handleBackRightWheelSet(int value);
+    void handleFrontLeftWheelPodStraight();
+    void handleFrontLeftWheelPodTurn();
+    void handleFrontLeftWheelPodStrafe();
+    void handleFrontLeftWheelPodSet(int value);
+    void handleFrontRightWheelPodStraight();
+    void handleFrontRightWheelPodTurn();
+    void handleFrontRightWheelPodStrafe();
+    void handleFrontRightWheelPodSet(int value);
+    void handleBackLeftWheelPodStraight();
+    void handleBackLeftWheelPodTurn();
+    void handleBackLeftWheelPodStrafe();
+    void handleBackLeftWheelPodSet(int value);
+    void handleBackRightWheelPodStraight();
+    void handleBackRightWheelPodTurn();
+    void handleBackRightWheelPodStrafe();
+    void handleBackRightWheelPodSet(int value);
 
 private:
     Ui::MainWindow *ui;
