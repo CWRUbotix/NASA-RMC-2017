@@ -36,7 +36,7 @@ enum SensorHardware {
 typedef struct SensorInfo {
   SensorHardware hardware;
   uint8_t addr; // When hardware = SH_RC_*
-  bool whichMotor; // When hardware = SH_RC_*
+  uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
 } SensorInfo;
 
@@ -52,7 +52,7 @@ enum MotorHardware {
 typedef struct MotorInfo {
   MotorHardware hardware;
   uint8_t addr;
-  bool whichMotor;
+  uint8_t whichMotor;
   float kp; // When hardware = MH_RC_POS or MC_RC_VEL
   float ki; // When hardware = MH_RC_POS or MC_RC_VEL
   float kd; // When hardware = MH_RC_POS or MC_RC_VEL
@@ -61,11 +61,12 @@ typedef struct MotorInfo {
   uint32_t minpos; // When hardware = MH_RC_POS
   uint32_t maxpos; // When hardware = MH_RC_POS
   uint32_t accel;
+  uint16_t feedbackSensorID;
 } MotorInfo;
 
 SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
 MotorInfo motor_infos[256] = {}; // All initialized to MH_NONE
-int16_t motor_setpoints[256] = {}; // All initialized to 0
+int16_t motor_setpoints[256] = {0,0,0,0,1000,1000,1000,1000}; // All others initialized to 0
 
 RoboClaw roboclaw(&Serial1,10000);
 Sabertooth sabretooth[4] = {
@@ -133,18 +134,30 @@ void setup() {
   motor_infos[4].hardware = MH_ST_POS;
   motor_infos[4].addr = 0;
   motor_infos[4].whichMotor = 1;
+  motor_infos[4].feedbackSensorID = 4;
+  motor_infos[4].kp = 2;
+  motor_infos[4].deadband = 15;
   // Actuator FR addr 0 motor 2
   motor_infos[5].hardware = MH_ST_POS;
   motor_infos[5].addr = 0;
   motor_infos[5].whichMotor = 2;
+  motor_infos[5].feedbackSensorID = 5;
+  motor_infos[5].kp = -2;
+  motor_infos[5].deadband = 15;
   // Actuator BL addr 1 motor 1
   motor_infos[6].hardware = MH_ST_POS;
   motor_infos[6].addr = 1;
   motor_infos[6].whichMotor = 1;
+  motor_infos[6].feedbackSensorID = 6;
+  motor_infos[6].kp = 2;
+  motor_infos[6].deadband = 15;
   // Back right wheel pod actuator
   motor_infos[7].hardware = MH_ST_POS;
   motor_infos[7].addr = 1;
   motor_infos[7].whichMotor = 2;
+  motor_infos[7].feedbackSensorID = 7;
+  motor_infos[7].kp = -2;
+  motor_infos[7].deadband = 15;
   // Implied use same-id sensor
   
   /*
@@ -517,22 +530,34 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
 
 void hciWait() {
   do {
-    /*
-    for (int id = 4; id < 8; id++) {
-      int16_t podPos;
-      getSensor(id, &podPos); // TODO: detect fault
-      int16_t val = 10*(motor_setpoints[id] - podPos);
-      val = (val / 2) + 64;
-      if (val > 127) {
-        val = 127;
+    for (int id = 0; id < 256; id++) {
+      MotorInfo motor_info = motor_infos[id];
+      if (motor_info.hardware == MH_ST_POS) {
+        int16_t pos;
+        getSensor(id, &pos); // TODO: detect fault
+        int err = motor_setpoints[id] - pos;
+        if (err <= (signed)motor_info.deadband) {
+          if (err >= -(signed)motor_info.deadband) {
+            // In deadband
+            err = 0;
+          } else {
+            // Below deadband
+            //err += motor_info.deadband;
+          }
+        } else {
+          // Above deadband
+          //err -= motor_info.deadband;
+        }
+        int val = motor_info.kp * err;
+        if (val > 127) {
+          val = 127;
+        }
+        if (val < -127) {
+          val = -127;
+        }
+        sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
       }
-      if (val < 0) {
-        val = 0;
-      }
-      sabretooth[motor_infos[id].addr].motor(motor_infos[id].whichMotor, val);
-      
     }
-    */
   } while (!SerialUSB.available());
 }
 
