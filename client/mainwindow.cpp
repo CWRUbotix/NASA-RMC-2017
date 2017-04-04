@@ -211,7 +211,7 @@ void MainWindow::handleFrontLeftWheelStop() {
 
 void MainWindow::handleFrontLeftWheelSet(int value) {
     SpeedContolCommand msg;
-    msg.set_rpm((value / 100.0F));
+    msg.set_rpm(60 * (value / 100.0F));
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -234,7 +234,7 @@ void MainWindow::handleFrontRightWheelStop() {
 
 void MainWindow::handleFrontRightWheelSet(int value) {
     SpeedContolCommand msg;
-    msg.set_rpm((value / 100.0F));
+    msg.set_rpm(60 * (value / 100.0F));
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -257,7 +257,7 @@ void MainWindow::handleBackLeftWheelStop() {
 
 void MainWindow::handleBackLeftWheelSet(int value) {
     SpeedContolCommand msg;
-    msg.set_rpm((value / 100.0F));
+    msg.set_rpm(60 * (value / 100.0F));
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -280,7 +280,7 @@ void MainWindow::handleBackRightWheelStop() {
 
 void MainWindow::handleBackRightWheelSet(int value) {
     SpeedContolCommand msg;
-    msg.set_rpm((value / 100.0F));
+    msg.set_rpm(60 * (value / 100.0F));
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);

@@ -466,10 +466,11 @@ public class ModuleMain {
 					a.override = true;
 					a.hold = true;
 					if (id % 2 == 0) {
-                        a.targetValue = scc.getRpm() * -32767.0F;
+                        a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096;
                     } else {
-                        a.targetValue = scc.getRpm() * 32767.0F;
+                        a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096;
                     }
+                    System.out.println("target value = " + a.targetValue);
 					a.type = HardwareControlInterface.ActuationType.AngVel;
 					a.actuatorID = id;
 					System.out.println("queueing actuaton for id = " + id);

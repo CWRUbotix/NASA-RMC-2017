@@ -524,7 +524,7 @@
                 <item>
                  <widget class="QLabel" name="label_8">
                   <property name="text">
-                   <string>100%</string>
+                   <string>60 RPM</string>
                   </property>
                  </widget>
                 </item>
@@ -564,7 +564,7 @@
                 <item>
                  <widget class="QLabel" name="label_9">
                   <property name="text">
-                   <string>-100%</string>
+                   <string>-60 RPM</string>
                   </property>
                  </widget>
                 </item>
@@ -673,7 +673,7 @@
                 <item>
                  <widget class="QLabel" name="label_18">
                   <property name="text">
-                   <string>100%</string>
+                   <string>60 RPM</string>
                   </property>
                  </widget>
                 </item>
@@ -713,7 +713,7 @@
                 <item>
                  <widget class="QLabel" name="label_19">
                   <property name="text">
-                   <string>-100%</string>
+                   <string>-60 RPM</string>
                   </property>
                  </widget>
                 </item>
@@ -1086,7 +1086,7 @@
                 <item>
                  <widget class="QLabel" name="label_23">
                   <property name="text">
-                   <string>100%</string>
+                   <string>60 RPM</string>
                   </property>
                  </widget>
                 </item>
@@ -1126,7 +1126,7 @@
                 <item>
                  <widget class="QLabel" name="label_24">
                   <property name="text">
-                   <string>-100%</string>
+                   <string>-60 RPM</string>
                   </property>
                  </widget>
                 </item>
@@ -1235,7 +1235,7 @@
                 <item>
                  <widget class="QLabel" name="label_26">
                   <property name="text">
-                   <string>100%</string>
+                   <string>60 RPM</string>
                   </property>
                  </widget>
                 </item>
@@ -1275,7 +1275,7 @@
                 <item>
                  <widget class="QLabel" name="label_27">
                   <property name="text">
-                   <string>-100%</string>
+                   <string>-60 RPM</string>
                   </property>
                  </widget>
                 </item>
