@@ -111,24 +111,40 @@ void setup() {
   sensor_infos[7].whichPin = 0;
 
   // Front left wheel motor
-  motor_infos[1].hardware = MH_RC_PWM;
+  motor_infos[1].hardware = MH_RC_VEL;
   motor_infos[1].addr = ADDRESS_RC_0;
   motor_infos[1].whichMotor = 0;
+  motor_infos[1].kp = 16;
+  motor_infos[1].ki = 0;
+  motor_infos[1].kd = 0;
+  motor_infos[1].qpps = 865000;
   
   // Front right wheel motor
-  motor_infos[0].hardware = MH_RC_PWM;
+  motor_infos[0].hardware = MH_RC_VEL;
   motor_infos[0].addr = ADDRESS_RC_0;
   motor_infos[0].whichMotor = 1;
+  motor_infos[0].kp = 16;
+  motor_infos[0].ki = 0;
+  motor_infos[0].kd = 0;
+  motor_infos[0].qpps = 865000;
   
   // Back left wheel motor
-  motor_infos[3].hardware = MH_RC_PWM;
+  motor_infos[3].hardware = MH_RC_VEL;
   motor_infos[3].addr = ADDRESS_RC_1;
   motor_infos[3].whichMotor = 0;
+  motor_infos[3].kp = 16;
+  motor_infos[3].ki = 0;
+  motor_infos[3].kd = 0;
+  motor_infos[3].qpps = 865000;
   
   // Back right wheel motor
-  motor_infos[2].hardware = MH_RC_PWM;
+  motor_infos[2].hardware = MH_RC_VEL;
   motor_infos[2].addr = ADDRESS_RC_1;
   motor_infos[2].whichMotor = 1;
+  motor_infos[2].kp = 16;
+  motor_infos[2].ki = 0;
+  motor_infos[2].kd = 0;
+  motor_infos[2].qpps = 865000;
 
   // Actuator FL addr 0 motor 1
   motor_infos[4].hardware = MH_ST_POS;
