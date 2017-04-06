@@ -47,7 +47,7 @@ public class StateModuleTest {
     }
 
     /**
-     * Test of run method, of class LocomotionStateModule.
+     * Test of run method
      */
     @Test
     public void testRun() throws Exception {
@@ -90,13 +90,19 @@ public class StateModuleTest {
         // Queue is known to be empty
 
         // Send message
-        Messages.LocomotionStateSubscribe subMsg = Messages.LocomotionStateSubscribe.newBuilder()
+        Messages.StateSubscribe subMsg = Messages.StateSubscribe.newBuilder()
                 .setStartTime(instantToUnixTime(Instant.now()))
                 .setInterval(0.1f)
                 .setReplyKey(queueName)
+                .setLocomotionSummary(true)
+                .setLocomotionDetailed(true)
+                .setDepositionSummary(true)
+                .setDepositionDetailed(true)
+                .setExcavationSummary(true)
+                .setExcavationDetailed(true)
                 .build();
 
-        channel.basicPublish("amq.topic", "state.locomotion.subscribe", null, subMsg.toByteArray());
+        channel.basicPublish("amq.topic", "state.subscribe", null, subMsg.toByteArray());
 
         // Wait
         Thread.sleep(1000);
@@ -106,7 +112,7 @@ public class StateModuleTest {
         channel.close();
         connection.close();
         byte[] body = response.getBody();
-        Messages.LocomotionState s = Messages.LocomotionState.parseFrom(body);
+        Messages.State s = Messages.State.parseFrom(body);
         System.out.println(s);
     }
 }

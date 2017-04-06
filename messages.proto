@@ -194,6 +194,7 @@ message State{
 	optional ExcavationStateDetailed excDetailed = 4;
 	optional DepositionStateSummary depSummary = 5;
 	optional DepositionStateDetailed depDetailed = 6;
+	required UnixTime timestamp = 7;
 }
 
 //summary of locomotion state
@@ -206,19 +207,10 @@ message LocomotionStateSummary {
 	}
 	required Configuration config = 1;
 	required float speed = 2;
-	required UnixTime timestamp = 3;
 }
 
 //details of locomotion state. ALL THE VALUES
 message LocomotionStateDetailed {
-	enum Configuration {
-		INTERMEDIATE_CONFIG = 0;
-		STRAIGHT_CONFIG = 1;
-		STRAFE_CONFIG = 2;
-		TURN_CONFIG = 3;
-	}
-	required Configuration config = 1;
-	required float speed = 2;
 	required float front_left_rpm = 3;
 	required float front_right_rpm = 4;
 	required float back_left_rpm = 5;
@@ -235,7 +227,6 @@ message LocomotionStateDetailed {
 	required bool front_right_retracted = 16;
 	required bool back_left_retracted = 17;
 	required bool back_right_retracted = 18;
-	required UnixTime timestamp = 19;
 }
 
 //summary of excavation state
@@ -247,14 +238,10 @@ message ExcavationStateSummary {
 	required bool arm_retracted = 5;
 	required bool translation_extended = 6;
 	required bool translation_retracted = 7;
-	required UnixTime timestamp = 8;
 }
 
 //details of excavation state
 message ExcavationStateDetailed {
-	required float rpm = 1;
-	required float displacement = 2;
-	required float arm_pos = 3;
 	required bool arm_left_extended = 4;
 	required bool arm_right_extended = 5;
 	required bool arm_left_retracted = 6;
@@ -263,7 +250,6 @@ message ExcavationStateDetailed {
 	required bool translation_right_extended = 9;
 	required bool translation_left_retracted = 10;
 	required bool translation_right_retracted = 11;
-	required UnixTime timestamp = 12;
 }
 
 //summary of deposition state
@@ -272,19 +258,16 @@ message DepositionStateSummary {
 	required float load = 2;
 	required bool dump_extended = 3;
 	required bool dump_retracted = 4;
-	required UnixTime timestamp = 5;
 }
 
 //details of deposition state
 message DepositionStateDetailed {
-	required float pos = 1;
 	required float front_left_load = 2;
 	required float front_right_load = 3;
 	required float back_left_load = 4;
 	required float back_right_load = 5;
-	required float dump_left_extended = 6;
-	required float dump_right_extended = 7;
-	required float dump_left_retracted = 8;
-	required float dump_right_retracted = 9;
-	required UnixTime timestamp = 10;
+	required bool dump_left_extended = 6;
+	required bool dump_right_extended = 7;
+	required bool dump_left_retracted = 8;
+	required bool dump_right_retracted = 9;
 }
