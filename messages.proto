@@ -173,14 +173,32 @@ message DepositionControlCommandMoveConveyor {
 	required float timeout = 2;
 }
 
-// state.locomotion.subscribe
-message LocomotionStateSubscribe {
+//state.subscribe
+message StateSubscribe {
 	required string replyKey = 1;
 	required float interval = 2;
-	optional UnixTime startTime = 3;
+	required bool locomotion_summary = 3;
+	required bool locomotion_detailed = 4;
+	required bool excavation_summary = 5;
+	required bool excavation_detailed = 6;
+	required bool deposition_summary = 7;
+	required bool deposition_detailed = 8;
+	optional UnixTime startTime = 9;
 }
 
-message LocomotionState {
+//state "super message"
+message State{
+	optional LocomotionStateSummary locSummary = 1;
+	optional LocomotionStateDetailed locDetailed = 2;
+	optional ExcavationStateSummary excSummary = 3;
+	optional ExcavationStateDetailed excDetailed = 4;
+	optional DepositionStateSummary depSummary = 5;
+	optional DepositionStateDetailed depDetailed = 6;
+	required UnixTime timestamp = 7;
+}
+
+//summary of locomotion state
+message LocomotionStateSummary {
 	enum Configuration {
 		INTERMEDIATE_CONFIG = 0;
 		STRAIGHT_CONFIG = 1;
@@ -189,23 +207,67 @@ message LocomotionState {
 	}
 	required Configuration config = 1;
 	required float speed = 2;
-	required UnixTime timestamp = 3;
 }
 
-// state.excavation.subscribe
-message ExcavationStateSubscribe {
-	required string replyKey = 1;
-	required float interval = 2;
-	optional UnixTime startTime = 3;
+//details of locomotion state. ALL THE VALUES
+message LocomotionStateDetailed {
+	required float front_left_rpm = 3;
+	required float front_right_rpm = 4;
+	required float back_left_rpm = 5;
+	required float back_right_rpm = 6;
+	required float front_left_pos = 7;
+	required float front_right_pos = 8;
+	required float back_left_pos = 9;
+	required float back_right_pos = 10;
+	required bool front_left_extended = 11;
+	required bool front_right_extended = 12;
+	required bool back_left_extended = 13;
+	required bool back_right_extended = 14;
+	required bool front_left_retracted = 15;
+	required bool front_right_retracted = 16;
+	required bool back_left_retracted = 17;
+	required bool back_right_retracted = 18;
 }
 
-message ExcavationState { }
-
-// state.deposition.subscribe
-message DepositionStateSubscribe {
-	required string replyKey = 1;
-	required float interval = 2;
-	optional UnixTime startTime = 3;
+//summary of excavation state
+message ExcavationStateSummary { 
+	required float rpm = 1;
+	required float displacement = 2;
+	required float arm_pos = 3;
+	required bool arm_extended = 4;
+	required bool arm_retracted = 5;
+	required bool translation_extended = 6;
+	required bool translation_retracted = 7;
 }
 
-message DepositionState { }
+//details of excavation state
+message ExcavationStateDetailed {
+	required bool arm_left_extended = 4;
+	required bool arm_right_extended = 5;
+	required bool arm_left_retracted = 6;
+	required bool arm_right_retracted = 7;
+	required bool translation_left_extended = 8;
+	required bool translation_right_extended = 9;
+	required bool translation_left_retracted = 10;
+	required bool translation_right_retracted = 11;
+}
+
+//summary of deposition state
+message DepositionStateSummary { 
+	required float pos = 1;
+	required float load = 2;
+	required bool dump_extended = 3;
+	required bool dump_retracted = 4;
+}
+
+//details of deposition state
+message DepositionStateDetailed {
+	required float front_left_load = 2;
+	required float front_right_load = 3;
+	required float back_left_load = 4;
+	required float back_right_load = 5;
+	required bool dump_left_extended = 6;
+	required bool dump_right_extended = 7;
+	required bool dump_left_retracted = 8;
+	required bool dump_right_retracted = 9;
+}

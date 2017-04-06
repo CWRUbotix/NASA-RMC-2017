@@ -16,34 +16,38 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class LocomotionStateModuleTest {
-    
-    private LocomotionState state; // TODO: mock this
-    private LocomotionStateModule module;
-    
-    public LocomotionStateModuleTest() { }
-    
+public class StateModuleTest {
+
+    private LocomotionState locomotionState; // TODO: mock this
+    private ExcavationState excavationState;
+    private DepositionState depositionState;
+    private StateModule module;
+
+    public StateModuleTest() { }
+
     private Messages.UnixTime instantToUnixTime(Instant time) {
         Messages.UnixTime.Builder unixTimeBuilder = Messages.UnixTime.newBuilder();
         unixTimeBuilder.setTimeInt(time.getEpochSecond());
         unixTimeBuilder.setTimeFrac(time.getNano() / 1000000000F);
         return unixTimeBuilder.build();
     }
-    
+
     @Before
     public void setUp() throws InterruptedException {
-        state = new LocomotionState();
-        module = new LocomotionStateModule(state, "amq.topic");
+        locomotionState = new LocomotionState();
+        excavationState = new ExcavationState();
+        depositionState = new DepositionState();
+        module = new StateModule(locomotionState, excavationState, depositionState, "amq.topic");
         module.start();
     }
-    
+
     @After
     public void tearDown() throws IOException, TimeoutException, InterruptedException {
         module.stop();
     }
 
     /**
-     * Test of run method, of class LocomotionStateModule.
+     * Test of run method
      */
     @Test
     public void testRun() throws Exception {
@@ -51,7 +55,7 @@ public class LocomotionStateModuleTest {
         factory.setHost("localhost");
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
-        
+
         Messages.RpmUpdate.Builder rpmUpdateFactory = Messages.RpmUpdate.newBuilder();
         rpmUpdateFactory.setRpm(42F);
         rpmUpdateFactory.setTimestamp(instantToUnixTime(Instant.now()));
@@ -63,7 +67,7 @@ public class LocomotionStateModuleTest {
 
         Thread.sleep(1000);
 
-        float result = state.getWheelRpm(LocomotionState.Wheel.BACK_LEFT);
+        float result = locomotionState.getWheelRpm(LocomotionState.Wheel.BACK_LEFT);
         assertEquals(42F, result, 0);
     }
 
@@ -86,13 +90,19 @@ public class LocomotionStateModuleTest {
         // Queue is known to be empty
 
         // Send message
-        Messages.LocomotionStateSubscribe subMsg = Messages.LocomotionStateSubscribe.newBuilder()
+        Messages.StateSubscribe subMsg = Messages.StateSubscribe.newBuilder()
                 .setStartTime(instantToUnixTime(Instant.now()))
                 .setInterval(0.1f)
                 .setReplyKey(queueName)
+                .setLocomotionSummary(true)
+                .setLocomotionDetailed(true)
+                .setDepositionSummary(true)
+                .setDepositionDetailed(true)
+                .setExcavationSummary(true)
+                .setExcavationDetailed(true)
                 .build();
 
-        channel.basicPublish("amq.topic", "state.locomotion.subscribe", null, subMsg.toByteArray());
+        channel.basicPublish("amq.topic", "state.subscribe", null, subMsg.toByteArray());
 
         // Wait
         Thread.sleep(1000);
@@ -102,7 +112,7 @@ public class LocomotionStateModuleTest {
         channel.close();
         connection.close();
         byte[] body = response.getBody();
-        Messages.LocomotionState s = Messages.LocomotionState.parseFrom(body);
+        Messages.State s = Messages.State.parseFrom(body);
         System.out.println(s);
     }
 }

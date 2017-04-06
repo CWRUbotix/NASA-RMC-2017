@@ -26,12 +26,17 @@ public class DepositionState {
         BACK_LEFT,
         BACK_RIGHT
     }
+
+    public enum Side {
+        LEFT,
+        RIGHT
+    }
     
     /* Data members */
     private EnumMap <LoadCell, Float> loadCellValue;
     private float dumpPos;
-    private boolean extended;
-    private boolean retracted;
+    private EnumMap <Side, Boolean> dumpSideRetracted;
+    private EnumMap <Side, Boolean> dumpSideExtended;
 
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
@@ -57,6 +62,14 @@ public class DepositionState {
 
         dumpPos = 0;
 
+        dumpSideRetracted = new EnumMap<>(Side.class);
+        dumpSideRetracted.put(Side.LEFT, false);
+        dumpSideRetracted.put(Side.RIGHT, false);
+
+        dumpSideExtended = new EnumMap<>(Side.class);
+        dumpSideExtended.put(Side.LEFT, false);
+        dumpSideExtended.put(Side.RIGHT, false);
+
     }
     /* Update methods */
     
@@ -72,30 +85,42 @@ public class DepositionState {
         dumpPos = pos;
     }
     
-    public void updateDumpLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
-        extended = pressed;
+    public void updateDumpLimitExtended (Side side, boolean pressed, Instant time) throws RobotFaultException {
+        dumpSideExtended.put(side, pressed);
     }
     
-    public void updateDumpLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
-        retracted = pressed;
+    public void updateDumpLimitRetracted (Side side, boolean pressed, Instant time) throws RobotFaultException {
+        dumpSideRetracted.put(side, pressed);
     }
     
     /* State getter methods */
     
     public boolean isStored() {
         // TODO: use position too
-        return retracted;
+        return getDumpRetracted();
     }
     
     public float getDumpLoad(LoadCell cell) {
         return loadCellValue.get(cell);
+    }
+
+    public float getDumpLoad() {
+        //TODO: use linear functions to get more accurate reading
+        return loadCellValue.get(LoadCell.BACK_LEFT) + loadCellValue.get(LoadCell.BACK_RIGHT) +
+                loadCellValue.get(LoadCell.FRONT_LEFT) + loadCellValue.get(LoadCell.FRONT_RIGHT);
     }
     
     public float getDumpPos() {
         return dumpPos;
     }
 
-    public boolean getDumpExtended() { return extended; }
+    public boolean getDumpExtended() { return dumpSideExtended.get(Side.LEFT) || dumpSideExtended.get(Side.RIGHT); }
 
-    public boolean getDumpRetracted() { return retracted; }
+    public boolean getDumpRetracted() { return dumpSideRetracted.get(Side.LEFT) || dumpSideRetracted.get(Side.RIGHT); }
+
+    public boolean getDumpExtended(Side side) { return dumpSideExtended.get(side); }
+
+    public boolean getDumpRetracted(Side side) { return dumpSideRetracted.get(side); }
+
+
 }	

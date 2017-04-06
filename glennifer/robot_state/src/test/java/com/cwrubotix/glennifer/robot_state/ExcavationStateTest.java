@@ -51,21 +51,11 @@ public class ExcavationStateTest {
     public void testLimitSwitches() throws Exception {
         Instant time = Instant.now();
         ExcavationState instance = new ExcavationState();
-        instance.updateArmLimitExtended(true, time);
+        instance.updateArmLimitExtended(ExcavationState.Side.LEFT, true, time);
+        assertTrue(instance.getArmExtended(ExcavationState.Side.LEFT));
         assertTrue(instance.getArmExtended());
-        instance.updateArmLimitExtended(false, time);
+        instance.updateArmLimitExtended(ExcavationState.Side.LEFT, false, time);
+        assertFalse(instance.getArmExtended(ExcavationState.Side.LEFT));
         assertFalse(instance.getArmExtended());
-        instance.updateArmLimitRetracted(true, time);
-        assertTrue(instance.getArmRetracted());
-        instance.updateArmLimitRetracted(false, time);
-        assertFalse(instance.getArmRetracted());
-        instance.updateTranslationLimitExtended(true, time);
-        assertTrue(instance.getTranslationExtended());
-        instance.updateTranslationLimitExtended(false, time);
-        assertFalse(instance.getTranslationExtended());
-        instance.updateTranslationLimitRetracted(true, time);
-        assertTrue(instance.getTranslationRetracted());
-        instance.updateTranslationLimitRetracted(false, time);
-        assertFalse(instance.getTranslationRetracted());
     }
 }
