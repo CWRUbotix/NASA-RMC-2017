@@ -108,7 +108,7 @@ def handle_strafe(channel, method, header, body):
     publish_wheel_rpm(back_right_speed, msg_in.speed, msg_in.timeout)
 
 def handle_configure(channel, method, header, body):
-    # Caleed when we receive message from configure queue
+    # Called when we receive message from configure queue
     configuration = messages_pb2.LocomotionControlCommandConfigure()
     configuration.ParseFromString(body)
 
