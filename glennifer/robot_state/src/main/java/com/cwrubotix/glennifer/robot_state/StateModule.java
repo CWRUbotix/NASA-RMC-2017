@@ -168,6 +168,7 @@ public class StateModule {
 
             if(typeOfSensor.equals("locomotion")){ //this is a locomotion message
                 if (keys.length < 4) {
+                    System.out.println("Locomotion sensor update routing key requires 4 elements");
                     return;
                 }
                 String wheelString = keys[2];
@@ -182,6 +183,7 @@ public class StateModule {
                 } else if (wheelString.equals("back_right")) {
                     wheel = LocomotionState.Wheel.BACK_RIGHT;
                 } else {
+                    System.out.println("Bad wheel string in routing key");
                     return;
                 }
                 if (sensorString.equals("wheel_rpm")) {
@@ -192,10 +194,14 @@ public class StateModule {
                     handleWheelPodLimitExtendedUpdate(wheel, body);
                 } else if (sensorString.equals("wheel_pod_limit_retracted")) {
                     handleWheelPodLimitRetractedUpdate(wheel, body);
+                } else {
+                    System.out.println("Bad sensor string in routing key");
+                    return;
                 }
             }
             else if(typeOfSensor.equals("excavation")){ //excavation message
                 if (keys.length < 3) {
+                    System.out.println("Excavation sensor update routing key requires 3 elements");
                     return;
                 }
                 String sensorString = keys[2];
@@ -214,6 +220,7 @@ public class StateModule {
                     } else if (sideString.equals("right")) {
                         side = ExcavationState.Side.RIGHT;
                     } else {
+                        System.out.println("Bad side string in routing key");
                         return;
                     }
                     handleArmLimitExtendedUpdate(side, body);
@@ -225,6 +232,7 @@ public class StateModule {
                     } else if (sideString.equals("right")) {
                         side = ExcavationState.Side.RIGHT;
                     } else {
+                        System.out.println("Bad side string in routing key");
                         return;
                     }
                     handleArmLimitRetractedUpdate(side, body);
@@ -236,6 +244,7 @@ public class StateModule {
                     } else if (sideString.equals("right")) {
                         side = ExcavationState.Side.RIGHT;
                     } else {
+                        System.out.println("Bad side string in routing key");
                         return;
                     }
                     handleConveyorTranslationLimitExtendedUpdate(side, body);
@@ -247,9 +256,13 @@ public class StateModule {
                     } else if (sideString.equals("right")) {
                         side = ExcavationState.Side.RIGHT;
                     } else {
+                        System.out.println("Bad side string in routing key");
                         return;
                     }
                     handleConveyorTranslationLimitRetractedUpdate(side, body);
+                } else {
+                    System.out.println("Bad sensor string in routing key");
+                    return;
                 }
             }
             else if(typeOfSensor.equals("deposition")){ //deposition message
@@ -266,6 +279,7 @@ public class StateModule {
                     } else if (loadCellString.equals("back_right")) {
                         loadcell = DepositionState.LoadCell.BACK_RIGHT;
                     } else {
+                        System.out.println("Bad load cell string in routing key");
                         return;
                     }
                     handleDumpLoadUpdate(loadcell, body);
@@ -279,6 +293,7 @@ public class StateModule {
                     } else if (sideString.equals("right")) {
                         side = DepositionState.Side.RIGHT;
                     } else {
+                        System.out.println("Bad side string in routing key");
                         return;
                     }
                     handleDumpLimitExtendedUpdate(side, body);
@@ -290,11 +305,15 @@ public class StateModule {
                     } else if (sideString.equals("right")) {
                         side = DepositionState.Side.RIGHT;
                     } else {
+                        System.out.println("Bad side string in routing key");
                         return;
                     }
                     handleDumpLimitRetractedUpdate(side, body);
+                } else {
+                    System.out.println("Bad sensor string in routing key");
                 }
             } else { //oops
+                System.out.println("Bad subsystem string in routing key");
                 return;
             }
 
