@@ -1,6 +1,7 @@
 package com.cwrubotix.glennifer.robot_state;
 
 import java.time.Instant;
+import java.util.EnumMap;
 
 /**
  * A ExcavationState object encapsulates the current state of the robot's
@@ -13,15 +14,20 @@ import java.time.Instant;
  * the logical level.
  */
 public class ExcavationState {
-    
+
+    public enum Side {
+        LEFT,
+        RIGHT
+    }
+
     /* Data members */
 	private float conveyorRpm;
 	private float translationDisplacement;
 	private float armPos;
-	private boolean armRetracted;
-    private boolean armExtended;
-    private boolean translationRetracted;
-    private boolean translationExtended;
+    private EnumMap <Side, Boolean> armSideRetracted;
+    private EnumMap <Side, Boolean> armSideExtended;
+    private EnumMap <Side, Boolean> translationSideRetracted;
+    private EnumMap <Side, Boolean> translationSideExtended;
 
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
@@ -41,10 +47,22 @@ public class ExcavationState {
         conveyorRpm = 0;
         translationDisplacement = 0;
 		armPos = 0;
-        armRetracted = false;
-        armExtended = false;
-        translationRetracted = false;
-        translationExtended = false;
+
+        armSideRetracted = new EnumMap<>(Side.class);
+        armSideRetracted.put(Side.LEFT, false);
+        armSideRetracted.put(Side.RIGHT, false);
+
+        armSideExtended = new EnumMap<>(Side.class);
+        armSideExtended.put(Side.LEFT, false);
+        armSideExtended.put(Side.RIGHT, false);
+
+        translationSideRetracted = new EnumMap<>(Side.class);
+        translationSideRetracted.put(Side.LEFT, false);
+        translationSideRetracted.put(Side.RIGHT, false);
+
+        translationSideExtended = new EnumMap<>(Side.class);
+        translationSideExtended.put(Side.LEFT, false);
+        translationSideExtended.put(Side.RIGHT, false);
 
     }
     
@@ -71,22 +89,22 @@ public class ExcavationState {
         translationDisplacement = displacement;
     }
     
-    public void updateArmLimitExtended (boolean pressed, Instant time) throws RobotFaultException {
+    public void updateArmLimitExtended (Side side, boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
-        armExtended = pressed;
+        armSideExtended.put(side, pressed);
     }
     
-    public void updateArmLimitRetracted (boolean pressed, Instant time) throws RobotFaultException {
+    public void updateArmLimitRetracted (Side side, boolean pressed, Instant time) throws RobotFaultException {
         // TODO: use limit switches
-        armRetracted = pressed;
+        armSideRetracted.put(side, pressed);
     }
 	
-	public void updateTranslationLimitExtended(boolean pressed, Instant time) throws RobotFaultException {
-        translationExtended = pressed;
+	public void updateTranslationLimitExtended(Side side, boolean pressed, Instant time) throws RobotFaultException {
+        translationSideExtended.put(side, pressed);
     }
     
-    public void updateTranslationLimitRetracted(boolean pressed, Instant time) throws RobotFaultException {
-        translationRetracted = pressed;
+    public void updateTranslationLimitRetracted(Side side, boolean pressed, Instant time) throws RobotFaultException {
+        translationSideRetracted.put(side, pressed);
     }
     
     /* State getter methods */
@@ -116,11 +134,19 @@ public class ExcavationState {
         return armPos;
     }
 
-    public boolean getArmRetracted() { return armRetracted; }
+    public boolean getArmRetracted(Side side) { return armSideRetracted.get(side); }
 
-    public boolean getArmExtended() { return armExtended; }
+    public boolean getArmExtended(Side side) { return armSideExtended.get(side); }
 
-    public boolean getTranslationRetracted() { return translationRetracted; }
+    public boolean getTranslationRetracted(Side side) { return translationSideRetracted.get(side); }
 
-    public boolean getTranslationExtended() { return translationExtended; }
+    public boolean getTranslationExtended(Side side) { return translationSideExtended.get(side); }
+
+    public boolean getArmRetracted() { return armSideRetracted.get(Side.LEFT) || armSideRetracted.get(Side.RIGHT); }
+
+    public boolean getArmExtended() { return armSideExtended.get(Side.LEFT) || armSideExtended.get(Side.RIGHT); }
+
+    public boolean getTranslationRetracted() { return translationSideRetracted.get(Side.LEFT) || translationSideRetracted.get(Side.RIGHT); }
+
+    public boolean getTranslationExtended() { return translationSideExtended.get(Side.LEFT) || translationSideExtended.get(Side.RIGHT); }
 }	

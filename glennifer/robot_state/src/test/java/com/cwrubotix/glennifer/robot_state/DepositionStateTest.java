@@ -39,14 +39,12 @@ public class DepositionStateTest {
     public void testLimitSwitches() throws Exception {
         Instant time = Instant.now();
         DepositionState instance = new DepositionState();
-        instance.updateDumpLimitExtended(true, time);
+        instance.updateDumpLimitExtended(DepositionState.Side.LEFT, true, time);
+        assertTrue(instance.getDumpExtended(DepositionState.Side.LEFT));
         assertTrue(instance.getDumpExtended());
-        instance.updateDumpLimitExtended(false, time);
+        instance.updateDumpLimitExtended(DepositionState.Side.LEFT, false, time);
+        assertFalse(instance.getDumpExtended(DepositionState.Side.LEFT));
         assertFalse(instance.getDumpExtended());
-        instance.updateDumpLimitRetracted(true, time);
-        assertTrue(instance.getDumpRetracted());
-        instance.updateDumpLimitRetracted(false, time);
-        assertFalse(instance.getDumpRetracted());
     }
 
     /**
@@ -56,9 +54,9 @@ public class DepositionStateTest {
     public void testLimitSwitchConfigurations() throws Exception {
         Instant time = Instant.now();
         DepositionState instance = new DepositionState();
-        instance.updateDumpLimitRetracted(true, time); // Retracted
+        instance.updateDumpLimitRetracted(DepositionState.Side.LEFT, true, time); // Retracted
         assertTrue(instance.isStored());
-        instance.updateDumpLimitRetracted(false, time); // Not retracted
+        instance.updateDumpLimitRetracted(DepositionState.Side.LEFT, false, time); // Not retracted
         assertFalse(instance.isStored());
     }
 }
