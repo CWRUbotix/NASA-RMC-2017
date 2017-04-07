@@ -158,7 +158,7 @@ void setup() {
   motor_infos[4].feedbackSensorID = 4;
   motor_infos[4].kp = 2;
   motor_infos[4].deadband = 15;
-  motor_infos[4].scale = 100;
+  motor_infos[4].scale = 1;
   // Actuator FR addr 0 motor 2
   motor_infos[5].hardware = MH_ST_POS;
   motor_infos[5].addr = 0;
@@ -166,7 +166,7 @@ void setup() {
   motor_infos[5].feedbackSensorID = 5;
   motor_infos[5].kp = -2;
   motor_infos[5].deadband = 15;
-  motor_infos[5].scale = 100;
+  motor_infos[5].scale = 1;
   // Actuator BL addr 1 motor 1
   motor_infos[6].hardware = MH_ST_POS;
   motor_infos[6].addr = 1;
@@ -174,7 +174,7 @@ void setup() {
   motor_infos[6].feedbackSensorID = 6;
   motor_infos[6].kp = 2;
   motor_infos[6].deadband = 15;
-  motor_infos[6].scale = 100;
+  motor_infos[6].scale = 1;
   // Back right wheel pod actuator
   motor_infos[7].hardware = MH_ST_POS;
   motor_infos[7].addr = 1;
@@ -182,7 +182,7 @@ void setup() {
   motor_infos[7].feedbackSensorID = 7;
   motor_infos[7].kp = -2;
   motor_infos[7].deadband = 15;
-  motor_infos[7].scale = 100;
+  motor_infos[7].scale = 1;
   // Implied use same-id sensor
   
   /*

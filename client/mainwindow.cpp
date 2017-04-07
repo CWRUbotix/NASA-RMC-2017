@@ -273,6 +273,7 @@ void MainWindow::handleLocomotionRight() {
 }
 
 void MainWindow::handleLocomotionRelease() {
+    /*
     if (0 == m_desiredConfig) { // straight
         LocomotionControlCommandStraight msg;
         msg.set_speed(0.0F);
@@ -327,6 +328,7 @@ void MainWindow::handleLocomotionRelease() {
     } else {
         ui->consoleOutputTextBrowser->append("Wrong config");
     }
+    */
 }
 
 void MainWindow::handleLocomotionStop() {
@@ -334,6 +336,7 @@ void MainWindow::handleLocomotionStop() {
 }
 
 void MainWindow::handleLocomotionStraight() {
+    m_desiredConfig = 0;
     LocomotionControlCommandConfigure msg;
     msg.set_power(100.0F);
     msg.set_target(LocomotionControlCommandConfigure_Configuration_STRAIGHT_CONFIG);
@@ -354,6 +357,7 @@ void MainWindow::handleLocomotionStraight() {
 }
 
 void MainWindow::handleLocomotionTurn() {
+    m_desiredConfig = 1;
     LocomotionControlCommandConfigure msg;
     msg.set_power(100.0F);
     msg.set_target(LocomotionControlCommandConfigure_Configuration_TURN_CONFIG);
@@ -374,6 +378,7 @@ void MainWindow::handleLocomotionTurn() {
 }
 
 void MainWindow::handleLocomotionStrafe() {
+    m_desiredConfig = 2;
     LocomotionControlCommandConfigure msg;
     msg.set_power(100.0F);
     msg.set_target(LocomotionControlCommandConfigure_Configuration_STRAFE_CONFIG);

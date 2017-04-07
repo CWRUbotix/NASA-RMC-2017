@@ -114,20 +114,17 @@ def handle_configure(channel, method, header, body):
     configuration = messages_pb2.LocomotionControlCommandConfigure()
     configuration.ParseFromString(body)
 
-    if (configuration.target is
-            messages_pb2.LocomotionCommandConfigure.Configuration.STRAIGHT_CONFIG):
+    if (configuration.target is 1):
         publish_wheel_pod_angle(Wheel.front_left, 0, configuration.timeout)
         publish_wheel_pod_angle(Wheel.front_right, 0, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 0, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_right, 0, configuration.timeout)
-    elif (configuration.target is
-            messages_pb2.LocomotionCommandConfigure.Configuration.TURN_CONFIG):
+    elif (configuration.target is 2):
         publish_wheel_pod_angle(Wheel.front_left, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.front_right, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_right, 60, configuration.timeout)
-    elif (configuration.target is
-            messages_pb2.LocomotionCommandConfigure.Configuration.STRAFE_CONFIG):
+    elif (configuration.target is 3):
         publish_wheel_pod_angle(Wheel.front_left, 90, configuration.timeout)
         publish_wheel_pod_angle(Wheel.front_right, 90, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 90, configuration.timeout)
