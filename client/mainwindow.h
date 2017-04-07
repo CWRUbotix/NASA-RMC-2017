@@ -28,6 +28,11 @@ public slots:
     void handleLocomotionDown();
     void handleLocomotionLeft();
     void handleLocomotionRight();
+    void handleLocomotionRelease();
+    void handleLocomotionStop();
+    void handleLocomotionStraight();
+    void handleLocomotionTurn();
+    void handleLocomotionStrafe();
     void handleFrontLeftWheelStop();
     void handleFrontLeftWheelSet(int value);
     void handleFrontRightWheelStop();
@@ -53,6 +58,9 @@ public slots:
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
 
+    void keyPressEvent(QKeyEvent *ev);
+    void keyReleaseEvent(QKeyEvent *ev);
+
 private:
     Ui::MainWindow *ui;
     AMQP *m_amqp;
@@ -63,6 +71,7 @@ private:
     QGraphicsRectItem *rectangle2;
     QGraphicsRectItem *rectangle3;
     QGraphicsRectItem *rectangle4;
+    int m_desiredConfig = 0; // 0 is straight, 1 is turn, 2 is strafe
     void updateAngle(int x);
 };
 

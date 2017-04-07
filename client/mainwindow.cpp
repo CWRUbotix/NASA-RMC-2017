@@ -6,6 +6,7 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QImage>
+#include <QMessageBox>
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -61,12 +62,28 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(ui->locomotion_UpButton, &QPushButton::clicked,
                      this, &MainWindow::handleLocomotionUp);
+    QObject::connect(ui->locomotion_UpButton, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
     QObject::connect(ui->locomotion_DownButton, &QPushButton::clicked,
                      this, &MainWindow::handleLocomotionDown);
+    QObject::connect(ui->locomotion_DownButton, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
     QObject::connect(ui->locomotion_LeftButton, &QPushButton::clicked,
                      this, &MainWindow::handleLocomotionLeft);
+    QObject::connect(ui->locomotion_LeftButton, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
     QObject::connect(ui->locomotion_RightButton, &QPushButton::clicked,
                      this, &MainWindow::handleLocomotionRight);
+    QObject::connect(ui->locomotion_RightButton, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
+    QObject::connect(ui->locomotion_StopButton, &QPushButton::clicked,
+                     this, &MainWindow::handleLocomotionStop);
+    QObject::connect(ui->locomotion_StraightButton, &QPushButton::clicked,
+                     this, &MainWindow::handleLocomotionStraight);
+    QObject::connect(ui->locomotion_TurnButton, &QPushButton::clicked,
+                     this, &MainWindow::handleLocomotionTurn);
+    QObject::connect(ui->locomotion_StrafeButton, &QPushButton::clicked,
+                     this, &MainWindow::handleLocomotionStrafe);
     QObject::connect(ui->pushButton_FrontLeftWheelStop, &QPushButton::clicked,
                      this, &MainWindow::handleFrontLeftWheelStop);
     QObject::connect(ui->pushButton_FrontRightWheelStop, &QPushButton::clicked,
@@ -130,47 +147,197 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::handleLocomotionUp() {
-    LocomotionControlCommandStraight msg;
-    msg.set_speed(ui->slider_LocomotionSpeed->value() / 100.0F);
-    msg.set_timeout(456);
-    int msg_size = msg.ByteSize();
-    void *msg_buff = malloc(msg_size);
-    if (!msg_buff) {
-        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
-        return;
+    if (0 == m_desiredConfig) { // straight
+        LocomotionControlCommandStraight msg;
+        msg.set_speed(ui->slider_LocomotionSpeed->value() / 100.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.straight");
+
+        free(msg_buff);
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
     }
-    msg.SerializeToArray(msg_buff, msg_size);
-
-    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
-    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
-    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.straight");
-
-    free(msg_buff);
 }
 
 void MainWindow::handleLocomotionDown() {
-    LocomotionControlCommandStraight msg;
-    msg.set_speed(ui->slider_LocomotionSpeed->value() / -100.0F);
-    msg.set_timeout(456);
-    int msg_size = msg.ByteSize();
-    void *msg_buff = malloc(msg_size);
-    if (!msg_buff) {
-        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
-        return;
+    if (0 == m_desiredConfig) { // straight
+        LocomotionControlCommandStraight msg;
+        msg.set_speed(ui->slider_LocomotionSpeed->value() / -100.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.straight");
+
+        free(msg_buff);
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
     }
-    msg.SerializeToArray(msg_buff, msg_size);
-
-    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
-    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
-    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.straight");
-
-    free(msg_buff);
 }
 
 void MainWindow::handleLocomotionLeft() {
-    LocomotionControlCommandTurn msg;
-    msg.set_speed(ui->slider_LocomotionSpeed->value() / -100.0F);
-    msg.set_timeout(456);
+    if (1 == m_desiredConfig) { // turn
+        LocomotionControlCommandTurn msg;
+        msg.set_speed(ui->slider_LocomotionSpeed->value() / -100.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.turn");
+
+        free(msg_buff);
+    } else if (2 == m_desiredConfig) { // strafe
+        LocomotionControlCommandStrafe msg;
+        msg.set_speed(ui->slider_LocomotionSpeed->value() / -100.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.strafe");
+
+        free(msg_buff);
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleLocomotionRight() {
+    if (1 == m_desiredConfig) { // turn
+        LocomotionControlCommandTurn msg;
+        msg.set_speed(ui->slider_LocomotionSpeed->value() / 100.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.turn");
+
+        free(msg_buff);
+    } else if (2 == m_desiredConfig) { // strafe
+        LocomotionControlCommandStrafe msg;
+        msg.set_speed(ui->slider_LocomotionSpeed->value() / 100.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.strafe");
+
+        free(msg_buff);
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleLocomotionRelease() {
+    if (0 == m_desiredConfig) { // straight
+        LocomotionControlCommandStraight msg;
+        msg.set_speed(0.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.straight");
+
+        free(msg_buff);
+    } else if (1 == m_desiredConfig) { // turn
+        LocomotionControlCommandTurn msg;
+        msg.set_speed(0.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.turn");
+
+        free(msg_buff);
+    } else if (2 == m_desiredConfig) { // strafe
+        LocomotionControlCommandStrafe msg;
+        msg.set_speed(0.0F);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.strafe");
+
+        free(msg_buff);
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleLocomotionStop() {
+    handleLocomotionRelease();
+}
+
+void MainWindow::handleLocomotionStraight() {
+    LocomotionControlCommandConfigure msg;
+    msg.set_power(100.0F);
+    msg.set_target(LocomotionControlCommandConfigure_Configuration_STRAIGHT_CONFIG);
+    msg.set_timeout(456.0F);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
     if (!msg_buff) {
@@ -181,15 +348,16 @@ void MainWindow::handleLocomotionLeft() {
 
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
-    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.turn");
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.configure");
 
     free(msg_buff);
 }
 
-void MainWindow::handleLocomotionRight() {
-    LocomotionControlCommandTurn msg;
-    msg.set_speed(ui->slider_LocomotionSpeed->value() / 100.0F);
-    msg.set_timeout(456);
+void MainWindow::handleLocomotionTurn() {
+    LocomotionControlCommandConfigure msg;
+    msg.set_power(100.0F);
+    msg.set_target(LocomotionControlCommandConfigure_Configuration_TURN_CONFIG);
+    msg.set_timeout(456.0F);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
     if (!msg_buff) {
@@ -200,7 +368,27 @@ void MainWindow::handleLocomotionRight() {
 
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
-    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.turn");
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.configure");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleLocomotionStrafe() {
+    LocomotionControlCommandConfigure msg;
+    msg.set_power(100.0F);
+    msg.set_target(LocomotionControlCommandConfigure_Configuration_STRAFE_CONFIG);
+    msg.set_timeout(456.0F);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.configure");
 
     free(msg_buff);
 }
@@ -302,7 +490,7 @@ void MainWindow::handleFrontLeftWheelPodStrafe() {
 }
 
 void MainWindow::handleFrontLeftWheelPodTurn() {
-    ui->slider_FrontLeftWheelPod->setValue(45);
+    ui->slider_FrontLeftWheelPod->setValue(60);
 }
 
 void MainWindow::handleFrontLeftWheelPodStraight() {
@@ -333,7 +521,7 @@ void MainWindow::handleFrontRightWheelPodStrafe() {
 }
 
 void MainWindow::handleFrontRightWheelPodTurn() {
-    ui->slider_FrontRightWheelPod->setValue(45);
+    ui->slider_FrontRightWheelPod->setValue(60);
 }
 
 void MainWindow::handleFrontRightWheelPodStraight() {
@@ -364,7 +552,7 @@ void MainWindow::handleBackLeftWheelPodStrafe() {
 }
 
 void MainWindow::handleBackLeftWheelPodTurn() {
-    ui->slider_BackLeftWheelPod->setValue(45);
+    ui->slider_BackLeftWheelPod->setValue(60);
 }
 
 void MainWindow::handleBackLeftWheelPodStraight() {
@@ -395,7 +583,7 @@ void MainWindow::handleBackRightWheelPodStrafe() {
 }
 
 void MainWindow::handleBackRightWheelPodTurn() {
-    ui->slider_BackRightWheelPod->setValue(45);
+    ui->slider_BackRightWheelPod->setValue(60);
 }
 
 void MainWindow::handleBackRightWheelPodStraight() {
@@ -419,6 +607,14 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
 
     free(msg_buff);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *ev) {
+    QWidget::keyPressEvent(ev);
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
+    QWidget::keyReleaseEvent(ev);
 }
 
 void MainWindow::updateAngle(int x){

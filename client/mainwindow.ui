@@ -40,7 +40,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -56,13 +56,13 @@
         <attribute name="title">
          <string>Locomotion</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
           <widget class="QGroupBox" name="groupBox">
            <property name="title">
             <string>Motor Speed Feedback</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_11">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QGraphicsView" name="graphicsView"/>
             </item>
@@ -70,46 +70,15 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <item>
-              <widget class="QGroupBox" name="groupBox_2">
-               <property name="title">
-                <string>Control</string>
-               </property>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Control</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
                <layout class="QGridLayout" name="gridLayout">
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="locomotion_LeftButton">
-                  <property name="text">
-                   <string>Left</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QSlider" name="slider_LocomotionSpeed">
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1">
-                 <widget class="QSlider" name="horizontalSlider_6">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="5">
-                 <widget class="QPushButton" name="Rotate_Clockwise">
-                  <property name="text">
-                   <string>Clockwise</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="1">
                  <widget class="QPushButton" name="locomotion_UpButton">
                   <property name="text">
@@ -117,10 +86,10 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="locomotion_DownButton">
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="locomotion_LeftButton">
                   <property name="text">
-                   <string>Down</string>
+                   <string>Left</string>
                   </property>
                  </widget>
                 </item>
@@ -131,64 +100,112 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="6">
-                 <widget class="QPushButton" name="Rotate_AntiClockwise">
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="locomotion_DownButton">
                   <property name="text">
-                   <string>Counterclockwise</string>
+                   <string>Down</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="5">
-                 <widget class="QRadioButton" name="radioButton_5">
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="locomotion_StopButton">
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Stop</string>
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="5">
-                 <widget class="QRadioButton" name="radioButton_3">
-                  <property name="text">
-                   <string>Rotate</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="5">
-                 <widget class="QRadioButton" name="radioButton_4">
-                  <property name="text">
-                   <string>Strafe</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
+               </layout>
+              </item>
+              <item>
+               <layout class="QGridLayout" name="gridLayout_3">
+                <item row="0" column="0">
                  <widget class="QLabel" name="label_4">
                   <property name="text">
                    <string>Speed</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="0" column="1">
+                 <widget class="QSlider" name="slider_LocomotionSpeed">
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
                  <widget class="QLabel" name="label_7">
                   <property name="text">
                    <string>Timeout</string>
                   </property>
                  </widget>
                 </item>
+                <item row="1" column="1">
+                 <widget class="QSlider" name="horizontalSlider_6">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
                </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QProgressBar" name="locomotion_ProgressBar">
-               <property name="maximum">
-                <number>100</number>
-               </property>
-               <property name="value">
-                <number>0</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>290</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QPushButton" name="locomotion_StrafeButton">
+                <property name="text">
+                 <string>Strafe</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="locomotion_TurnButton">
+                <property name="text">
+                 <string>Turn</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="locomotion_StraightButton">
+                <property name="text">
+                 <string>Straight</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QProgressBar" name="locomotion_ProgressBar">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

@@ -114,24 +114,26 @@ def handle_configure(channel, method, header, body):
     configuration = messages_pb2.LocomotionControlCommandConfigure()
     configuration.ParseFromString(body)
 
-    if (configuration.target is 
+    if (configuration.target is
             messages_pb2.LocomotionCommandConfigure.Configuration.STRAIGHT_CONFIG):
-        publish_wheel_pod_angle(Wheel.front_left, 0, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.front_right_pod, 0, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.back_left_pod, 0, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.back_right_pod, 0, msg_in.timeout)
+        publish_wheel_pod_angle(Wheel.front_left, 0, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.front_right, 0, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.back_left, 0, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.back_right, 0, configuration.timeout)
     elif (configuration.target is
             messages_pb2.LocomotionCommandConfigure.Configuration.TURN_CONFIG):
-        publish_wheel_pod_angle(Wheel.front_left, 0.5, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.front_right, 0.5, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.back_left, 0.5, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.back_right, 0.5, msg_in.timeout)
+        publish_wheel_pod_angle(Wheel.front_left, 60, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.front_right, 60, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.back_left, 60, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.back_right, 60, configuration.timeout)
     elif (configuration.target is
             messages_pb2.LocomotionCommandConfigure.Configuration.STRAFE_CONFIG):
-        publish_wheel_pod_angle(Wheel.front_left, 1, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.front_right, 1, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.back_left, 1, msg_in.timeout)
-        publish_wheel_pod_angle(Wheel.back_right, 1, msg_in.timeout)
+        publish_wheel_pod_angle(Wheel.front_left, 90, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.front_right, 90, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.back_left, 90, configuration.timeout)
+        publish_wheel_pod_angle(Wheel.back_right, 90, configuration.timeout)
+    else:
+        print('Bad config')
     
 def publish_wheel_rpm(wheel, rpm, timeout):
     msg = messages_pb2.SpeedContolCommand()
