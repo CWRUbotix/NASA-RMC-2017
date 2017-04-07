@@ -78,12 +78,14 @@ def handle_straight(channel, method, header, body):
     msg_in = messages_pb2.LocomotionControlCommandStraight()
     msg_in.ParseFromString(body)
 
+
+
     # else if the configuration is correct 
     # set the wheels rpm and timeout
-    publish_wheel_rpm(Wheel.front_left, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(Wheel.front_right, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(Wheel.back_left, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(Wheel.back_right, msg_in.speed, msg_in.timeout)
+    publish_wheel_rpm(Wheel.front_left, msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.front_right, msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.back_left, msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.back_right, msg_in.speed / 0.015959, msg_in.timeout)
     
 def handle_turn(channel, method, header, body):
     # Called when we receive messages from turn queue
@@ -91,10 +93,10 @@ def handle_turn(channel, method, header, body):
     msg_in.ParseFromString(body)
 
     # else if the configuration is correct
-    publish_wheel_rpm(Wheel.front_left, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(Wheel.front_right, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(Wheel.back_left, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(Wheel.back_right, msg_in.speed, msg_in.timeout)
+    publish_wheel_rpm(Wheel.front_left, msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.front_right, -msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.back_left, msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.back_right, -msg_in.speed / 0.015959, msg_in.timeout)
     
 def handle_strafe(channel, method, header, body):
   # Called when we receive message from strafe queue
@@ -102,10 +104,10 @@ def handle_strafe(channel, method, header, body):
     msg_in.ParseFromString(body)
 
     # else if the configuration is correct
-    publish_wheel_rpm(front_left_speed, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(front_right_speed, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(back_left_speed, msg_in.speed, msg_in.timeout)
-    publish_wheel_rpm(back_right_speed, msg_in.speed, msg_in.timeout)
+    publish_wheel_rpm(Wheel.front_left, msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.front_right, -msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.back_left, -msg_in.speed / 0.015959, msg_in.timeout)
+    publish_wheel_rpm(Wheel.back_right, msg_in.speed / 0.015959, msg_in.timeout)
 
 def handle_configure(channel, method, header, body):
     # Called when we receive message from configure queue
