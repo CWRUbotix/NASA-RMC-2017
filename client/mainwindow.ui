@@ -17,6 +17,9 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QSplitter" name="splitter">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -39,6 +42,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="currentIndex">
         <number>1</number>
        </property>
@@ -48,7 +54,11 @@
         </attribute>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QGraphicsView" name="mapGraphicsView"/>
+          <widget class="QGraphicsView" name="mapGraphicsView">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -64,7 +74,11 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QGraphicsView" name="graphicsView"/>
+             <widget class="QGraphicsView" name="graphicsView">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -81,6 +95,9 @@
                <layout class="QGridLayout" name="gridLayout">
                 <item row="0" column="1">
                  <widget class="QPushButton" name="locomotion_UpButton">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Up</string>
                   </property>
@@ -88,6 +105,9 @@
                 </item>
                 <item row="1" column="0">
                  <widget class="QPushButton" name="locomotion_LeftButton">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Left</string>
                   </property>
@@ -95,6 +115,9 @@
                 </item>
                 <item row="1" column="2">
                  <widget class="QPushButton" name="locomotion_RightButton">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Right</string>
                   </property>
@@ -102,6 +125,9 @@
                 </item>
                 <item row="2" column="1">
                  <widget class="QPushButton" name="locomotion_DownButton">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Down</string>
                   </property>
@@ -109,6 +135,9 @@
                 </item>
                 <item row="1" column="1">
                  <widget class="QPushButton" name="locomotion_StopButton">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Stop</string>
                   </property>
@@ -127,6 +156,9 @@
                 </item>
                 <item row="0" column="1">
                  <widget class="QSlider" name="slider_LocomotionSpeed">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="maximum">
                    <number>100</number>
                   </property>
@@ -147,6 +179,9 @@
                 </item>
                 <item row="1" column="1">
                  <widget class="QSlider" name="horizontalSlider_6">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -173,6 +208,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
                <widget class="QPushButton" name="locomotion_StrafeButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>Strafe</string>
                 </property>
@@ -180,6 +218,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="locomotion_TurnButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>Turn</string>
                 </property>
@@ -187,6 +228,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="locomotion_StraightButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>Straight</string>
                 </property>
@@ -222,6 +266,9 @@
            <height>22</height>
           </rect>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="text">
           <string>Bucket Conveyor on</string>
          </property>
@@ -239,6 +286,9 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QSlider" name="horizontalSlider">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -262,11 +312,17 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QRadioButton" name="radioButton">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="text">
            <string>Manual translate</string>
           </property>
          </widget>
          <widget class="QSlider" name="horizontalSlider_2">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -285,26 +341,41 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QRadioButton" name="radioButton_2">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="text">
            <string>Translation rate</string>
           </property>
          </widget>
          <widget class="QSlider" name="horizontalSlider_3">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
          <widget class="QSlider" name="horizontalSlider_4">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
          <widget class="QPushButton" name="pushButton">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="text">
            <string>Start</string>
           </property>
          </widget>
          <widget class="QPushButton" name="pushButton_2">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="text">
            <string>Stop</string>
           </property>
@@ -390,6 +461,9 @@
            <height>181</height>
           </rect>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_DepositionControl">
@@ -405,6 +479,9 @@
            <height>29</height>
           </rect>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -417,6 +494,9 @@
            <width>100</width>
            <height>22</height>
           </rect>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
           <string>Conveyor</string>
@@ -460,6 +540,9 @@
            <height>267</height>
           </rect>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_MotorClosedLoop">
@@ -475,6 +558,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Front Left Wheel</string>
            </property>
@@ -483,6 +569,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QSlider" name="slider_FrontLeftWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>-100</number>
                 </property>
@@ -501,6 +590,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
                  <widget class="QProgressBar" name="progressBar_FrontLeftWheelForwards">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -520,6 +612,9 @@
                 </item>
                 <item>
                  <widget class="QProgressBar" name="progressBar_FrontLeftWheelBackwards">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -540,6 +635,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
                  <widget class="QLabel" name="label_8">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>60 RPM</string>
                   </property>
@@ -547,6 +645,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_2">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -560,6 +661,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_FrontLeftWheelStop">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Stop</string>
                   </property>
@@ -567,6 +671,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -580,6 +687,9 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_9">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>-60 RPM</string>
                   </property>
@@ -593,6 +703,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_15">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_FrontLeftWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -606,6 +719,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_20">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>RPM</string>
                 </property>
@@ -624,6 +740,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Front Right Wheel</string>
            </property>
@@ -632,6 +751,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_20">
               <item>
                <widget class="QSlider" name="slider_FrontRightWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>-100</number>
                 </property>
@@ -650,6 +772,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_20">
                 <item>
                  <widget class="QProgressBar" name="progressBar_FrontRightWheelForwards">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -669,6 +794,9 @@
                 </item>
                 <item>
                  <widget class="QProgressBar" name="progressBar_FrontRightWheelBackwards">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -689,6 +817,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_21">
                 <item>
                  <widget class="QLabel" name="label_18">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>60 RPM</string>
                   </property>
@@ -696,6 +827,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_10">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -709,6 +843,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_FrontRightWheelStop">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Stop</string>
                   </property>
@@ -716,6 +853,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_11">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -729,6 +869,9 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_19">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>-60 RPM</string>
                   </property>
@@ -742,6 +885,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_21">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_FrontRightWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -755,6 +901,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_21">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>RPM</string>
                 </property>
@@ -773,6 +922,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Front Left Wheel Pod</string>
            </property>
@@ -781,6 +933,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_14">
               <item>
                <widget class="QSlider" name="slider_FrontLeftWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>0</number>
                 </property>
@@ -797,6 +952,9 @@
               </item>
               <item>
                <widget class="QProgressBar" name="progressBar_FrontLeftWheePod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
@@ -821,6 +979,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_33">
                 <item>
                  <widget class="QPushButton" name="pushButton_FrontLeftWheelPodStrafe">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Strafe</string>
                   </property>
@@ -828,6 +989,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_13">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -841,6 +1005,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_FrontLeftWheelPodTurn">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Turn</string>
                   </property>
@@ -848,6 +1015,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_14">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -861,6 +1031,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_FrontLeftWheelPodStraight">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Straight</string>
                   </property>
@@ -874,6 +1047,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_11">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_FrontLeftWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -887,6 +1063,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_14">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>deg</string>
                 </property>
@@ -905,6 +1084,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Front Right Wheel Pod</string>
            </property>
@@ -913,6 +1095,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_22">
               <item>
                <widget class="QSlider" name="slider_FrontRightWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>0</number>
                 </property>
@@ -929,6 +1114,9 @@
               </item>
               <item>
                <widget class="QProgressBar" name="progressBar_FrontRightWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
@@ -953,6 +1141,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_34">
                 <item>
                  <widget class="QPushButton" name="pushButton_FrontRightWheelPodStrafe">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Strafe</string>
                   </property>
@@ -960,6 +1151,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_17">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -973,6 +1167,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_FrontRightWheelPodTurn">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Turn</string>
                   </property>
@@ -980,6 +1177,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_18">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -993,6 +1193,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_FrontRightWheelPodStraight">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Straight</string>
                   </property>
@@ -1006,6 +1209,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_23">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_FrontRightWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -1019,6 +1225,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_22">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>deg</string>
                 </property>
@@ -1037,6 +1246,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Back Left Wheel</string>
            </property>
@@ -1045,6 +1257,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <item>
                <widget class="QSlider" name="slider_BackLeftWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>-100</number>
                 </property>
@@ -1063,6 +1278,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_26">
                 <item>
                  <widget class="QProgressBar" name="progressBar_BackLeftWheelForwards">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -1082,6 +1300,9 @@
                 </item>
                 <item>
                  <widget class="QProgressBar" name="progressBar_BackLeftWheelBackwards">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -1102,6 +1323,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_27">
                 <item>
                  <widget class="QLabel" name="label_23">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>60 RPM</string>
                   </property>
@@ -1109,6 +1333,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_12">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1122,6 +1349,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_BackLeftWheelStop">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Stop</string>
                   </property>
@@ -1129,6 +1359,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_19">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1142,6 +1375,9 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_24">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>-60 RPM</string>
                   </property>
@@ -1155,6 +1391,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_25">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_BackLeftWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -1168,6 +1407,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_25">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>RPM</string>
                 </property>
@@ -1186,6 +1428,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Back Right Wheel</string>
            </property>
@@ -1194,6 +1439,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_28">
               <item>
                <widget class="QSlider" name="slider_BackRightWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>-100</number>
                 </property>
@@ -1212,6 +1460,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_31">
                 <item>
                  <widget class="QProgressBar" name="progressBar_BackRightWheelForwards">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -1231,6 +1482,9 @@
                 </item>
                 <item>
                  <widget class="QProgressBar" name="progressBar_BackRightWheeBackwards">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -1251,6 +1505,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_32">
                 <item>
                  <widget class="QLabel" name="label_26">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>60 RPM</string>
                   </property>
@@ -1258,6 +1515,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_24">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1271,6 +1531,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_BackRightWheelStop">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Stop</string>
                   </property>
@@ -1278,6 +1541,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_25">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1291,6 +1557,9 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_27">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>-60 RPM</string>
                   </property>
@@ -1304,6 +1573,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_29">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_BackRightWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -1317,6 +1589,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_28">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>RPM</string>
                 </property>
@@ -1335,6 +1610,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Back Left Wheel Pod</string>
            </property>
@@ -1343,6 +1621,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_32">
               <item>
                <widget class="QSlider" name="slider_BackLeftWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>0</number>
                 </property>
@@ -1359,6 +1640,9 @@
               </item>
               <item>
                <widget class="QProgressBar" name="progressBar_BackLeftWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
@@ -1383,6 +1667,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_42">
                 <item>
                  <widget class="QPushButton" name="pushButton_BackLeftWheelPodStrafe">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Strafe</string>
                   </property>
@@ -1390,6 +1677,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_28">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1403,6 +1693,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_BackLeftWheelPodTurn">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Turn</string>
                   </property>
@@ -1410,6 +1703,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_29">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1423,6 +1719,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_BackLeftWheelPodStraight">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Straight</string>
                   </property>
@@ -1436,6 +1735,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_33">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_BackLeftWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -1449,6 +1751,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_32">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>deg</string>
                 </property>
@@ -1467,6 +1772,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Back Right Wheel Pod</string>
            </property>
@@ -1475,6 +1783,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_34">
               <item>
                <widget class="QSlider" name="slider_BackRightWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>0</number>
                 </property>
@@ -1491,6 +1802,9 @@
               </item>
               <item>
                <widget class="QProgressBar" name="progressBar_BackRightWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
@@ -1515,6 +1829,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_44">
                 <item>
                  <widget class="QPushButton" name="pushButton_BackRightWheelPodStrafe">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Strafe</string>
                   </property>
@@ -1522,6 +1839,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_30">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1535,6 +1855,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_BackRightWheelPodTurn">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Turn</string>
                   </property>
@@ -1542,6 +1865,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_31">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1555,6 +1881,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_BackRightWheelPodStraight">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Straight</string>
                   </property>
@@ -1568,6 +1897,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_35">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_BackRightWheelPod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -1581,6 +1913,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_33">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>deg</string>
                 </property>
@@ -1599,6 +1934,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Excavation Arm</string>
            </property>
@@ -1607,6 +1945,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_16">
               <item>
                <widget class="QSlider" name="slider_ExcavationArm">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>0</number>
                 </property>
@@ -1623,6 +1964,9 @@
               </item>
               <item>
                <widget class="QProgressBar" name="progressBar_ExcavationArm">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
@@ -1647,6 +1991,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_35">
                 <item>
                  <widget class="QPushButton" name="pushButton_ExcavationArmDig">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Dig</string>
                   </property>
@@ -1654,6 +2001,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_7">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1667,6 +2017,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_ExcavationArmJog">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Jog</string>
                   </property>
@@ -1674,6 +2027,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_ExcavationArmStore">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Store</string>
                   </property>
@@ -1687,6 +2043,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_12">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_ExcavationArm">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -1700,6 +2059,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_15">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>deg</string>
                 </property>
@@ -1718,6 +2080,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Excavation Translation</string>
            </property>
@@ -1726,6 +2091,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_17">
               <item>
                <widget class="QSlider" name="slider_ExcavationTranslation">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>0</number>
                 </property>
@@ -1742,6 +2110,9 @@
               </item>
               <item>
                <widget class="QProgressBar" name="progressBar_ExcavationTranslation">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
@@ -1766,6 +2137,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_36">
                 <item>
                  <widget class="QPushButton" name="pushButton_ExcavationTranslationExtend">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Extend</string>
                   </property>
@@ -1773,6 +2147,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_8">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1786,6 +2163,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_ExcavationTranslationRetract">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Retract</string>
                   </property>
@@ -1799,6 +2179,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_13">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_ExcavationTranslation">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -1812,6 +2195,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_16">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>m</string>
                 </property>
@@ -1830,12 +2216,18 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Excavation Conveyor</string>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_26">
             <item>
              <spacer name="horizontalSpacer">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -1851,6 +2243,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_28">
               <item>
                <spacer name="verticalSpacer_20">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -1864,6 +2259,9 @@
               </item>
               <item>
                <widget class="QCheckBox" name="checkBox_ExcavationConveyor">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>On</string>
                 </property>
@@ -1871,6 +2269,9 @@
               </item>
               <item>
                <spacer name="verticalSpacer_21">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -1886,6 +2287,9 @@
             </item>
             <item>
              <spacer name="horizontalSpacer_2">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -1908,6 +2312,9 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Deposition Dump</string>
            </property>
@@ -1916,6 +2323,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_18">
               <item>
                <widget class="QSlider" name="slider_DepositionDump">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="minimum">
                  <number>0</number>
                 </property>
@@ -1932,6 +2342,9 @@
               </item>
               <item>
                <widget class="QProgressBar" name="progressBar_DepositionDump">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
@@ -1956,6 +2369,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_37">
                 <item>
                  <widget class="QPushButton" name="pushButton_DepositionDumpDump">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Dump</string>
                   </property>
@@ -1963,6 +2379,9 @@
                 </item>
                 <item>
                  <spacer name="verticalSpacer_9">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
@@ -1976,6 +2395,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_DepositionDumpStore">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>Store</string>
                   </property>
@@ -1989,6 +2411,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_19">
               <item>
                <widget class="QLCDNumber" name="lcdNumber_DepositionDump">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="smallDecimalPoint">
                  <bool>false</bool>
                 </property>
@@ -2002,6 +2427,9 @@
               </item>
               <item>
                <widget class="QLabel" name="label_17">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>deg</string>
                 </property>
@@ -2020,12 +2448,18 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="title">
             <string>Deposition Conveyor</string>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_27">
             <item>
              <spacer name="horizontalSpacer_3">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -2041,6 +2475,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_29">
               <item>
                <spacer name="verticalSpacer_22">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -2054,6 +2491,9 @@
               </item>
               <item>
                <widget class="QCheckBox" name="checkBox_DepositionConveyor">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>On</string>
                 </property>
@@ -2061,6 +2501,9 @@
               </item>
               <item>
                <spacer name="verticalSpacer_23">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -2076,6 +2519,9 @@
             </item>
             <item>
              <spacer name="horizontalSpacer_4">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -2094,9 +2540,16 @@
        </widget>
       </widget>
       <widget class="QWidget" name="verticalLayoutWidget">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_19">
         <item>
-         <widget class="QTextBrowser" name="consoleOutputTextBrowser"/>
+         <widget class="QTextBrowser" name="consoleOutputTextBrowser">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="emergencyStopButton">
@@ -2520,6 +2973,9 @@
              </colorrole>
             </disabled>
            </palette>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="autoFillBackground">
            <bool>true</bool>
