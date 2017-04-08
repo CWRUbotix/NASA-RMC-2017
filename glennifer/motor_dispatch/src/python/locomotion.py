@@ -119,12 +119,12 @@ def handle_configure(channel, method, header, body):
         publish_wheel_pod_angle(Wheel.front_right, 0, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 0, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_right, 0, configuration.timeout)
-    elif (configuration.target is 2):
+    elif (configuration.target is 3):
         publish_wheel_pod_angle(Wheel.front_left, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.front_right, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_right, 60, configuration.timeout)
-    elif (configuration.target is 3):
+    elif (configuration.target is 2):
         publish_wheel_pod_angle(Wheel.front_left, 90, configuration.timeout)
         publish_wheel_pod_angle(Wheel.front_right, 90, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 90, configuration.timeout)
