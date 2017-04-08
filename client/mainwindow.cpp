@@ -354,7 +354,9 @@ void MainWindow::handleLocomotionStop() {
 }
 
 void MainWindow::handleLocomotionStraight() {
+    m_configSpeeds[m_desiredConfig] = ui->slider_LocomotionSpeed->value();
     m_desiredConfig = 0;
+    ui->slider_LocomotionSpeed->setValue(m_configSpeeds[m_desiredConfig]);
     LocomotionControlCommandConfigure msg;
     msg.set_power(100.0F);
     msg.set_target(LocomotionControlCommandConfigure_Configuration_STRAIGHT_CONFIG);
@@ -375,7 +377,9 @@ void MainWindow::handleLocomotionStraight() {
 }
 
 void MainWindow::handleLocomotionTurn() {
+    m_configSpeeds[m_desiredConfig] = ui->slider_LocomotionSpeed->value();
     m_desiredConfig = 1;
+    ui->slider_LocomotionSpeed->setValue(m_configSpeeds[m_desiredConfig]);
     LocomotionControlCommandConfigure msg;
     msg.set_power(100.0F);
     msg.set_target(LocomotionControlCommandConfigure_Configuration_TURN_CONFIG);
@@ -396,7 +400,9 @@ void MainWindow::handleLocomotionTurn() {
 }
 
 void MainWindow::handleLocomotionStrafe() {
+    m_configSpeeds[m_desiredConfig] = ui->slider_LocomotionSpeed->value();
     m_desiredConfig = 2;
+    ui->slider_LocomotionSpeed->setValue(m_configSpeeds[m_desiredConfig]);
     LocomotionControlCommandConfigure msg;
     msg.set_power(100.0F);
     msg.set_target(LocomotionControlCommandConfigure_Configuration_STRAFE_CONFIG);
@@ -633,11 +639,79 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {
-    QWidget::keyPressEvent(ev);
+    switch (ev->key()) {
+    case (Qt::Key_Space):
+        handleLocomotionStop();
+        break;
+    case (Qt::Key_W):
+        handleLocomotionUp();
+        break;
+    case (Qt::Key_A):
+        handleLocomotionLeft();
+        break;
+    case (Qt::Key_S):
+        handleLocomotionDown();
+        break;
+    case (Qt::Key_D):
+        handleLocomotionRight();
+        break;
+    case (Qt::Key_I):
+        handleLocomotionStraight();
+        break;
+    case (Qt::Key_O):
+        handleLocomotionTurn();
+        break;
+    case (Qt::Key_P):
+        handleLocomotionStrafe();
+        break;
+    case (Qt::Key_J):
+        ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() - 10);
+        break;
+    case (Qt::Key_K):
+        ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + 10);
+        break;
+    default:
+        QWidget::keyPressEvent(ev);
+        break;
+    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
-    QWidget::keyReleaseEvent(ev);
+    switch (ev->key()) {
+    case (Qt::Key_Space):
+        break;
+    case (Qt::Key_W):
+        handleLocomotionStop();
+        break;
+    case (Qt::Key_A):
+        handleLocomotionStop();
+        break;
+    case (Qt::Key_S):
+        handleLocomotionStop();
+        break;
+    case (Qt::Key_D):
+        handleLocomotionStop();
+        break;
+    case (Qt::Key_I):
+        break;
+    case (Qt::Key_O):
+        break;
+    case (Qt::Key_P):
+        break;
+    case (Qt::Key_J):
+        break;
+    case (Qt::Key_K):
+        break;
+    default:
+        QWidget::keyReleaseEvent(ev);
+        break;
+    }
+}
+
+void MainWindow::wheelEvent(QWheelEvent* event) {
+    int delta = event->angleDelta().y();
+    delta = (delta > 0) ? 5 : -5;
+    ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + delta);
 }
 
 void MainWindow::updateAngle(int x){

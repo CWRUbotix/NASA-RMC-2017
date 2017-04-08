@@ -62,6 +62,7 @@ public slots:
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
+    void wheelEvent(QWheelEvent* event);
 
 private:
     Ui::MainWindow *ui;
@@ -74,6 +75,7 @@ private:
     QGraphicsRectItem *rectangle3;
     QGraphicsRectItem *rectangle4;
     int m_desiredConfig = 0; // 0 is straight, 1 is turn, 2 is strafe
+    int m_configSpeeds[3] = {100, 60, 50};
     void updateAngle(int x);
 };
 
