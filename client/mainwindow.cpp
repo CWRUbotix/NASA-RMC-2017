@@ -7,6 +7,9 @@
 #include <QGraphicsItem>
 #include <QImage>
 #include <QMessageBox>
+#include <QKeyEvent>
+#include <QWheelEvent>
+#include <QDebug>
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -332,7 +335,22 @@ void MainWindow::handleLocomotionRelease() {
 }
 
 void MainWindow::handleLocomotionStop() {
-    handleLocomotionRelease();
+    LocomotionControlCommandStrafe msg;
+    msg.set_speed(0.0F);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.locomotion.strafe");
+
+    free(msg_buff);
 }
 
 void MainWindow::handleLocomotionStraight() {

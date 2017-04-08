@@ -7,6 +7,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsItem>
+#include <QKeyEvent>
+#include <QWheelEvent>
 
 using namespace com::cwrubotix::glennifer;
 
