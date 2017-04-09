@@ -34,3 +34,5 @@ wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc |
 apt-get update
 apt-get -q -y install rabbitmq-server
 invoke-rc.d rabbitmq-server start
+
+sudo usermod -a -G dialout tim
