@@ -1,7 +1,9 @@
 package com.cwrubotix.glennifer.robot_state;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.EnumMap;
+import java.util.Optional;
 
 /**
  * A LocomotionState object encapsulates the current state of the robot's
@@ -21,7 +23,7 @@ public class LocomotionState {
     private static final float WHEEL_POD_POS_MIN_TURN = 40f;
     private static final float WHEEL_POD_POS_MAX_TURN = 50f;
     private static final float WHEEL_POD_POS_MIN_STRAFE = 80f;
-    
+
     /**
      * The Wheel enum is used to specify one of the locomotion subsystem's 4
      * wheels.
@@ -32,7 +34,7 @@ public class LocomotionState {
         BACK_LEFT,
         BACK_RIGHT
     }
-    
+
     /**
      * The Configuration enum is used to represent the locomotion subsystem's
      * overall wheel pod configuration.
@@ -43,18 +45,24 @@ public class LocomotionState {
         TURN,
         STRAFE
     }
-    
+
     /* Data members */
-    private EnumMap <Wheel, Float> wheelRpm;
-    private EnumMap <Wheel, Float> wheelPodPos;
-    private EnumMap <Wheel, Boolean> wheelPodLimitRetracted;
-    private EnumMap <Wheel, Boolean> wheelPodLimitExtended;
+    private EnumMap<Wheel, Optional<Float>> wheelRpm;
+    private EnumMap<Wheel, Float> wheelPodPos;
+    private EnumMap<Wheel, Boolean> wheelPodLimitRetracted;
+    private EnumMap<Wheel, Boolean> wheelPodLimitExtended;
+
     // TODO: Store the time most recently updated, either for the whole system
     // or for each sensor. If you want to handle out of order updates, you'll
     // need to do it for each sensor I think.
+
+    //Floats for containing time since updates
+    private Instant timeSinceWheelRPM;
+    private Instant timeSincePodPos;
+    private Instant timeSystem;
     
     /* Constructor */
-    
+
     public LocomotionState() {
         /* Implementation note: In this constructor, all data members are
          * initialized to 0 because this class does not currently consider the
@@ -62,20 +70,20 @@ public class LocomotionState {
          * order to handle that case, initialization would need to be done
          * differently.
          */
-        
+
         // TODO: handle no input from sensor
-        
+    	//Initialize with empty optionals, if that's a thing
         wheelRpm = new EnumMap<>(Wheel.class);
-        wheelRpm.put(Wheel.FRONT_LEFT, (float)0);
-        wheelRpm.put(Wheel.FRONT_RIGHT, (float)0);
-        wheelRpm.put(Wheel.BACK_LEFT, (float)0);
-        wheelRpm.put(Wheel.BACK_RIGHT, (float)0);
-        
+        wheelRpm.put(Wheel.FRONT_LEFT, Optional.empty());
+        wheelRpm.put(Wheel.FRONT_RIGHT, Optional.empty());
+        wheelRpm.put(Wheel.BACK_LEFT, Optional.empty());
+        wheelRpm.put(Wheel.BACK_RIGHT, Optional.empty());
+
         wheelPodPos = new EnumMap<>(Wheel.class);
-        wheelPodPos.put(Wheel.FRONT_LEFT, (float)0);
-        wheelPodPos.put(Wheel.FRONT_RIGHT, (float)0);
-        wheelPodPos.put(Wheel.BACK_LEFT, (float)0);
-        wheelPodPos.put(Wheel.BACK_RIGHT, (float)0);
+        wheelPodPos.put(Wheel.FRONT_LEFT, (float) 0);
+        wheelPodPos.put(Wheel.FRONT_RIGHT, (float) 0);
+        wheelPodPos.put(Wheel.BACK_LEFT, (float) 0);
+        wheelPodPos.put(Wheel.BACK_RIGHT, (float) 0);
 
         wheelPodLimitRetracted = new EnumMap<>(Wheel.class);
         wheelPodLimitRetracted.put(Wheel.FRONT_LEFT, false);
@@ -91,21 +99,46 @@ public class LocomotionState {
     }
     
     /* Update methods */
-    
-    public void updateWheelRpm (Wheel wheel, float rpm, Instant time) throws RobotFaultException {
+    //when this is called, rpm will never be null
+    public void updateWheelRpm(Wheel wheel, float rpm, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
-        wheelRpm.put(wheel, rpm);
+
+        wheelRpm.put(wheel, Optional.of(rpm));
+
+        //Check if time is null
+        Optional<Instant> opTime = Optional.ofNullable(time);
+        if ((opTime.isPresent()) && timeSinceWheelRPM != null) {
+            Duration duration = Duration.between(time, timeSinceWheelRPM);
+
+            //some given consistency value?
+            if (duration.toMillis() > 2000) {
+                //throw something?
+            }
+        }
+
+        //else update PodPos time
+        timeSinceWheelRPM = Instant.now();
     }
     
     public void updateWheelPodPos (Wheel wheel, float pos, Instant time) throws RobotFaultException {
         // TODO: use timestamp to validate data
         // TODO: detect impossibly sudden changes
+    	
+    	if(timeSincePodPos != null && time != null){
+    	Duration duration = Duration.between(time, timeSincePodPos);
+    	//Placeholder for now, but eventually see if values are ridiculous
+    		if(duration.toMillis() > 2000){
+    		//throw something?
+    		}
+    	}
+    	//else update PodPos time
+    	timeSincePodPos = Instant.now();
         wheelPodPos.put(wheel, pos);
     }
     
     public void updateWheelPodLimitExtended (Wheel wheel, boolean pressed, Instant time) throws RobotFaultException {
-        // TODO: use limit 
+    	 // TODO: use limit 
         // From Paul:
         //For Locomotion, there is only one limit switch. 
         //When it is fully retracted, we know we are in STRAIGHT
@@ -160,24 +193,102 @@ public class LocomotionState {
     
     public float getStraightSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        // All wheels are positive
-        return (wheelRpm.get(Wheel.FRONT_LEFT) + wheelRpm.get(Wheel.FRONT_RIGHT) + wheelRpm.get(Wheel.BACK_LEFT) + wheelRpm.get(Wheel.BACK_RIGHT))/4;
+
+        //number of wheels reporting values
+        int divNum = 0;
+        //total RPM for forward speed
+        Float rpmTot = (float) 0;
+        /// For TURN: Left wheels are positive, right wheels are negative
+        /// For STRAFE: FL and BR are positive, FR and BL are negative
+        Optional<Float> rpmWL = wheelRpm.get(Wheel.FRONT_LEFT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmTot += rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.FRONT_RIGHT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmTot += rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.BACK_LEFT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmTot += rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.BACK_RIGHT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmTot += rpmWL.get();
+        }
+        //speed is the averaged RPM for reporting wheels
+        return rpmTot / divNum;
     }
     
     public float getTurnSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        // Left wheels are positive, right wheels are negative
-        return (wheelRpm.get(Wheel.FRONT_LEFT) - wheelRpm.get(Wheel.FRONT_RIGHT) + wheelRpm.get(Wheel.BACK_LEFT) - wheelRpm.get(Wheel.BACK_RIGHT))/4;
+
+        //number of wheels reporting values
+        int divNum = 0;
+        Float rpmTurn = (float) 0;
+        /// For TURN: Left wheels are positive, right wheels are negative
+        /// For STRAFE: FL and BR are positive, FR and BL are negative
+        Optional<Float> rpmWL = wheelRpm.get(Wheel.FRONT_LEFT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmTurn += rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.FRONT_RIGHT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmTurn -= rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.BACK_LEFT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmTurn += rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.BACK_RIGHT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmTurn -= rpmWL.get();
+        }
+        //speed is the averaged RPM for reporting wheels
+        return rpmTurn / divNum;
     }
     
     public float getStrafeSpeed() {
         // TODO: use physical constants, real or made up, to get speed
-        // FL and BR are positive, FR and BL are negative
-        return (wheelRpm.get(Wheel.FRONT_LEFT) - wheelRpm.get(Wheel.FRONT_RIGHT) - wheelRpm.get(Wheel.BACK_LEFT) + wheelRpm.get(Wheel.BACK_RIGHT))/4;
+
+        //number of wheels reporting values
+        int divNum = 0;
+        Float rpmStrafe = (float) 0;
+        /// For STRAFE: FL and BR are positive, FR and BL are negative
+        Optional<Float> rpmWL = wheelRpm.get(Wheel.FRONT_LEFT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmStrafe += rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.FRONT_RIGHT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmStrafe -= rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.BACK_LEFT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmStrafe -= rpmWL.get();
+        }
+        rpmWL = wheelRpm.get(Wheel.BACK_RIGHT);
+        if (rpmWL.isPresent()) {
+            divNum++;
+            rpmStrafe += rpmWL.get();
+        }
+        //speed is the averaged RPM for reporting wheels
+        return rpmStrafe / divNum;
     }
     
     public float getWheelRpm(Wheel wheel) {
-        return wheelRpm.get(wheel);
+        return wheelRpm.get(wheel).get();
     }
     
     public float getWheelPodPos(Wheel wheel) {

@@ -46,6 +46,43 @@ public class LocomotionStateTest {
     }
 
     @Test
+    public void testNullSpeed() throws Exception {
+    	Instant time = Instant.now();
+        LocomotionState instance = new LocomotionState();    
+        float resultAverageStraightSpeed = instance.getStraightSpeed();
+        float resultAverageTurnSpeed = instance.getTurnSpeed();
+        float resultAverageStrafeSpeed = instance.getStrafeSpeed();
+        float averageStraightRpm = 0.0F;
+        float averageTurnRpm = 0.0F;
+        float averageStrafeRpm = 0.0F;
+        //Expected behavior is now to expect a NaN if the wheels are not reporting
+        assertEquals(Float.NaN, resultAverageStraightSpeed, 0);
+        assertEquals(Float.NaN, resultAverageTurnSpeed, 0);
+        assertEquals(Float.NaN, resultAverageStrafeSpeed, 0);
+        
+      //Update 3 Wheels, Don't for wheel front right - Not sure if situation should be handled differently though.
+        
+        float rpmFrontLeft = 4.2F;
+        instance.updateWheelRpm(LocomotionState.Wheel.FRONT_LEFT, rpmFrontLeft, time);
+        //float rpmFrontRight = 5.2F;
+        //instance.updateWheelRpm(LocomotionState.Wheel.FRONT_RIGHT, rpmFrontRight, time);
+        float rpmBackLeft = -6.2F;
+        instance.updateWheelRpm(LocomotionState.Wheel.BACK_LEFT, rpmBackLeft, time);
+        float rpmBackRight = -1.2F;
+        instance.updateWheelRpm(LocomotionState.Wheel.BACK_RIGHT, rpmBackRight, time);
+        averageStraightRpm = (rpmFrontLeft + rpmBackLeft + rpmBackRight) / 3;
+        averageTurnRpm = (rpmFrontLeft + rpmBackLeft - rpmBackRight) / 3;
+        averageStrafeRpm = (rpmFrontLeft - rpmBackLeft + rpmBackRight) / 3;
+        resultAverageStraightSpeed = instance.getStraightSpeed();
+        resultAverageTurnSpeed = instance.getTurnSpeed();
+        resultAverageStrafeSpeed = instance.getStrafeSpeed();
+        
+        assertEquals(averageStraightRpm, resultAverageStraightSpeed, 0);
+        assertEquals(averageTurnRpm, resultAverageTurnSpeed, 0);
+        assertEquals(averageStrafeRpm, resultAverageStrafeSpeed, 0);
+    }
+    
+    @Test
     public void testSpeed() throws Exception {
         float rpmFrontLeft = 4.2F;
         Instant time = Instant.now();
@@ -63,7 +100,8 @@ public class LocomotionStateTest {
         float resultAverageStraightSpeed = instance.getStraightSpeed();
         float resultAverageTurnSpeed = instance.getTurnSpeed();
         float resultAverageStrafeSpeed = instance.getStrafeSpeed();
-        assertEquals(averageStraightRpm, resultAverageStraightSpeed, 0);
+        double delta = 1e-6;
+        assertEquals(averageStraightRpm, resultAverageStraightSpeed, delta);
         assertEquals(averageTurnRpm, resultAverageTurnSpeed, 0);
         assertEquals(averageStrafeRpm, resultAverageStrafeSpeed, 0);
     }
