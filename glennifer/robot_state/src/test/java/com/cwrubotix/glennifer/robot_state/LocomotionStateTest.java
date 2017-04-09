@@ -14,31 +14,46 @@ public class LocomotionStateTest {
     @Test
     public void testWheelRpm() throws Exception {
         float rpmFrontLeft = 4.2F;
+        boolean OptionalIsPresent = false;
         Instant time = Instant.now();
         LocomotionState instance = new LocomotionState();
+        //Haven't set a value for FRONT_LEFT yet, should return 'false'
+        OptionalIsPresent = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT).isPresent();
+        assertFalse(OptionalIsPresent);
+        //Set RPM value
         instance.updateWheelRpm(LocomotionState.Wheel.FRONT_LEFT, rpmFrontLeft, time);
-        float resultFrontLeft = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT);
+        //Will either get the current value or set it to null, meaning that wheel command didn't go through
+        float resultFrontLeft = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT).orElse(null);
         assertEquals(rpmFrontLeft, resultFrontLeft, 0);
+        
         float rpmFrontRight = 5.2F;
+        OptionalIsPresent = instance.getWheelRpm(LocomotionState.Wheel.FRONT_RIGHT).isPresent();
+        assertFalse(OptionalIsPresent);
         instance.updateWheelRpm(LocomotionState.Wheel.FRONT_RIGHT, rpmFrontRight, time);
-        resultFrontLeft = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT);
-        float resultFrontRight = instance.getWheelRpm(LocomotionState.Wheel.FRONT_RIGHT);
+        resultFrontLeft = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT).orElse(null);
+        float resultFrontRight = instance.getWheelRpm(LocomotionState.Wheel.FRONT_RIGHT).orElse(null);
         assertEquals(rpmFrontLeft, resultFrontLeft, 0);
         assertEquals(rpmFrontRight, resultFrontRight, 0);
         float rpmBackLeft = -6.2F;
+        //Again, no rpm value set for this wheel, test that this is true
+        OptionalIsPresent = instance.getWheelRpm(LocomotionState.Wheel.BACK_LEFT).isPresent();
+        assertFalse(OptionalIsPresent);
         instance.updateWheelRpm(LocomotionState.Wheel.BACK_LEFT, rpmBackLeft, time);
-        resultFrontLeft = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT);
-        resultFrontRight = instance.getWheelRpm(LocomotionState.Wheel.FRONT_RIGHT);
-        float resultBackLeft = instance.getWheelRpm(LocomotionState.Wheel.BACK_LEFT);
+        resultFrontLeft = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT).orElse(null);
+        resultFrontRight = instance.getWheelRpm(LocomotionState.Wheel.FRONT_RIGHT).orElse(null);
+        float resultBackLeft = instance.getWheelRpm(LocomotionState.Wheel.BACK_LEFT).orElse(null);
         assertEquals(rpmFrontLeft, resultFrontLeft, 0);
         assertEquals(rpmFrontRight, resultFrontRight, 0);
         assertEquals(rpmBackLeft, resultBackLeft, 0);
         float rpmBackRight = -1.2F;
+        //Again, no rpm value set for this wheel, test that this is true
+        OptionalIsPresent = instance.getWheelRpm(LocomotionState.Wheel.BACK_RIGHT).isPresent();
+        assertFalse(OptionalIsPresent);
         instance.updateWheelRpm(LocomotionState.Wheel.BACK_RIGHT, rpmBackRight, time);
-        resultFrontLeft = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT);
-        resultFrontRight = instance.getWheelRpm(LocomotionState.Wheel.FRONT_RIGHT);
-        resultBackLeft = instance.getWheelRpm(LocomotionState.Wheel.BACK_LEFT);
-        float resultBackRight = instance.getWheelRpm(LocomotionState.Wheel.BACK_RIGHT);
+        resultFrontLeft = instance.getWheelRpm(LocomotionState.Wheel.FRONT_LEFT).orElse(null);
+        resultFrontRight = instance.getWheelRpm(LocomotionState.Wheel.FRONT_RIGHT).orElse(null);
+        resultBackLeft = instance.getWheelRpm(LocomotionState.Wheel.BACK_LEFT).orElse(null);
+        float resultBackRight = instance.getWheelRpm(LocomotionState.Wheel.BACK_RIGHT).orElse(null);
         assertEquals(rpmFrontLeft, resultFrontLeft, 0);
         assertEquals(rpmFrontRight, resultFrontRight, 0);
         assertEquals(rpmBackLeft, resultBackLeft, 0);

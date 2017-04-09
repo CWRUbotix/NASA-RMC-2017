@@ -63,7 +63,7 @@ public class LocomotionStateModuleTest {
 
         Thread.sleep(1000);
 
-        float result = state.getWheelRpm(LocomotionState.Wheel.BACK_LEFT);
+        float result = state.getWheelRpm(LocomotionState.Wheel.BACK_LEFT).orElse(null);
         assertEquals(42F, result, 0);
     }
 

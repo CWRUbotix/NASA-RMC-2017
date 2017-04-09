@@ -287,8 +287,8 @@ public class LocomotionState {
         return rpmStrafe / divNum;
     }
     
-    public float getWheelRpm(Wheel wheel) {
-        return wheelRpm.get(wheel).get();
+    public Optional<Float> getWheelRpm(Wheel wheel) {
+        return wheelRpm.get(wheel);
     }
     
     public float getWheelPodPos(Wheel wheel) {
