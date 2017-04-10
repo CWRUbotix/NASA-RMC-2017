@@ -1,5 +1,6 @@
 package com.cwrubotix.glennifer.hci;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +32,8 @@ public class HardwareControlInterface implements Runnable {
 	private LinkedBlockingQueue<Actuation> actuationQueue = new LinkedBlockingQueue<Actuation>();
 	// Queue of coordinated actuations to be checked in
 	private LinkedBlockingQueue<CoordinatedActuation> coordinatedActuationQueue = new LinkedBlockingQueue<CoordinatedActuation>();
+	// Queue of sensor updates detected that can be consumed externally for sending
+	private LinkedBlockingQueue<LabeledSensorData> sensorUpdateQueue = new LinkedBlockingQueue<>();
 	// List of constraints set on various motors, etc.
 	private ArrayList<ActuationConstraint> constraints = new ArrayList<ActuationConstraint>();
 	// Hashmap of actuators to their ID's
@@ -56,6 +59,14 @@ public class HardwareControlInterface implements Runnable {
 	 */
 	public void queueCoordinatedActuation(CoordinatedActuation coordinatedActuation) {
 		coordinatedActuationQueue.add(coordinatedActuation);
+	}
+
+	/**
+	 * Blocking wait until there is a sensor update to be consumed, and then pop it.
+	 * @return the sensor data
+	 */
+	public LabeledSensorData pollSensorUpdate() {
+		return sensorUpdateQueue.poll();
 	}
 	
 	/**
@@ -102,7 +113,6 @@ public class HardwareControlInterface implements Runnable {
 	public void run() {
 		try {
 			while(true) {
-				long t = System.currentTimeMillis();
 				// Read sensors
 				readSensors();
 				// Update actuator data
@@ -233,6 +243,7 @@ public class HardwareControlInterface implements Runnable {
 		sendMessage(new SerialPacket(COMMAND_READ_SENSORS,data));
 		// Get the response
 		SerialPacket response = readMessage();
+		long t = System.currentTimeMillis();
 		if(response.command != COMMAND_READ_SENSORS) {
 			System.out.println("Failed to read sensors");
 			return false;
@@ -252,7 +263,10 @@ public class HardwareControlInterface implements Runnable {
 				// Get the sensor
 				Sensor s = sensors.get(sens);
 				// Update it with the data
-				s.updateRaw(dat);
+				boolean different = s.updateRaw(dat);
+				if (different) {
+					sensorUpdateQueue.add(new LabeledSensorData(sens, new SensorData(dat, t))); // TODO: transform to sensor-specific physical units here
+				}
 			}
 		}
 		return true;
