@@ -466,9 +466,9 @@ public class ModuleMain {
 					a.override = true;
 					a.hold = true;
 					if (id % 2 == 0) {
-                        a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+                        a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F; // Here 0 thru 3
                     } else {
-                        a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+                        a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F; // Here 0 thru 3
                     }
                     System.out.println("target value = " + a.targetValue);
 					a.type = HardwareControlInterface.ActuationType.AngVel;
@@ -494,7 +494,7 @@ public class ModuleMain {
 					a.override = true;
 					a.hold = true;
 					//a.targetValue = pcc.getPosition()*5 + 250;
-					a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+					a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3); // Here 4 thru 7
 					System.out.println(a.targetValue);
 					a.type = HardwareControlInterface.ActuationType.AngVel;
 					a.actuatorID = id;
@@ -519,48 +519,56 @@ public class ModuleMain {
 				
 				//first check if 0,1,2,3 RPM
 				if(sensorDataID == 0){
+				    //value = ...(value)
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 1){
+                    //value = ...(value)
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 2){
+                    //value = ...(value)
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 3){
+                    //value = ...(value)
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 4){
+                    //value = ...(value)
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 5){
+                    //value = ...(value)
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 6){
+                    //value = ...(value)
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 7){
+                    //value = ...(value)
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
