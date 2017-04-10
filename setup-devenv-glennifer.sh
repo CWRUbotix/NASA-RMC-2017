@@ -37,3 +37,6 @@ invoke-rc.d rabbitmq-server start
 
 # Let the cwrubotix user use serial ports
 usermod -a -G dialout cwrubotix
+
+# Run on boot
+cp rc.local /etc/rc.local
