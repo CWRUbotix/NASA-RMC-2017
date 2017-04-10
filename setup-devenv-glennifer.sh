@@ -35,4 +35,5 @@ apt-get update
 apt-get -q -y install rabbitmq-server
 invoke-rc.d rabbitmq-server start
 
-sudo usermod -a -G dialout tim
+# Let the cwrubotix user use serial ports
+usermod -a -G dialout cwrubotix
