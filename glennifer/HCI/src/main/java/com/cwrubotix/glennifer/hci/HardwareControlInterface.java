@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
 
 import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import jssc.SerialPort;
@@ -65,8 +66,8 @@ public class HardwareControlInterface implements Runnable {
 	 * Blocking wait until there is a sensor update to be consumed, and then pop it.
 	 * @return the sensor data
 	 */
-	public LabeledSensorData pollSensorUpdate() {
-		return sensorUpdateQueue.poll();
+	public LabeledSensorData pollSensorUpdate() throws InterruptedException {
+		return sensorUpdateQueue.poll(1000000, TimeUnit.DAYS);
 	}
 	
 	/**
