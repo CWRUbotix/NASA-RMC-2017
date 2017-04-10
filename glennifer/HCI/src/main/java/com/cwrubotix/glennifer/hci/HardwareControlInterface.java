@@ -205,28 +205,27 @@ public class HardwareControlInterface implements Runnable {
 		if(activeActuations.isEmpty()) {
 			return true;
 		}
-		// One request for each motor to avoid serial errors
+		// Allocate byte array for the data in the request
+		byte[] data = new byte[activeActuations.size()*4];
+		// Generate data array for request
+		// Each actuator ID is 2 bytes, each output is 2 bytes
+		// Conversion to short is not checked
 		for(int i = 0; i < activeActuations.size(); i++) {
-			// Allocate byte array for the data in the request
-			byte[] data = new byte[4];
-			// Generate data array for request
-			// Each actuator ID is 2 bytes, each output is 2 bytes
-			// Conversion to short is not checked
 			Actuation activeActuation = activeActuations.get(i);
 			short actuatorIdShort = (short)activeActuation.actuatorID;
 			short currentOutputShort = (short)activeActuation.currentOutput;
-			//System.out.println("Set motor #" + actuatorIdShort + " = " + currentOutputShort);
-			data[0] = (byte)(actuatorIdShort >>> 8);
-			data[1] = (byte)(actuatorIdShort);
-			data[2] = (byte)(currentOutputShort >>> 8);
-			data[3] = (byte)(currentOutputShort);
-			sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
-			// Get the response
-			SerialPacket response = readMessage();
-			if(response.command != COMMAND_SET_OUTPUTS) {
-				System.out.println("Failed to set outputs");
-				return false;
-			}
+			data[4*i] = (byte)(actuatorIdShort >>> 8);
+			data[4*i+1] = (byte)(actuatorIdShort);
+			data[4*i+2] = (byte)(currentOutputShort >>> 8);
+			data[4*i+3] = (byte)(currentOutputShort);
+			//System.out.println("Setting output: " + currentOutputShort + " actuator ID: " + actuatorIdShort);
+		}
+		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
+		// Get the response
+		SerialPacket response = readMessage();
+		if(response.command != COMMAND_SET_OUTPUTS) {
+			System.out.println("Failed to set outputs");
+			return false;
 		}
 		return true;
 	}
@@ -237,22 +236,24 @@ public class HardwareControlInterface implements Runnable {
 		}
 		// Get list of sensor IDs
 		Integer[] ids = sensors.keySet().toArray(new Integer[sensors.keySet().size()]);
-		// One request for each sensor to avoid serial errors
+		// Allocate byte array for the data in the request
+		byte[] data = new byte[ids.length*2];
+		// Generate data array for request
+		// Each sensor ID is 2 bytes
 		for(int i = 0; i < ids.length; i++) {
-			// Allocate byte array for the data in the request
-			byte[] data = new byte[2];
-			// Generate data array for request
-			// Each sensor ID is 2 bytes
-			data[0] = (byte)(ids[i].intValue()>>8);
-			data[1] = (byte)ids[i].intValue();
-			// Send message, prepares it as per the interface
-			sendMessage(new SerialPacket(COMMAND_READ_SENSORS,data));
-			// Get the response
-			SerialPacket response = readMessage();
-			if(response.command != COMMAND_READ_SENSORS) {
-				System.out.println("Failed to read sensors");
-				return false;
-			}
+			data[2*i] = (byte)(ids[i].intValue()>>8);
+			data[2*i+1] = (byte)ids[i].intValue();
+		}
+		// Send message, prepares it as per the interface
+		sendMessage(new SerialPacket(COMMAND_READ_SENSORS,data));
+		// Get the response
+		SerialPacket response = readMessage();
+		if(response.command != COMMAND_READ_SENSORS) {
+			System.out.println("Failed to read sensors");
+			return false;
+		}
+		// Parse the response
+		for(int i = 0; i < response.data.length/4; i++) {
 			// Parse the sensor IDs
 			int sens = ((int)response.data[0]) << 8 | (0xFF & response.data[1]);
 			// Parse the sensor values
