@@ -20,8 +20,8 @@ pip3 install protobuf
 pip3 install pika
 
 # Install the Java 8 Development Kit and Maven
-sudo apt-get install software-properties-common
-add-apt-repository ppa:openjdk-r/ppa
+apt-get -q -y install software-properties-common
+add-apt-repository -y ppa:openjdk-r/ppa
 apt-get update
 apt-get -q -y install openjdk-8-jdk maven
 
