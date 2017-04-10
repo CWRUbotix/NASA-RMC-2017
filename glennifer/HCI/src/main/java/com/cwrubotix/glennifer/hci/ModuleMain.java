@@ -577,8 +577,6 @@ public class ModuleMain {
 				} else {
 					// TODO: do others
 				}
-				
-				Thread.sleep(1000);
 			}
 		} catch (InterruptedException e) { }
 	}
