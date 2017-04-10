@@ -639,72 +639,80 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {
-    switch (ev->key()) {
-    case (Qt::Key_Space):
-        handleLocomotionStop();
-        break;
-    case (Qt::Key_W):
-        handleLocomotionUp();
-        break;
-    case (Qt::Key_A):
-        handleLocomotionLeft();
-        break;
-    case (Qt::Key_S):
-        handleLocomotionDown();
-        break;
-    case (Qt::Key_D):
-        handleLocomotionRight();
-        break;
-    case (Qt::Key_I):
-        handleLocomotionStraight();
-        break;
-    case (Qt::Key_O):
-        handleLocomotionTurn();
-        break;
-    case (Qt::Key_P):
-        handleLocomotionStrafe();
-        break;
-    case (Qt::Key_J):
-        ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() - 10);
-        break;
-    case (Qt::Key_K):
-        ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + 10);
-        break;
-    default:
+    if (ev->isAutoRepeat()) {
         QWidget::keyPressEvent(ev);
-        break;
+    } else {
+        switch (ev->key()) {
+        case (Qt::Key_Space):
+            handleLocomotionStop();
+            break;
+        case (Qt::Key_W):
+            handleLocomotionUp();
+            break;
+        case (Qt::Key_A):
+            handleLocomotionLeft();
+            break;
+        case (Qt::Key_S):
+            handleLocomotionDown();
+            break;
+        case (Qt::Key_D):
+            handleLocomotionRight();
+            break;
+        case (Qt::Key_I):
+            handleLocomotionStraight();
+            break;
+        case (Qt::Key_O):
+            handleLocomotionTurn();
+            break;
+        case (Qt::Key_P):
+            handleLocomotionStrafe();
+            break;
+        case (Qt::Key_J):
+            ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() - 10);
+            break;
+        case (Qt::Key_K):
+            ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + 10);
+            break;
+        default:
+            QWidget::keyPressEvent(ev);
+            break;
+        }
     }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
-    switch (ev->key()) {
-    case (Qt::Key_Space):
-        break;
-    case (Qt::Key_W):
-        handleLocomotionStop();
-        break;
-    case (Qt::Key_A):
-        handleLocomotionStop();
-        break;
-    case (Qt::Key_S):
-        handleLocomotionStop();
-        break;
-    case (Qt::Key_D):
-        handleLocomotionStop();
-        break;
-    case (Qt::Key_I):
-        break;
-    case (Qt::Key_O):
-        break;
-    case (Qt::Key_P):
-        break;
-    case (Qt::Key_J):
-        break;
-    case (Qt::Key_K):
-        break;
-    default:
+    if (ev->isAutoRepeat()) {
         QWidget::keyReleaseEvent(ev);
-        break;
+    } else {
+        switch (ev->key()) {
+        case (Qt::Key_Space):
+            break;
+        case (Qt::Key_W):
+            handleLocomotionStop();
+            break;
+        case (Qt::Key_A):
+            handleLocomotionStop();
+            break;
+        case (Qt::Key_S):
+            handleLocomotionStop();
+            break;
+        case (Qt::Key_D):
+            handleLocomotionStop();
+            break;
+        case (Qt::Key_I):
+            break;
+        case (Qt::Key_O):
+            break;
+        case (Qt::Key_P):
+            break;
+        case (Qt::Key_J):
+            break;
+        case (Qt::Key_K):
+            break;
+        default:
+            QWidget::keyReleaseEvent(ev);
+            break;
+        }
     }
 }
 
