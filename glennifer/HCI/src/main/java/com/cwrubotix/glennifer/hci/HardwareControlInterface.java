@@ -250,10 +250,11 @@ public class HardwareControlInterface implements Runnable {
 		}
 		// Parse the response
 		for(int i = 0; i < response.data.length/4; i++) {
+
 			// Parse the sensor IDs
-			int sens = ((int)response.data[0]) << 8 | (0xFF & response.data[1]);
+			int sens = ((int)response.data[4*i+0]) << 8 | (0xFF & response.data[4*i+1]);
 			// Parse the sensor values
-			int dat = ((int)response.data[2]) << 8 | (0xFF & response.data[3]);
+			int dat = ((int)response.data[4*i+2]) << 8 | (0xFF & response.data[4*i+3]);
 			if (dat != -32768) {
 				// If the sensor is not in the hashmap, ignore it
 				if(!sensors.containsKey(sens)) {
