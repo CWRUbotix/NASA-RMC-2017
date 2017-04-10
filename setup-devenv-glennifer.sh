@@ -43,3 +43,6 @@ usermod -a -G dialout cwrubotix
 
 # Run on boot
 cp rc.local /etc/rc.local
+
+# SSH server for debugging
+apt-get -q -y install openssh-server
