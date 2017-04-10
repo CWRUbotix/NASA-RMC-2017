@@ -35,6 +35,9 @@ apt-get update
 apt-get -q -y install rabbitmq-server
 invoke-rc.d rabbitmq-server start
 
+# Rabbitmq user setup
+cp rabbitmq.config /etc/rabbitmq/
+
 # Let the cwrubotix user use serial ports
 usermod -a -G dialout cwrubotix
 
