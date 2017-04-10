@@ -1,3 +1,4 @@
+cd /home/cwrubotix/workspace/NASA-RMC-2017/
 
 #build protobuf
 ./build-pb.sh
@@ -20,4 +21,9 @@ cd ..
 
 cd motor_dispatch/src/python
 python3 locomotion.py &
+cd ../../..
+
+cd client-cameras
+python3 client-cam-send.py &
+cd ..
 
