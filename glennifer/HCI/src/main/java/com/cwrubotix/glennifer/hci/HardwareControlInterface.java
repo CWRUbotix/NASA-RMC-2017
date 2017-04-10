@@ -1,6 +1,5 @@
 package com.cwrubotix.glennifer.hci;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,7 +10,6 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
-
 
 public class HardwareControlInterface implements Runnable {
 	public static final int baud = 9600;
@@ -103,20 +101,14 @@ public class HardwareControlInterface implements Runnable {
 	@Override
 	public void run() {
 		try {
-			
 			while(true) {
 				long t = System.currentTimeMillis();
-				long iterT = System.currentTimeMillis();
 				// Read sensors
 				readSensors();
-				System.out.println("readSensors took " + (System.currentTimeMillis()-t));
-				t = System.currentTimeMillis();
 				// Update actuator data
 				for(int id:actuators.keySet()) {
 					actuators.get(id).update();
 				}
-				System.out.println("getting actuators took " + (System.currentTimeMillis()-t));
-				t = System.currentTimeMillis();
 				// Process queue of actuations and coordinated actuations
 				for(Actuation a:actuationQueue) {
 					if(!addActuation(a)) {
@@ -124,8 +116,6 @@ public class HardwareControlInterface implements Runnable {
 						System.out.println("Could not add actuation to actuator ID: " + a.actuatorID);
 					}
 				}
-				System.out.println("adding actuations took " + (System.currentTimeMillis()-t));
-				t = System.currentTimeMillis();
 				// Calculate errors in actuation targets with actuator data
 				
 				// PID
@@ -134,18 +124,13 @@ public class HardwareControlInterface implements Runnable {
 				
 				// PID
 				calcOutputs();
-				System.out.println("calcOutputs took " + (System.currentTimeMillis()-t));
-				t = System.currentTimeMillis();
 				// Set outputs
 				setOutputs();
-				System.out.println("setOutputs took " + (System.currentTimeMillis()-t));
-				t = System.currentTimeMillis();
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					return;
 				}
-				System.out.println("Overall it took " + (System.currentTimeMillis() - iterT));
 			}
 		} catch(SerialPortException | SerialPortTimeoutException e) {
 			e.printStackTrace();
