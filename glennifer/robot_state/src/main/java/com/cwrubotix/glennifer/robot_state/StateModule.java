@@ -139,6 +139,7 @@ public class StateModule {
                 try {
                     //Not sure how to do this bit properly
                     StateModule.this.channel.basicPublish(exchangeName, returnKey, null, stateMsgBuilder.build().toByteArray());
+                    System.out.println("Sent state");
                     Thread.sleep(interval_ms);
                 } catch (IOException e) {
                     go = false;
@@ -349,6 +350,7 @@ public class StateModule {
                     dep_detailed));
             subscriptionThreads.add(t);
             t.start();
+            System.out.println("Start subscription thread with interval = " + interval);
         }
     }
     
