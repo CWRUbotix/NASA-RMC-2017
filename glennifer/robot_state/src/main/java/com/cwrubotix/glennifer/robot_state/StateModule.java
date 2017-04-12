@@ -58,9 +58,11 @@ public class StateModule {
         public void run() {
             boolean go = true;
             while (go) {
+                System.out.println("Sent state 1");
                 Instant now = Instant.now();
                 Messages.State.Builder stateMsgBuilder = Messages.State.newBuilder();
                 stateMsgBuilder.setTimestamp(instantToUnixTime(now));
+                System.out.println("Sent state 2");
                 if (loc_summary) {
                     Messages.LocomotionStateSummary msg = Messages.LocomotionStateSummary.newBuilder()
                             .setConfig(Messages.LocomotionStateSummary.Configuration.valueOf(StateModule.this.locomotionState.getConfiguration().ordinal()))
@@ -136,15 +138,19 @@ public class StateModule {
                             .build();
                     stateMsgBuilder.setDepDetailed(msg);
                 }
+                System.out.println("Sent state 3");
                 try {
                     //Not sure how to do this bit properly
                     StateModule.this.channel.basicPublish(exchangeName, returnKey, null, stateMsgBuilder.build().toByteArray());
-                    System.out.println("Sent state");
+                    System.out.println("Sent state 4");
                     Thread.sleep(interval_ms);
+                    System.out.println("Sent state 5");
                 } catch (IOException e) {
+                    System.out.println("Sent state 6");
                     go = false;
                     e.printStackTrace();
                 } catch (InterruptedException e) {
+                    System.out.println("Sent state 7");
                     go = false;
                 }
             }
