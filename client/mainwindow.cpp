@@ -135,6 +135,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelPodSet);
     QObject::connect(ui->slider_BackRightWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelPodSet);
+    QObject::connect(ui->pushButton_Subscribe, &QPushButton::clicked,
+                     this, &MainWindow::handleSubscribe);
 }
 
 MainWindow::MainWindow(AMQP *amqp, QWidget *parent) :
@@ -636,6 +638,49 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
 
     free(msg_buff);
+}
+
+void MainWindow::handleSubscribe() {
+    AMQPQueue *queue = m_amqp->createQueue("abcd");
+    queue->Declare();
+    queue->Bind("amq.topic", queue->getName());
+    queue->addEvent(AMQP_MESSAGE, &handleReceivedState);
+
+    StateSubscribe msg;
+    msg.set_replykey(queue->getName());
+    msg.set_interval(0.2F);
+    msg.set_locomotion_summary(false);
+    msg.set_locomotion_detailed(true);
+    msg.set_deposition_summary(false);
+    msg.set_deposition_detailed(false);
+    msg.set_excavation_summary(false);
+    msg.set_excavation_detailed(false);
+
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
+}
+
+int handleReceivedState(AMQPMessage *message) {
+    uint32_t len = 0;
+    char *data = message->getMessage(&len);
+    if (!data) {
+        qDebug() << "No data";
+        return 0;
+    }
+    State s;
+    s.ParseFromArray(data, len);
+    qDebug() << QString::fromStdString(s.DebugString());
+
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {
