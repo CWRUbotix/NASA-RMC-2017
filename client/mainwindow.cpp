@@ -10,6 +10,7 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QDebug>
+#include "consumerthread.h"
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -48,9 +49,13 @@ MainWindow::MainWindow(QWidget *parent) :
     outlinePen.setWidth(2);
 
     rectangle1 = locomotionScene->addRect(-50, -80, 10, 20, outlinePen, greenBrush);
+    rectangle1->setTransformOriginPoint(-45, -70);
     rectangle2 = locomotionScene->addRect(50, -80, 10, 20, outlinePen, greenBrush);
+    rectangle1->setTransformOriginPoint(55, -70);
     rectangle3 = locomotionScene->addRect(-50, 80, 10, 20, outlinePen, greenBrush);
+    rectangle1->setTransformOriginPoint(-45, 90);
     rectangle4 = locomotionScene->addRect(50, 80, 10, 20, outlinePen, greenBrush);
+    rectangle1->setTransformOriginPoint(55, 90);
 
     excavationScene->addRect(-80, -20, 160, 40, outlinePen, grayBrush);
     excavationScene->addRect(-100, -10, 160, 20, outlinePen, blueBrush);
@@ -641,13 +646,13 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
 }
 
 void MainWindow::handleSubscribe() {
-    AMQPQueue *queue = m_amqp->createQueue("abcd");
-    queue->Declare();
-    queue->Bind("amq.topic", queue->getName());
-    queue->addEvent(AMQP_MESSAGE, &handleReceivedState);
+    ConsumerThread *thread = new ConsumerThread(m_amqp);
+    connect(thread, &ConsumerThread::stateReady, this, &MainWindow::handleState);
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
 
     StateSubscribe msg;
-    msg.set_replykey(queue->getName());
+    msg.set_replykey("abcde");
     msg.set_interval(0.2F);
     msg.set_locomotion_summary(false);
     msg.set_locomotion_detailed(true);
@@ -670,17 +675,11 @@ void MainWindow::handleSubscribe() {
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
 }
 
-int handleReceivedState(AMQPMessage *message) {
-    uint32_t len = 0;
-    char *data = message->getMessage(&len);
-    if (!data) {
-        qDebug() << "No data";
-        return 0;
-    }
-    State s;
-    s.ParseFromArray(data, len);
-    qDebug() << QString::fromStdString(s.DebugString());
-
+void MainWindow::handleState(State *s) {
+    rectangle1->setRotation(s->locdetailed().front_left_pos());
+    rectangle2->setRotation(s->locdetailed().front_right_pos());
+    rectangle3->setRotation(s->locdetailed().back_left_pos());
+    rectangle4->setRotation(s->locdetailed().back_right_pos());
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {

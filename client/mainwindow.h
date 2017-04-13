@@ -63,6 +63,8 @@ public slots:
     void handleBackRightWheelPodSet(int value);
     void handleSubscribe();
 
+    void handleState(State *s);
+
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
     void wheelEvent(QWheelEvent* event);
@@ -81,7 +83,5 @@ private:
     int m_configSpeeds[3] = {100, 60, 50};
     void updateAngle(int x);
 };
-
-int handleReceivedState(AMQPMessage *message);
 
 #endif // MAINWINDOW_H
