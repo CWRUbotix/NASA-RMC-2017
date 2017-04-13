@@ -547,28 +547,28 @@ public class ModuleMain {
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 4){
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691;
+					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 + 360;
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 5){
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691;
+					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 + 360;
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 6){
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691;
+					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 + 360;
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 7){
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691;
+					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 + 360;
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
