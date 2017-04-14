@@ -25,6 +25,8 @@ public:
     explicit MainWindow(AMQP *amqp, QWidget *parent = 0);
     ~MainWindow();
 
+    static MainWindow instance;
+
 public slots:
     void handleLocomotionUp();
     void handleLocomotionDown();
@@ -59,6 +61,9 @@ public slots:
     void handleBackRightWheelPodTurn();
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
+    void handleSubscribe();
+
+    void handleState(State *s);
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);

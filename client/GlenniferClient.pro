@@ -14,11 +14,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
-    messages.pb.cc
+    messages.pb.cc \
+    consumerthread.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
-    messages.pb.h
+    messages.pb.h \
+    consumerthread.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui
