@@ -140,8 +140,6 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelPodSet);
     QObject::connect(ui->slider_BackRightWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelPodSet);
-    QObject::connect(ui->pushButton_Subscribe, &QPushButton::clicked,
-                     this, &MainWindow::handleSubscribe);
 }
 
 MainWindow::MainWindow(AMQP *amqp, QWidget *parent) :
@@ -645,7 +643,7 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     free(msg_buff);
 }
 
-void MainWindow::handleSubscribe() {
+void MainWindow::initSubscription() {
     ConsumerThread *thread = new ConsumerThread(m_amqp);
     connect(thread, &ConsumerThread::stateReady, this, &MainWindow::handleState);
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));

@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w(amqp);
+    w.initSubscription();
     w.show();
 
     int output = a.exec();

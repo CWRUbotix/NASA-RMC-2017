@@ -24,6 +24,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     explicit MainWindow(AMQP *amqp, QWidget *parent = 0);
     ~MainWindow();
+    void initSubscription();
 
     static MainWindow instance;
 
@@ -61,7 +62,6 @@ public slots:
     void handleBackRightWheelPodTurn();
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
-    void handleSubscribe();
 
     void handleState(State *s);
 
