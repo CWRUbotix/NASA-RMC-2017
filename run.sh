@@ -1,3 +1,8 @@
+
+datestring=$(date +%Y_%m_%d_%H_%M_%S)
+cd /home/cwrubotix
+mkdir -p "logs/$datestring"
+
 cd /home/cwrubotix/workspace/NASA-RMC-2017/
 
 #build protobuf
@@ -11,19 +16,19 @@ cp -r config glennifer/motor_dispatch/src/python
 #now actually start the things
 cd glennifer/HCI
 mvn compile
-mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.hci.ModuleMain" &
+nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.hci.ModuleMain" &> "/home/cwrubotix/logs/$datestring/ModuleMainOutput.log" &
 cd ..
 
 cd robot_state
 mvn compile
-mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.robot_state.StateModule" &
+nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.robot_state.StateModule" &> "/home/cwrubotix/logs/$datestring/StateModuleOutput.log" &
 cd ..
 
 cd motor_dispatch/src/python
-python3 locomotion.py &
+nohup python3 locomotion.py &> "/home/cwrubotix/logs/$datestring/LocomotionPyOutput.log" &
 cd ../../..
 
 cd client-cameras
-python3 client-cam-send.py &
+nohup python3 client-cam-send.py &> "/home/cwrubotix/logs/$datestring/CameraSendPyOutput.log" &
 cd ..
 
