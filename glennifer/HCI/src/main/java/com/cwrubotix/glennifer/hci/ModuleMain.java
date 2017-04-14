@@ -550,8 +550,6 @@ public class ModuleMain {
 
 					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 +360.38;
 
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 + 360.38;
-
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
