@@ -677,8 +677,8 @@ void MainWindow::handleSubscribe() {
 
 void MainWindow::handleState(State *s) {
     rectangle1->setRotation(s->locdetailed().front_left_pos());
-    rectangle2->setRotation(s->locdetailed().front_right_pos());
-    rectangle3->setRotation(s->locdetailed().back_left_pos());
+    rectangle2->setRotation(-s->locdetailed().front_right_pos());
+    rectangle3->setRotation(-s->locdetailed().back_left_pos());
     rectangle4->setRotation(s->locdetailed().back_right_pos());
 }
 
