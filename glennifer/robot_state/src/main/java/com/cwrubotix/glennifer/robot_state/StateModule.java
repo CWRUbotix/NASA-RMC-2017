@@ -330,7 +330,7 @@ public class StateModule {
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
             Messages.StateSubscribe msg = Messages.StateSubscribe.parseFrom(body);
             float interval = msg.getInterval();
-            int interval_ms = (int)(interval / 1000);
+            int interval_ms = (int)(interval * 1000);
             boolean loc_summary = true;
             boolean loc_detailed = true;
             boolean exc_summary = true;
@@ -349,6 +349,7 @@ public class StateModule {
                     dep_detailed));
             subscriptionThreads.add(t);
             t.start();
+            System.out.println("Start subscription thread with interval = " + interval);
         }
     }
     
