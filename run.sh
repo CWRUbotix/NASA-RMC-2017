@@ -1,6 +1,7 @@
 
 datestring=$(date +%Y_%m_%d_%H_%M_%S)
-mkdir -p "/home/glennifer/logs/$datestring"
+cd /home/glennifer
+mkdir -p "logs/$datestring"
 
 cd /home/cwrubotix/workspace/NASA-RMC-2017/
 
