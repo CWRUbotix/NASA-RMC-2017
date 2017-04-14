@@ -81,7 +81,6 @@ private:
     QGraphicsRectItem *rectangle4;
     int m_desiredConfig = 0; // 0 is straight, 1 is turn, 2 is strafe
     int m_configSpeeds[3] = {100, 60, 50};
-    void updateAngle(int x);
 };
 
 #endif // MAINWINDOW_H

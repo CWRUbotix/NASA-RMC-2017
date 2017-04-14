@@ -25,7 +25,6 @@ int handleReceivedState(AMQPMessage *message) {
         qDebug() << "No data";
         return 0;
     }
-    qDebug() << "got here 1";
     State *s = new State();
     s->ParseFromArray(data, len);
     emit instance->stateReady(s);
