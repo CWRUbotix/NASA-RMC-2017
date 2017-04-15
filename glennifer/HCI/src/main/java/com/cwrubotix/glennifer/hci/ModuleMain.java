@@ -400,6 +400,28 @@ public class ModuleMain {
 		configRFA.ID = 7;
 		configRFA.name = "Right Front Turning Actuator";
 
+        ActuatorConfig configBCDM = new ActuatorConfig();
+        configBCDM.ID = 8;
+        configBCDM.name = "Bucket Conveyor Drive Motor";
+
+        ActuatorConfig configBCLM = new ActuatorConfig();
+        configBCLM.ID = 9;
+        configBCLM.name = "Bucket Conveyor Linear Motor";
+
+        ActuatorConfig configBCA = new ActuatorConfig();
+        configBCRA.ID = 10;
+        configBCRA.name = "Bucket Conveyor Actuators"
+
+        ActuatorConfig configDM = new ActuatorConfig();
+        configDM.ID = 11;
+        configDM.name = "Deposition Motor";
+
+        ActuatorConfig configDRA = new ActuatorConfig();
+        configDRA.ID = 12;
+        configDRA.name = "Deposition Actuators"
+
+        ActuatorConfig config
+
 		// Add actuators
 		hci.addActuator(new Actuator(configLBM, hci), configLBM.ID);
 		hci.addActuator(new Actuator(configRBM, hci), configRBM.ID);
@@ -409,6 +431,12 @@ public class ModuleMain {
 		hci.addActuator(new Actuator(configRBA, hci), configRBA.ID);
 		hci.addActuator(new Actuator(configLFA, hci), configLFA.ID);
 		hci.addActuator(new Actuator(configRFA, hci), configRFA.ID);
+        hci.addActuator(new Actuator(configBCDM, hci), configBCDM.ID);
+        hci.addActuator(new Actuator(configBCLM, hci), configBCLM.ID);
+        hci.addActuator(new Actuator(configBCA, hci), configBCA.ID);
+        hci.addActuator(new Actuator(configDM, hci), configDM.ID);
+        hci.addActuator(new Actuator(configDRA, hci), configDRA.ID);
+        hci.addActuator(new Actuator(configDLA, hci), configDLA.ID);
 
 		// Constrain actuators
 
@@ -444,10 +472,10 @@ public class ModuleMain {
 									   AMQP.BasicProperties properties, byte[] body) throws IOException {
 				String routingKey = envelope.getRoutingKey();
 				String[] keys = routingKey.split("\\.");
-				if(keys.length < 4) {
+				if(keys.length < 3) {
 					System.out.println("Failed to interpret routing key");
 					return;
-				}
+                        		}
 				if (keys[3].equals("wheel_rpm")) {
 				    int id = -1;
 				    if (keys[2].equals("front_left")) {
@@ -461,6 +489,7 @@ public class ModuleMain {
                     } else {
 				        // TODO: handle this
                     }
+
                     Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
 					Actuation a = new Actuation();
 					a.override = true;
@@ -499,7 +528,70 @@ public class ModuleMain {
 					a.type = HardwareControlInterface.ActuationType.AngVel;
 					a.actuatorID = id;
 					hci.queueActuation(a);
-				}
+
+				} else if (keys[2].equals("conveyor_translation_displacement")) {
+                    Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
+                    Actuation a = new Actuation();
+                    a.override = true;
+                    a.hold = true;
+                    int id = 9;
+                    //a.targetValue = pcc.getPosition()*5 + 250;
+                    //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+                    //System.out.println(a.targetValue);
+                    a.type = HardwareControlInterface.ActuationType.AngVel;
+                    a.actuatorID = id;
+                    hci.queueActuation(a);
+
+                } else if (keys[2].equals("arm_pos")) {
+                    Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
+                    Actuation a = new Actuation();
+                    a.override = true;
+                    a.hold = true;
+                    int id = 10;
+                    //a.targetValue = pcc.getPosition()*5 + 250;
+                    //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+                    //System.out.println(a.targetValue);
+                    a.type = HardwareControlInterface.ActuationType.AngVel;
+                    a.actuatorID = id;
+                    hci.queueActuation(a);
+
+                } else if (keys[2].equals("dump_pos")) {
+                    Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
+                    Actuation a = new Actuation();
+                    a.override = true;
+                    a.hold = true;
+                    int id = 12;
+                    //a.targetValue = pcc.getPosition()*5 + 250;
+                    //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+                    //System.out.println(a.targetValue);
+                    a.type = HardwareControlInterface.ActuationType.AngVel;
+                    a.actuatorID = id;
+                    hci.queueActuation(a);
+
+                } else if (keys[2].equals("bucket_conveyor_rpm")) {
+                    Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+                    Actuation a = new Actuation();
+                    a.override = true;
+                    a.hold = true;
+                    int id = 8;
+                    //System.out.println("target value = " + a.targetValue);
+                    a.type = HardwareControlInterface.ActuationType.AngVel;
+                    a.actuatorID = id;
+                    hci.queueActuation(a);
+
+                }  else if (keys[2].equals("conveyor_rpm")) {
+                    Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+                    Actuation a = new Actuation();
+                    a.override = true;
+                    a.hold = true;
+                    int id = 11;
+                    //System.out.println("target value = " + a.targetValue);
+                    a.type = HardwareControlInterface.ActuationType.AngVel;
+                    a.actuatorID = id;
+                    hci.queueActuation(a);
+
+                }
+
 			}
 		};
 		channel.basicConsume(queueName, true, consumer);
@@ -586,7 +678,13 @@ public class ModuleMain {
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_pod_pos", null, msg.toByteArray());
-				} else {
+				} else if (sensorDataID == 8){
+                    
+                }
+
+
+
+                else {
 					// TODO: do others
 				}
 			}
