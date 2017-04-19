@@ -427,6 +427,8 @@ FAULT_T configure_motors() {
     case MH_ST_POS:
       // Nothing to do, default config
       break;
+    case MH_ST_BOTH:
+      // Nothing to do, default config  
     case MH_RC_BOTH:
       success = (roboclaw.SetM1PositionPID(
           motor_info.addr,
@@ -631,6 +633,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       return FAULT_LOST_ROBOCLAW;
     }
     break;
+  case MH_ST_BOTH:
+    sabretooth[motor_info.addr].motor(1, val_scaled);
+    sabretooth[motor_info.addr].motor(2, val_scaled); 
   default:
     break;
   }
