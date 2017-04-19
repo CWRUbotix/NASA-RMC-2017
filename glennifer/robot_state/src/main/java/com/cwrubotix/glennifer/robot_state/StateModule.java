@@ -6,6 +6,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
+
 import com.rabbitmq.client.AMQP;
 
 import com.cwrubotix.glennifer.Messages;
@@ -20,6 +21,7 @@ import com.cwrubotix.glennifer.Messages.UnixTime;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeoutException;
@@ -330,7 +332,7 @@ public class StateModule {
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
             Messages.StateSubscribe msg = Messages.StateSubscribe.parseFrom(body);
             float interval = msg.getInterval();
-            int interval_ms = (int)(interval / 1000);
+            int interval_ms = (int)(interval * 1000);
             boolean loc_summary = true;
             boolean loc_detailed = true;
             boolean exc_summary = true;
@@ -346,10 +348,34 @@ public class StateModule {
                     exc_summary,
                     exc_detailed,
                     dep_summary,
-                    dep_detailed));
-            subscriptionThreads.add(t);
+                    dep_detailed), replyKey);
+            subscriptionThreads.add(t, -1);
             t.start();
+            System.out.println("Start subscription thread with interval = " + interval);
         }
+    }
+    
+    private class UnsubscriptionRequest extends DefaultConsumer{
+    	
+    	public UnsubscriptionRequest(Channel channel){
+    		super(channel);
+    	}
+    	
+    	@Override
+    	public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+    		Messages.StateSubscribe msg = Messages.StateSubscribe.parseFrom(body);
+    		String replyKey = msg.getReplyKey();
+    		int index = subscriptionThreads.indexOf(replyKey, -1);
+    		Thread t = subscriptionThreads.get(index);
+    		subscriptionThreads.remove(t);
+    		t.interrupt();
+    		try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
     }
     
     private void handleWheelRpmUpdate(LocomotionState.Wheel wheel, byte[] body) throws IOException {
@@ -517,6 +543,76 @@ public class StateModule {
         }
     }
     
+    /*Hash Table for SubscriptionThreads*/
+    private class SubscriptionThreads{
+
+    	private Thread[] threads;
+    	private int numItems;
+    	
+    	public SubscriptionThreads(){
+    		threads = new Thread[4096];
+    		numItems = 0;
+    	}
+    	
+    	//Generates hashcode with given replyKey of the thread
+    	public int hashCode(String replyKey){
+    		int hashCode = 0;
+    		int power = 0;
+    		for(int index = 0; index < replyKey.length(); index++){
+    			hashCode = hashCode + ((replyKey.charAt(index) << power) - replyKey.charAt(index));
+    		}
+    		return hashCode % threads.length;
+    	}
+    	
+    	public synchronized void add(Thread t, int currentIndex){
+    		if(currentIndex == -1)
+    			currentIndex = hashCode(t.getName());
+    		if(threads[currentIndex] == null || threads[currentIndex].getName().equals("removed")){
+    			threads[currentIndex] = t;
+    			numItems++;
+    			if(((double)numItems/(double)threads.length) > 0.75)
+    				rehash();
+    		}
+    		else if(!threads[currentIndex].getName().equals(t.getName())){
+    			currentIndex = (currentIndex + 7) % threads.length;
+    			add(t, currentIndex);
+    		} 
+    		else
+    			return;
+    	}
+    	
+    	public synchronized Thread get(int index){
+    		return threads[index];
+    	}
+    	
+    	public synchronized int indexOf(String replyKey, int currentIndex){
+    		if(currentIndex == -1)
+    			currentIndex = hashCode(replyKey);
+    		if(threads[currentIndex] == null)
+    			return -1; 
+    		else if(!threads[currentIndex].getName().equals(replyKey)){
+    			currentIndex = (currentIndex + 7) % threads.length; // second hash function with stride of 7.
+    			return indexOf(replyKey, currentIndex);
+    		} 
+    		else
+    			return currentIndex;
+    	}
+    	
+    	public synchronized void remove(Thread t){
+    		int index = indexOf(t.getName(), -1);
+    		threads[index] = new Thread("removed");
+    	}
+    	
+    	public synchronized void rehash(){
+    		Thread[] copy = threads.clone();
+    		threads = new Thread[copy.length*2];
+    		for(int index = 0; index < copy.length; index++){
+    			if(copy[index] != null || !copy[index].getName().equals("removed"))
+    				add(copy[index], hashCode(copy[index].getName())); 
+    		}
+    	}
+    }
+    
     /* Data Members */
     private LocomotionState locomotionState;
     private ExcavationState excavationState;
@@ -524,7 +620,7 @@ public class StateModule {
     private String exchangeName;
     private Connection connection;
     private Channel channel;
-    private Queue<Thread> subscriptionThreads = new LinkedList<>();
+    private SubscriptionThreads subscriptionThreads = new SubscriptionThreads();
     
     public StateModule(LocomotionState locState, ExcavationState excState, DepositionState depState) {
         this(locState, excState, depState, "amq.topic");
@@ -568,6 +664,11 @@ public class StateModule {
         queueName = channel.queueDeclare().getQueue();
         channel.queueBind(queueName, exchangeName, "state.subscribe");
         this.channel.basicConsume(queueName, true, new RequestConsumer(channel));
+        
+        // Listen for requests to unsubscribe to state updates.
+        queueName = channel.queueDeclare().getQueue();
+        channel.queueBind(queueName, exchangeName, "state.unsubscribe");
+        this.channel.basicConsume(queueName, true, new UnsubscriptionRequest(channel));
     }
 
     public void start() {
@@ -583,10 +684,10 @@ public class StateModule {
     }
 
     public void stop() throws IOException, TimeoutException, InterruptedException {
-        for (Thread t : subscriptionThreads) {
+        for (Thread t : subscriptionThreads.threads) {
             t.interrupt();
         }
-        for (Thread t : subscriptionThreads) {
+        for (Thread t : subscriptionThreads.threads) {
             t.join();
         }
         channel.close();
