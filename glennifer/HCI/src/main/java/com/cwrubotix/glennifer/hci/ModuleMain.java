@@ -435,7 +435,7 @@ public class ModuleMain {
         hci.addActuator(new Actuator(configBCLM, hci), configBCLM.ID);
         hci.addActuator(new Actuator(configBCA, hci), configBCA.ID);
         hci.addActuator(new Actuator(configDM, hci), configDM.ID);
-        hci.addActuator(new Actuator(configDA, hci), configDRA.ID);
+        hci.addActuator(new Actuator(configDA, hci), configDA.ID);
 
 		// Constrain actuators
 
