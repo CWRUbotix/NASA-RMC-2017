@@ -10,6 +10,20 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QDebug>
+#include <opencv2/core/core.hpp>
+#include <opencv2/video.hpp>
+#include <opencv/cv.h>
+#include <opencv/cv.hpp>
+#include "mydialog.h"
+#include "mydialog2.h"
+#include "mydialog3.h"
+#include "mydialog4.h"
+#include "mydialog5.h"
+
+cv::VideoCapture capWebcam(0);
+cv::Mat matOriginal;
+QImage qimgOriginal;
+//QLabel lblInputImage;
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -735,4 +749,19 @@ void MainWindow::updateAngle(int x){
 
     rectangle4->setTransformOriginPoint(QPoint(85,90));
     rectangle4->setRotation(x);
+}
+
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    mDialog1 = new MyDialog(this);
+    mDialog2 = new MyDialog2(this);
+    mDialog3 = new MyDialog3(this);
+    mDialog4 = new MyDialog4(this);
+    mDialog5 = new MyDialog5(this);
+    mDialog1->show();
+    mDialog2->show();
+    mDialog3->show();
+    mDialog4->show();
+    mDialog5->show();
 }

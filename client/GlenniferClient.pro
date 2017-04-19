@@ -14,14 +14,29 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
-    messages.pb.cc
+    messages.pb.cc \
+    mydialog.cpp \
+    mydialog2.cpp \
+    mydialog3.cpp \
+    mydialog4.cpp \
+    mydialog5.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
-    messages.pb.h
+    messages.pb.h \
+    mydialog.h \
+    mydialog2.h \
+    mydialog3.h \
+    mydialog4.h \
+    mydialog5.h
 
 FORMS    += mainwindow.ui \
-    connectiondialog.ui
+    connectiondialog.ui \
+    mydialog.ui \
+    mydialog2.ui \
+    mydialog3.ui \
+    mydialog4.ui \
+    mydialog5.ui
 
 CONFIG += conan_basic_setup
 include(conanbuildinfo.pri)

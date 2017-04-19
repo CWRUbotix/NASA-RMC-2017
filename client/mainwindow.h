@@ -9,6 +9,13 @@
 #include <QGraphicsItem>
 #include <QKeyEvent>
 #include <QWheelEvent>
+#include <QFileDialog>
+#include <QMessageBox>
+#include "mydialog.h"
+#include "mydialog2.h"
+#include "mydialog3.h"
+#include "mydialog4.h"
+#include "mydialog5.h"
 
 using namespace com::cwrubotix::glennifer;
 
@@ -64,6 +71,10 @@ public slots:
     void keyReleaseEvent(QKeyEvent *ev);
     void wheelEvent(QWheelEvent* event);
 
+
+private slots:
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MainWindow *ui;
     AMQP *m_amqp;
@@ -77,6 +88,12 @@ private:
     int m_desiredConfig = 0; // 0 is straight, 1 is turn, 2 is strafe
     int m_configSpeeds[3] = {100, 60, 50};
     void updateAngle(int x);
+
+    MyDialog *mDialog1;
+    MyDialog2 *mDialog2;
+    MyDialog3 *mDialog3;
+    MyDialog4 *mDialog4;
+    MyDialog5 *mDialog5;
 };
 
 #endif // MAINWINDOW_H

@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include <yaml-cpp/yaml.h>
 #include <QDebug>
+#include <opencv2/cvconfig.h>
+#include <opencv/cv.h>
 
 int main(int argc, char *argv[])
 {
@@ -70,8 +72,11 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+
     MainWindow w(amqp);
     w.show();
+
+
 
     int output = a.exec();
     return output;
