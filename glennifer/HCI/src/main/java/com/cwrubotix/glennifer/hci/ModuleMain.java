@@ -410,7 +410,7 @@ public class ModuleMain {
 
         ActuatorConfig configBCA = new ActuatorConfig();
         configBCRA.ID = 10;
-        configBCRA.name = "Bucket Conveyor Actuators"
+        configBCRA.name = "Bucket Conveyor Actuators";
 
         ActuatorConfig configDM = new ActuatorConfig();
         configDM.ID = 11;
@@ -418,9 +418,9 @@ public class ModuleMain {
 
         ActuatorConfig configDRA = new ActuatorConfig();
         configDRA.ID = 12;
-        configDRA.name = "Deposition Actuators"
+        configDRA.name = "Deposition Actuators";
 
-        ActuatorConfig config
+        ActuatorConfig config;
 
 		// Add actuators
 		hci.addActuator(new Actuator(configLBM, hci), configLBM.ID);
@@ -655,7 +655,7 @@ public class ModuleMain {
                 //WHEEL POD LIMIT EXTENDED
                 else if (sensorDataID == 5 || sensorDataID == 8 || sensorDataID == 11 || sensorDataID == 14){
                     Messages.LimitUpdate msg = Messages.LimitUpdate.newBuilder()
-                            .setPressed()
+                            .setPressed();
                 }
 
                 // sensor.locomotion.front_left.wheel_pod_limit_extended
