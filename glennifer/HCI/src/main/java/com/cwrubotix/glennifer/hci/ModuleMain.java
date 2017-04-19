@@ -586,6 +586,7 @@ public class ModuleMain {
                     a.hold = true;
                     int id = 11;
                     //System.out.println("target value = " + a.targetValue);
+                    a.targetValue = scc.getRpm();
                     a.type = HardwareControlInterface.ActuationType.AngVel;
                     a.actuatorID = id;
                     hci.queueActuation(a);

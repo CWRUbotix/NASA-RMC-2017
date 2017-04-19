@@ -221,7 +221,7 @@ void setup() {
   motor_infos[10].scale = 1;
 
   // Deposition Conveyor Motor TODO
-  motor_infos[11].hardware = MH_RC_VEL;
+  motor_infos[11].hardware = MH_RC_PWM;
   motor_infos[11].addr = 3;
   motor_infos[11].whichMotor = 2;
   motor_infos[11].feedbackSensorID = 11;
@@ -231,7 +231,7 @@ void setup() {
   motor_infos[11].qpps = 865000;
   motor_infos[11].scale = 1;
 
-  // Deposition Left Actuator TODO
+  // Deposition Actuators
   motor_infos[12].hardware = MH_ST_BOTH;
   motor_infos[12].addr = 2;
   motor_infos[12].feedbackSensorID = 12;
