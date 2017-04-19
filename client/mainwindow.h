@@ -9,6 +9,7 @@
 #include <QGraphicsItem>
 #include <QKeyEvent>
 #include <QWheelEvent>
+#include <QCloseEvent>
 
 using namespace com::cwrubotix::glennifer;
 
@@ -24,6 +25,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     explicit MainWindow(AMQP *amqp, QWidget *parent = 0);
     ~MainWindow();
+    void initSubscription();
 
     static MainWindow instance;
 
@@ -61,13 +63,13 @@ public slots:
     void handleBackRightWheelPodTurn();
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
-    void handleSubscribe();
 
     void handleState(State *s);
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
     void wheelEvent(QWheelEvent* event);
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::MainWindow *ui;
