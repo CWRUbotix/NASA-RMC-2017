@@ -20,9 +20,9 @@
 #include "mydialog4.h"
 #include "mydialog5.h"
 
-cv::VideoCapture capWebcam(0);
-cv::Mat matOriginal;
-QImage qimgOriginal;
+//cv::VideoCapture capWebcam(0);
+//cv::Mat matOriginal;
+//QImage qimgOriginal;
 //QLabel lblInputImage;
 
 /*
