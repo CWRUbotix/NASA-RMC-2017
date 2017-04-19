@@ -409,16 +409,16 @@ public class ModuleMain {
         configBCLM.name = "Bucket Conveyor Linear Motor";
 
         ActuatorConfig configBCA = new ActuatorConfig();
-        configBCRA.ID = 10;
-        configBCRA.name = "Bucket Conveyor Actuators";
+        configBCA.ID = 10;
+        configBCA.name = "Bucket Conveyor Actuators";
 
         ActuatorConfig configDM = new ActuatorConfig();
         configDM.ID = 11;
         configDM.name = "Deposition Motor";
 
-        ActuatorConfig configDRA = new ActuatorConfig();
-        configDRA.ID = 12;
-        configDRA.name = "Deposition Actuators";
+        ActuatorConfig configDA = new ActuatorConfig();
+        configDA.ID = 12;
+        configDA.name = "Deposition Actuators";
 
         ActuatorConfig config;
 
@@ -435,8 +435,7 @@ public class ModuleMain {
         hci.addActuator(new Actuator(configBCLM, hci), configBCLM.ID);
         hci.addActuator(new Actuator(configBCA, hci), configBCA.ID);
         hci.addActuator(new Actuator(configDM, hci), configDM.ID);
-        hci.addActuator(new Actuator(configDRA, hci), configDRA.ID);
-        hci.addActuator(new Actuator(configDLA, hci), configDLA.ID);
+        hci.addActuator(new Actuator(configDA, hci), configDRA.ID);
 
 		// Constrain actuators
 
@@ -653,11 +652,12 @@ public class ModuleMain {
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_pod_pos", null, msg.toByteArray());
 				} 
                 //WHEEL POD LIMIT EXTENDED
+                /*
                 else if (sensorDataID == 5 || sensorDataID == 8 || sensorDataID == 11 || sensorDataID == 14){
                     Messages.LimitUpdate msg = Messages.LimitUpdate.newBuilder()
                             .setPressed();
                 }
-
+*/
                 // sensor.locomotion.front_left.wheel_pod_limit_extended
 // sensor.locomotion.front_right.wheel_pod_limit_extended
 // sensor.locomotion.back_left.wheel_pod_limit_extended
