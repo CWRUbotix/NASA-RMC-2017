@@ -11,6 +11,7 @@
 #include <QWheelEvent>
 #include <QDebug>
 #include "consumerthread.h"
+#include <QCloseEvent>
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -762,4 +763,29 @@ void MainWindow::wheelEvent(QWheelEvent* event) {
     int delta = event->angleDelta().y();
     delta = (delta > 0) ? 5 : -5;
     ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + delta);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    StateSubscribe msg;
+    msg.set_replykey("abcde");
+    msg.set_interval(0.2F);
+    msg.set_locomotion_summary(false);
+    msg.set_locomotion_detailed(true);
+    msg.set_deposition_summary(false);
+    msg.set_deposition_detailed(false);
+    msg.set_excavation_summary(false);
+    msg.set_excavation_detailed(false);
+
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "state.unsubscribe");
 }

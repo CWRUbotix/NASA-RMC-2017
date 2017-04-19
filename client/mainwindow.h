@@ -9,6 +9,7 @@
 #include <QGraphicsItem>
 #include <QKeyEvent>
 #include <QWheelEvent>
+#include <QCloseEvent>
 
 using namespace com::cwrubotix::glennifer;
 
@@ -68,6 +69,7 @@ public slots:
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
     void wheelEvent(QWheelEvent* event);
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::MainWindow *ui;
