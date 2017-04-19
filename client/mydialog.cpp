@@ -12,4 +12,19 @@ MyDialog::~MyDialog()
 {
     delete ui;
 }
+void MyDialog::assignFrame(Mat frame) {
+     cv::cvtColor(frame, RGBFrame, CV_BGR2RGB);
+     img = QImage((const unsigned char*)(RGBFrame.data),
+                  RGBFrame.cols, RGBFrame.rows, QImage::Format_RGB888);
+    //emit img????????
+}
 
+void MyDialog::assignDisplay(QImage img) {
+    //add to the scene
+}
+
+void MyDialog::updateFrame(Mat frame) {
+    while(true) { //add stop function
+        assignFrame(frame);
+    }
+}

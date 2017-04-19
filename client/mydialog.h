@@ -19,7 +19,11 @@
 #include <QDialog>
 #include <AMQPcpp.h>
 #include "messages.pb.h"
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsItem>
 
+using namespace cv;
 namespace Ui {
 class MyDialog;
 }
@@ -33,13 +37,17 @@ public:
     ~MyDialog();
 
 public slots:
+    void assignFrame(cv::Mat frame);
+    void assignDisplay(QImage img);
+    void updateFrame(cv::Mat frame);
 
 private:
     Ui::MyDialog *ui;
     //cv::VideoCapture capture;
     cv::Mat frame;
     QImage img;
-
+    cv::Mat RGBFrame;
+    QGraphicsScene scene;
 };
 
 #endif // MYDIALOG_H
