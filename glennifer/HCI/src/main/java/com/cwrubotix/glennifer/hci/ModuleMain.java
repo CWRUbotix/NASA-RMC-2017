@@ -507,31 +507,88 @@ public class ModuleMain {
 		// Main loop to get sensor data
 		try {
 			while (true) {
-				Sensor s = hci.getSensorFromID(4);
-				if (s.data.isEmpty()) {
-					System.out.println("Sensor #4 has no data");
+				LabeledSensorData sensorData = hci.pollSensorUpdate();
+				
+				int sensorDataID =  sensorData.id;
+				double value = sensorData.data.data;
+				long time_ms = sensorData.data.timestamp;
+				Messages.UnixTime unixTime = Messages.UnixTime.newBuilder()
+						.setTimeInt(time_ms / 1000)
+						.setTimeFrac((time_ms % 1000) / (1000.0F))
+						.build(); 
+				
+				//first check if 0,1,2,3 RPM
+				if(sensorDataID == 0){
+					value = -100.0F * value * 60.0F / 270 / 4096;
+					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
+							.setRpm((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_rpm", null, msg.toByteArray());
+				} else if(sensorDataID == 1){
+					value = 100.0F * value * 60.0F / 270 / 4096;
+					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
+							.setRpm((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_rpm", null, msg.toByteArray());
+				} else if(sensorDataID == 2){
+					value = -100.0F * value * 60.0F / 270 / 4096;
+					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
+							.setRpm((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_rpm", null, msg.toByteArray());
+				} else if(sensorDataID == 3){
+					value = 100.0F * value * 60.0F / 270 / 4096;
+					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
+							.setRpm((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_rpm", null, msg.toByteArray());
+				} else if(sensorDataID == 4){
+					value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+					if (value > 1) value = 1;
+					if (value < -1) value = -1;
+					value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
+							.setPosition((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_pod_pos", null, msg.toByteArray());
+				} else if(sensorDataID == 5){
+					value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+					if (value > 1) value = 1;
+					if (value < -1) value = -1;
+					value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
+							.setPosition((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_pod_pos", null, msg.toByteArray());
+				} else if(sensorDataID == 6){
+					value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+					if (value > 1) value = 1;
+					if (value < -1) value = -1;
+					value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
+							.setPosition((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_pod_pos", null, msg.toByteArray());
+				} else if(sensorDataID == 7){
+					value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+					if (value > 1) value = 1;
+					if (value < -1) value = -1;
+					value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
+							.setPosition((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_pod_pos", null, msg.toByteArray());
 				} else {
-					System.out.println("Sensor #4 = " + s.data.get(s.data.size()-1).data);
+					// TODO: do others
 				}
-                s = hci.getSensorFromID(5);
-                if (s.data.isEmpty()) {
-                    System.out.println("Sensor #5 has no data");
-                } else {
-                    System.out.println("Sensor #5 = " + s.data.get(s.data.size()-1).data);
-                }
-                s = hci.getSensorFromID(6);
-                if (s.data.isEmpty()) {
-                    System.out.println("Sensor #6 has no data");
-                } else {
-                    System.out.println("Sensor #6 = " + s.data.get(s.data.size()-1).data);
-                }
-                s = hci.getSensorFromID(7);
-                if (s.data.isEmpty()) {
-                    System.out.println("Sensor #7 has no data");
-                } else {
-                    System.out.println("Sensor #7 = " + s.data.get(s.data.size()-1).data);
-                }
-				Thread.sleep(1000);
 			}
 		} catch (InterruptedException e) { }
 	}

@@ -12,24 +12,27 @@ public class Sensor {
 	double RC;
 	boolean lowPass = false;
 	
-	public void updateRaw(int val) {
-		update(val*config.scale);
+	public boolean updateRaw(int val) {
+		return update(val*config.scale);
 	}
 	
 	/**
-	 * Updates the data with the value.  Performs low pass filter if enabled
+	 * Updates the data with the value.  Performs low pass filter if enabled. Returns whether or not the new value is different
 	 * @param val
+	 * @return true if the new value is different, false if not
 	 */
-	public void update(double val) {
+	public boolean update(double val) {
 		long mil = System.currentTimeMillis();
 		if(data.size() == 0 || !lowPass) {
 			data.add(new SensorData(val, mil));
-			return;
+			return true;
 		}
 		double dt = (double)(mil - data.get(data.size()-1).timestamp);
 		double alpha = dt/(RC + dt);
 		double fVal = alpha * val + (1 - alpha)*data.get(data.size()-1).data;
+		boolean different = (fVal != data.get(data.size() - 1).data);
 		data.add(new SensorData(fVal, mil));
+		return different;
 	}
 	
 	public void setLowPassFreq(double freq) {

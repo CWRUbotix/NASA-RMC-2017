@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    /*
     amqp_connection_state_t conn = amqp_new_connection();
     amqp_socket_t *socket = amqp_tcp_socket_new(conn);
 
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
       QMessageBox::critical(0,"Error","Failed to allocate socket.\nDetails: amqp_tcp_socket_new() returned NULL");
       return 1;
     }
+    */
 
     ConnectionDialog d;
     d.exec();

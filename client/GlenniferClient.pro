@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     mydialog2.cpp \
     mydialog3.cpp \
     mydialog4.cpp \
-    mydialog5.cpp
+    mydialog5.cpp \
+    consumerthread.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
@@ -28,7 +29,8 @@ HEADERS  += mainwindow.h \
     mydialog2.h \
     mydialog3.h \
     mydialog4.h \
-    mydialog5.h
+    mydialog5.h \
+    consumerthread.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui \

@@ -19,6 +19,7 @@
 #include "mydialog3.h"
 #include "mydialog4.h"
 #include "mydialog5.h"
+#include "consumerthread.h"
 
 //cv::VideoCapture capWebcam(0);
 //cv::Mat matOriginal;
@@ -62,9 +63,13 @@ MainWindow::MainWindow(QWidget *parent) :
     outlinePen.setWidth(2);
 
     rectangle1 = locomotionScene->addRect(-50, -80, 10, 20, outlinePen, greenBrush);
+    rectangle1->setTransformOriginPoint(-45, -70);
     rectangle2 = locomotionScene->addRect(50, -80, 10, 20, outlinePen, greenBrush);
+    rectangle2->setTransformOriginPoint(55, -70);
     rectangle3 = locomotionScene->addRect(-50, 80, 10, 20, outlinePen, greenBrush);
+    rectangle3->setTransformOriginPoint(-45, 90);
     rectangle4 = locomotionScene->addRect(50, 80, 10, 20, outlinePen, greenBrush);
+    rectangle4->setTransformOriginPoint(55, 90);
 
     excavationScene->addRect(-80, -20, 160, 40, outlinePen, grayBrush);
     excavationScene->addRect(-100, -10, 160, 20, outlinePen, blueBrush);
@@ -149,6 +154,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelPodSet);
     QObject::connect(ui->slider_BackRightWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelPodSet);
+    QObject::connect(ui->pushButton_Subscribe, &QPushButton::clicked,
+                     this, &MainWindow::handleSubscribe);
 }
 
 MainWindow::MainWindow(AMQP *amqp, QWidget *parent) :
@@ -650,6 +657,43 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
 
     free(msg_buff);
+}
+
+void MainWindow::handleSubscribe() {
+    ConsumerThread *thread = new ConsumerThread(m_amqp);
+    connect(thread, &ConsumerThread::stateReady, this, &MainWindow::handleState);
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
+
+    StateSubscribe msg;
+    msg.set_replykey("abcde");
+    msg.set_interval(0.2F);
+    msg.set_locomotion_summary(false);
+    msg.set_locomotion_detailed(true);
+    msg.set_deposition_summary(false);
+    msg.set_deposition_detailed(false);
+    msg.set_excavation_summary(false);
+    msg.set_excavation_detailed(false);
+
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
+}
+
+void MainWindow::handleState(State *s) {
+    rectangle1->setRotation(s->locdetailed().front_left_pos());
+    rectangle2->setRotation(-s->locdetailed().front_right_pos());
+    rectangle3->setRotation(-s->locdetailed().back_left_pos());
+    rectangle4->setRotation(s->locdetailed().back_right_pos());
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {
