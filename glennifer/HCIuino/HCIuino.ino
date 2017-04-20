@@ -127,6 +127,18 @@ void setup() {
   sensor_infos[10].whichMotor = 2;
   // END DUMMY SENSORS
 
+  sensor_infos[23].hardware = SH_PIN_LIMIT;
+  sensor_infos[23].whichPin = 36;
+
+  sensor_infos[24].hardware = SH_PIN_LIMIT;
+  sensor_infos[24].whichPin = 37;
+
+  sensor_infos[25].hardware = SH_PIN_LIMIT;
+  sensor_infos[25].whichPin = 38;
+
+  sensor_infos[26].hardware = SH_PIN_LIMIT;
+  sensor_infos[26].whichPin = 39;
+  
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
   motor_infos[1].addr = ADDRESS_RC_0;
