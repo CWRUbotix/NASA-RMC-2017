@@ -67,10 +67,12 @@ public slots:
     void handleExcavationArmStore();
     void handleExcavationTranslationSet(int value);
     void handleExcavationTranslationExtend();
+    void handleExcavationTranslationStop();
     void handleExcavationTranslationRetract();
     void handleExcavationConveyor(bool checked);
     void handleDepositionDumpSet(int value);
     void handleDepositionDumpDump();
+    void handleDepositionDumpStop();
     void handleDepositionDumpStore();
     void handleDepositionConveyor(bool checked);
     void handleSubscribe();
