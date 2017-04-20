@@ -140,7 +140,6 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelPodSet);
     QObject::connect(ui->slider_BackRightWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelPodSet);
-
     QObject::connect(ui->slider_ExcavationArm, &QSlider::valueChanged,
                      this, &MainWindow::handleExcavationArmSet);
     QObject::connect(ui->pushButton_ExcavationArmDig, &QPushButton::clicked,
@@ -153,6 +152,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleExcavationTranslationSet);
     QObject::connect(ui->pushButton_ExcavationTranslationExtend, &QPushButton::clicked,
                      this, &MainWindow::handleExcavationTranslationExtend);
+    QObject::connect(ui->pushButton_ExcavationTranslationStop, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationTranslationStop);
     QObject::connect(ui->pushButton_ExcavationTranslationRetract, &QPushButton::clicked,
                      this, &MainWindow::handleExcavationTranslationRetract);
     QObject::connect(ui->checkBox_ExcavationConveyor, &QCheckBox::stateChanged,
@@ -161,6 +162,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleDepositionDumpSet);
     QObject::connect(ui->pushButton_DepositionDumpDump, &QPushButton::clicked,
                      this, &MainWindow::handleDepositionDumpDump);
+    QObject::connect(ui->pushButton_DepositionDumpStop, &QPushButton::clicked,
+                     this, &MainWindow::handleDepositionDumpStop);
     QObject::connect(ui->pushButton_DepositionDumpStore, &QPushButton::clicked,
                      this, &MainWindow::handleDepositionDumpStore);
     QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
@@ -718,19 +721,24 @@ void MainWindow::handleExcavationTranslationSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.conveyor_translation_displacement");
 
     free(msg_buff);
+    qDebug() << "Sent excavation tranlsation = " << QString::number(value);
 }
 
 void MainWindow::handleExcavationTranslationExtend() {
     ui->slider_ExcavationTranslation->setValue(100);
 }
 
-void MainWindow::handleExcavationTranslationRetract() {
+void MainWindow::handleExcavationTranslationStop() {
     ui->slider_ExcavationTranslation->setValue(0);
+}
+
+void MainWindow::handleExcavationTranslationRetract() {
+    ui->slider_ExcavationTranslation->setValue(-100);
 }
 
 void MainWindow::handleExcavationConveyor(bool checked) {
     SpeedContolCommand msg;
-    msg.set_rpm(checked ? 127 : 0);
+    msg.set_rpm(checked ? 100 : 0);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -753,7 +761,26 @@ void MainWindow::handleDepositionDumpSet(int value) {
 
 void MainWindow::handleDepositionDumpDump() {
     PositionContolCommand msg;
-    msg.set_position(1);
+    msg.set_position(100);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDepositionDumpStop() {
+    PositionContolCommand msg;
+    msg.set_position(0);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -772,7 +799,7 @@ void MainWindow::handleDepositionDumpDump() {
 
 void MainWindow::handleDepositionDumpStore() {
     PositionContolCommand msg;
-    msg.set_position(-1);
+    msg.set_position(-100);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -791,7 +818,7 @@ void MainWindow::handleDepositionDumpStore() {
 
 void MainWindow::handleDepositionConveyor(bool checked) {
     SpeedContolCommand msg;
-    msg.set_rpm(checked ? -127 : 0);
+    msg.set_rpm(checked ? -100 : 0);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
