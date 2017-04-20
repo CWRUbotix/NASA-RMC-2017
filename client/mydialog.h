@@ -37,7 +37,7 @@ public:
     ~MyDialog();
 
 public slots:
-    void assignFrame(cv::Mat frame);
+    QGraphicsPixmapItem assignFrame(cv::Mat frame);
     void assignDisplay(QImage img);
     void updateFrame(cv::Mat frame);
 
