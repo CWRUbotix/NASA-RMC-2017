@@ -221,9 +221,9 @@ public class ModuleMain {
                 configARMPOSBH.name = "Arm B Limit High";
                 configARMPOSBH.limitSwitch = true;
 
-                SensorConfig configTPOS = configARMPOS.copy();
-                configTPOSA.ID = 22;
-                configTPOSA.name = "Translation Pot Position A";
+                SensorConfig configTPOS = configARMPOSA.copy();
+                configTPOS.ID = 22;
+                configTPOS.name = "Translation Pot Position A";
                 
                 SensorConfig configTPOSAL = configARMPOSA.copy();
                 configTPOSAL.ID = 23;
@@ -671,7 +671,6 @@ public class ModuleMain {
                             .setPressed();
                 }
                 */
-                else if (sensorDataID == 23)
                 // sensor.locomotion.front_left.wheel_pod_limit_extended
 // sensor.locomotion.front_right.wheel_pod_limit_extended
 // sensor.locomotion.back_left.wheel_pod_limit_extended
