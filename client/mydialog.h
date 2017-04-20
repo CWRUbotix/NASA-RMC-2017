@@ -47,7 +47,10 @@ private:
     cv::Mat frame;
     QImage img;
     cv::Mat RGBFrame;
+    QPixmap pmap;
+    QGraphicsPixmapItem gpmap;
     QGraphicsScene scene;
+    QGraphicsView view;
 };
 
 #endif // MYDIALOG_H

@@ -16,11 +16,11 @@ void MyDialog::assignFrame(Mat frame) {
      cv::cvtColor(frame, RGBFrame, CV_BGR2RGB);
      img = QImage((const unsigned char*)(RGBFrame.data),
                   RGBFrame.cols, RGBFrame.rows, QImage::Format_RGB888);
-    //emit img????????
+     pmap = QPixmap::fromImage(img);
 }
 
 void MyDialog::assignDisplay(QImage img) {
-    //add to the scene
+
 }
 
 void MyDialog::updateFrame(Mat frame) {

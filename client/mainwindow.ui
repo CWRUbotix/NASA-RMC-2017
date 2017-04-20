@@ -46,7 +46,11 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
+<<<<<<< HEAD
         <number>0</number>
+=======
+        <number>4</number>
+>>>>>>> master
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -193,26 +197,6 @@
             </item>
             <item>
              <spacer name="horizontalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="pushButton_Subscribe">
-              <property name="text">
-               <string>Subscribe</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_5">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -2115,10 +2099,10 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="minimum">
-                 <number>0</number>
+                 <number>-100</number>
                 </property>
                 <property name="maximum">
-                 <number>1</number>
+                 <number>100</number>
                 </property>
                 <property name="value">
                  <number>0</number>
@@ -2162,6 +2146,29 @@
                   </property>
                   <property name="text">
                    <string>Extend</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_ExcavationTranslationStop">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Stop</string>
                   </property>
                  </widget>
                 </item>
@@ -2394,6 +2401,29 @@
                   </property>
                   <property name="text">
                    <string>Dump</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_DepositionDumpStop">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Stop</string>
                   </property>
                  </widget>
                 </item>

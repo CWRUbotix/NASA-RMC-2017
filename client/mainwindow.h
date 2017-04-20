@@ -9,6 +9,7 @@
 #include <QGraphicsItem>
 #include <QKeyEvent>
 #include <QWheelEvent>
+<<<<<<< HEAD
 #include <QFileDialog>
 #include <QMessageBox>
 #include "mydialog.h"
@@ -16,6 +17,9 @@
 #include "mydialog3.h"
 #include "mydialog4.h"
 #include "mydialog5.h"
+=======
+#include <QCloseEvent>
+>>>>>>> master
 
 using namespace com::cwrubotix::glennifer;
 
@@ -29,8 +33,9 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    explicit MainWindow(AMQP *amqp, QWidget *parent = 0);
+    explicit MainWindow(QString loginStr, QWidget *parent = 0);
     ~MainWindow();
+    void initSubscription();
 
     static MainWindow instance;
 
@@ -68,13 +73,28 @@ public slots:
     void handleBackRightWheelPodTurn();
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
+    void handleExcavationArmSet(int value);
+    void handleExcavationArmDig();
+    void handleExcavationArmJog();
+    void handleExcavationArmStore();
+    void handleExcavationTranslationSet(int value);
+    void handleExcavationTranslationExtend();
+    void handleExcavationTranslationStop();
+    void handleExcavationTranslationRetract();
+    void handleExcavationConveyor(bool checked);
+    void handleDepositionDumpSet(int value);
+    void handleDepositionDumpDump();
+    void handleDepositionDumpStop();
+    void handleDepositionDumpStore();
+    void handleDepositionConveyor(bool checked);
     void handleSubscribe();
 
-    void handleState(State *s);
+    void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
     void wheelEvent(QWheelEvent* event);
+    void closeEvent(QCloseEvent *event);
 
 
 private slots:
@@ -83,6 +103,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     AMQP *m_amqp;
+    QString m_loginStr;
     QGraphicsScene *locomotionScene;
     QGraphicsScene *excavationScene;
     QGraphicsScene *depositionScene;
