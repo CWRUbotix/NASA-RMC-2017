@@ -17,7 +17,7 @@ public class HardwareControlInterface implements Runnable {
 	public static final int baud = 9600;
 	public static final byte COMMAND_READ_SENSORS = 0x01;
 	public static final byte COMMAND_SET_OUTPUTS = 0x02;
-	private static final int SERIAL_TIMEOUT_MS = 500;
+	private static final int SERIAL_TIMEOUT_MS = 2000;
 	
 	// The types of actuations and constraints that can be made
 	enum ActuationType {
