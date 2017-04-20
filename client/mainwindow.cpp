@@ -721,7 +721,6 @@ void MainWindow::handleExcavationTranslationSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.conveyor_translation_displacement");
 
     free(msg_buff);
-    qDebug() << "Sent excavation tranlsation = " << QString::number(value);
 }
 
 void MainWindow::handleExcavationTranslationExtend() {
