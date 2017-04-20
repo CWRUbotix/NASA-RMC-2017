@@ -63,6 +63,21 @@ public slots:
     void handleBackRightWheelPodTurn();
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
+    void handleExcavationArmSet(int value);
+    void handleExcavationArmDig();
+    void handleExcavationArmJog();
+    void handleExcavationArmStore();
+    void handleExcavationTranslationSet(int value);
+    void handleExcavationTranslationExtend();
+    void handleExcavationTranslationStop();
+    void handleExcavationTranslationRetract();
+    void handleExcavationConveyor(bool checked);
+    void handleDepositionDumpSet(int value);
+    void handleDepositionDumpDump();
+    void handleDepositionDumpStop();
+    void handleDepositionDumpStore();
+    void handleDepositionConveyor(bool checked);
+    void handleSubscribe();
 
     void handleState(State *s);
 
