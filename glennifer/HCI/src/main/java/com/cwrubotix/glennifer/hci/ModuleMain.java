@@ -528,7 +528,6 @@ public class ModuleMain {
                         Actuation a = new Actuation();
                         a.override = true;
                         a.hold = true;
-                        //a.targetValue = pcc.getPosition()*5 + 250;
                         a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
                         System.out.println(a.targetValue);
                         a.type = HardwareControlInterface.ActuationType.AngVel;
@@ -550,9 +549,7 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         int id = 9;
-                        //a.targetValue = pcc.getPosition()*5 + 250;
-                        //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
-                        //System.out.println(a.targetValue);
+                        a.targetValue = pcc.getPosition();
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
                         hci.queueActuation(a);
@@ -562,9 +559,7 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         int id = 10;
-                        //a.targetValue = pcc.getPosition()*5 + 250;
-                        //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
-                        //System.out.println(a.targetValue);
+                        a.targetValue = pcc.getPosition();
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
                         hci.queueActuation(a);
@@ -574,7 +569,7 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         int id = 8;
-                        //System.out.println("target value = " + a.targetValue);
+                        a.targetValue = scc.getRpm();
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
                         hci.queueActuation(a);
@@ -593,9 +588,7 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         int id = 12;
-                        //a.targetValue = pcc.getPosition()*5 + 250;
-                        //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
-                        //System.out.println(a.targetValue);
+                        a.targetValue = pcc.getPosition();
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
                         hci.queueActuation(a);
@@ -605,7 +598,6 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         int id = 11;
-                        //System.out.println("target value = " + a.targetValue);
                         a.targetValue = scc.getRpm();
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;

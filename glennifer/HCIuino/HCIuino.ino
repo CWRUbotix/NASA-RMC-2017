@@ -45,10 +45,10 @@ enum MotorHardware {
   MH_RC_PWM,
   MH_RC_VEL,
   MH_RC_POS,
+  MH_RC_POS_BOTH,
   MH_ST_PWM,
   MH_ST_POS,
-  MH_RC_BOTH,
-  MH_ST_BOTH
+  MH_ST_PWM_BOTH
 };
 
 typedef struct MotorInfo {
@@ -112,6 +112,20 @@ void setup() {
   // 0 is back right
   sensor_infos[7].hardware = SH_PIN_POT;
   sensor_infos[7].whichPin = 0;
+
+  // DUMMY SENSORS for setting pot mode
+  sensor_infos[8].hardware = SH_RC_POT;
+  sensor_infos[8].addr = ADDRESS_RC_3;
+  sensor_infos[8].whichMotor = 1;
+  
+  sensor_infos[9].hardware = SH_RC_POT;
+  sensor_infos[9].addr = ADDRESS_RC_2;
+  sensor_infos[9].whichMotor = 0;
+  
+  sensor_infos[10].hardware = SH_RC_POT;
+  sensor_infos[10].addr = ADDRESS_RC_2;
+  sensor_infos[10].whichMotor = 1;
+  // END DUMMY SENSORS
 
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
@@ -191,53 +205,48 @@ void setup() {
   // Implied use same-id sensor
 
   // Bucket Conveyor Drive motor TODO
-  motor_infos[8].hardware = MH_RC_VEL;
+  motor_infos[8].hardware = MH_RC_PWM;
   motor_infos[8].addr = ADDRESS_RC_3;
   motor_infos[8].whichMotor = 0;
-  motor_infos[8].feedbackSensorID = 8;
-  motor_infos[8].kp = 10;
-  motor_infos[8].ki = 0;
-  motor_infos[8].kd = 0;
-  motor_infos[8].qpps = 865000;
   motor_infos[8].scale = 1;
 
   // Bucket Conveyor Linear motor TODO
-  motor_infos[9].hardware = MH_RC_VEL;
-  motor_infos[9].addr = 3;
+  motor_infos[9].hardware = MH_RC_POS;
+  motor_infos[9].addr = ADDRESS_RC_3;
   motor_infos[9].whichMotor = 1;
-  motor_infos[9].feedbackSensorID = 9;
   motor_infos[9].kp = 10;
   motor_infos[9].ki = 0;
   motor_infos[9].kd = 0;
-  motor_infos[9].qpps = 865000;
+  motor_infos[9].qpps = 200;
+  motor_infos[9].deadband = 10;
+  motor_infos[9].minpos = 0;
+  motor_infos[9].maxpos = 2047;
+  motor_infos[9].accel = 9999999;
   motor_infos[9].scale = 1;
 
   // Bucket Conveyor Actuators
-  motor_infos[10].hardware = MH_RC_BOTH;
+  motor_infos[10].hardware = MH_RC_POS_BOTH;
   motor_infos[10].addr = ADDRESS_RC_2;
-  motor_infos[10].feedbackSensorID = 10;
   motor_infos[10].kp = 10;
-  motor_infos[10].deadband = 15;
+  motor_infos[10].ki = 0;
+  motor_infos[10].kd = 0;
+  motor_infos[10].qpps = 200;
+  motor_infos[10].deadband = 10;
+  motor_infos[10].minpos = 0;
+  motor_infos[10].maxpos = 2047;
+  motor_infos[10].accel = 9999999;
   motor_infos[10].scale = 1;
 
   // Deposition Conveyor Motor TODO
   motor_infos[11].hardware = MH_ST_PWM;
   motor_infos[11].addr = 3;
   motor_infos[11].whichMotor = 2;
-  motor_infos[11].feedbackSensorID = 11;
-  motor_infos[11].kp = 10;
-  motor_infos[11].ki = 0;
-  motor_infos[11].kd = 0;
-  motor_infos[11].qpps = 865000;
   motor_infos[11].scale = 1;
 
   // Deposition Actuators
-  motor_infos[12].hardware = MH_ST_BOTH;
+  motor_infos[12].hardware = MH_ST_PWM_BOTH;
   motor_infos[12].addr = 2;
-  motor_infos[12].feedbackSensorID = 12;
-  motor_infos[12].kp = 10;
-  motor_infos[12].deadband = 15;
-  motor_infos[12].scale = 1;
+  motor_infos[12].scale = 127;
 
   /*
   motor_infos[2].hardware = MH_RC_POS;
@@ -427,10 +436,10 @@ FAULT_T configure_motors() {
     case MH_ST_POS:
       // Nothing to do, default config
       break;
-    case MH_ST_BOTH:
+    case MH_ST_PWM_BOTH:
       // Nothing to do, default config  
-    case MH_RC_BOTH:
-      success = (roboclaw.SetM1PositionPID(
+    case MH_RC_POS_BOTH:
+      success = roboclaw.SetM1PositionPID(
           motor_info.addr,
           motor_info.kp,
           motor_info.ki,
@@ -438,18 +447,22 @@ FAULT_T configure_motors() {
           motor_info.qpps,
           motor_info.deadband,
           motor_info.minpos,
-          motor_info.maxpos) && roboclaw.SetM2PositionPID(
-          motor_info.addr,
-          motor_info.kp,
-          motor_info.ki,
-          motor_info.kd,
-          motor_info.qpps,
-          motor_info.deadband,
-          motor_info.minpos,
-          motor_info.maxpos));
+          motor_info.maxpos);
       if (!success) {
         return FAULT_LOST_ROBOCLAW;
-      } 
+      }
+      success = roboclaw.SetM2PositionPID(
+          motor_info.addr,
+          motor_info.kp,
+          motor_info.ki,
+          motor_info.kd,
+          motor_info.qpps,
+          motor_info.deadband,
+          motor_info.minpos,
+          motor_info.maxpos);
+      if (!success) {
+        return FAULT_LOST_ROBOCLAW;
+      }
       break;
     default:
       break;
@@ -617,7 +630,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   case MH_ST_POS:
     motor_setpoints[ID] = val_scaled;
     break;
-  case MH_RC_BOTH:
+  case MH_RC_POS_BOTH:
     success = roboclaw.SpeedAccelDeccelPositionM1M2(
         motor_info.addr,
         motor_info.accel,
@@ -633,7 +646,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       return FAULT_LOST_ROBOCLAW;
     }
     break;
-  case MH_ST_BOTH:
+  case MH_ST_PWM_BOTH:
     sabretooth[motor_info.addr].motor(1, val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
   default:

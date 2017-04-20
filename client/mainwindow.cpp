@@ -140,6 +140,29 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelPodSet);
     QObject::connect(ui->slider_BackRightWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelPodSet);
+
+    QObject::connect(ui->slider_ExcavationArm, &QSlider::valueChanged,
+                     this, &MainWindow::handleExcavationArmSet);
+    QObject::connect(ui->pushButton_ExcavationArmDig, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmDig);
+    QObject::connect(ui->pushButton_ExcavationArmJog, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmJog);
+    QObject::connect(ui->pushButton_ExcavationArmStore, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmStore);
+    QObject::connect(ui->slider_ExcavationTranslation, &QSlider::valueChanged,
+                     this, &MainWindow::handleExcavationTranslationSet);
+    QObject::connect(ui->pushButton_ExcavationTranslationExtend, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationTranslationExtend);
+    QObject::connect(ui->pushButton_ExcavationTranslationRetract, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationTranslationRetract);
+    QObject::connect(ui->checkBox_ExcavationConveyor, &QCheckBox::stateChanged,
+                     this, &MainWindow::handleExcavationConveyor);
+    QObject::connect(ui->slider_DepositionDump, &QSlider::valueChanged,
+                     this, &MainWindow::handleDepositionDumpSet);
+    QObject::connect(ui->pushButton_DepositionDumpDump, &QPushButton::clicked,
+                     this, &MainWindow::handleDepositionDumpDump);
+    QObject::connect(ui->pushButton_DepositionDumpStore, &QPushButton::clicked,
+                     this, &MainWindow::handleDepositionDumpStore);
     QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
                      this, &MainWindow::handleDepositionConveyor);
     QObject::connect(ui->pushButton_Subscribe, &QPushButton::clicked,
@@ -643,6 +666,125 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleExcavationArmSet(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.arm_pos");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleExcavationArmDig() {
+    ui->slider_ExcavationArm->setValue(90);
+}
+
+void MainWindow::handleExcavationArmJog() {
+    ui->slider_ExcavationArm->setValue(10);
+}
+
+void MainWindow::handleExcavationArmStore() {
+    ui->slider_ExcavationArm->setValue(0);
+}
+
+void MainWindow::handleExcavationTranslationSet(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.conveyor_translation_displacement");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleExcavationTranslationExtend() {
+    ui->slider_ExcavationTranslation->setValue(100);
+}
+
+void MainWindow::handleExcavationTranslationRetract() {
+    ui->slider_ExcavationTranslation->setValue(0);
+}
+
+void MainWindow::handleExcavationConveyor(bool checked) {
+    SpeedContolCommand msg;
+    msg.set_rpm(checked ? 127 : 0);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.bucket_conveyor_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDepositionDumpSet(int value) {
+    ui->consoleOutputTextBrowser->append("Dump actuators do not have position control\n");
+}
+
+void MainWindow::handleDepositionDumpDump() {
+    PositionContolCommand msg;
+    msg.set_position(1);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDepositionDumpStore() {
+    PositionContolCommand msg;
+    msg.set_position(-1);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
 
     free(msg_buff);
 }
