@@ -221,7 +221,7 @@ public class ModuleMain {
                 configARMPOSBH.name = "Arm B Limit High";
                 configARMPOSBH.limitSwitch = true;
 
-                SensorConfig configTPOSA = configARMPOSA.copy();
+                SensorConfig configTPOS = configARMPOS.copy();
                 configTPOSA.ID = 22;
                 configTPOSA.name = "Translation Pot Position A";
                 
@@ -231,13 +231,9 @@ public class ModuleMain {
                 configTPOSAL.limitSwitch = true;
                 
                 SensorConfig configTPOSAH = configARMPOSA.copy();
-                configTPOSAH.ID = 23;
+                configTPOSAH.ID = 24;
                 configTPOSAH.name = "Translation Pot A Limit High";
                 configTPOSAH.limitSwitch = true;
-                
-                SensorConfig configTPOSB = configARMPOSA.copy();
-                configTPOSB.ID = 24;
-                configTPOSB.name = "Translation Pot Position B";
                 
                 SensorConfig configTPOSBL = configARMPOSA.copy();
                 configTPOSBL.ID = 25;
@@ -332,10 +328,9 @@ public class ModuleMain {
                 hci.addSensor(new Sensor(configARMPOSB), configARMPOSB.ID);
                 hci.addSensor(new Sensor(configARMPOSBL), configARMPOSBL.ID);
                 hci.addSensor(new Sensor(configARMPOSBH), configARMPOSBH.ID);
-                hci.addSensor(new Sensor(configTPOSA), configTPOSA.ID);
+                hci.addSensor(new Sensor(configTPOS), configTPOS.ID);
                 hci.addSensor(new Sensor(configTPOSAL), configTPOSAL.ID);
                 hci.addSensor(new Sensor(configTPOSAH), configTPOSAH.ID);
-                hci.addSensor(new Sensor(configTPOSB), configTPOSB.ID);
                 hci.addSensor(new Sensor(configTPOSBL), configTPOSBL.ID);
                 hci.addSensor(new Sensor(configTPOSBH), configTPOSBH.ID);
                 hci.addSensor(new Sensor(configBELT), configBELT.ID);
@@ -675,7 +670,8 @@ public class ModuleMain {
                     Messages.LimitUpdate msg = Messages.LimitUpdate.newBuilder()
                             .setPressed();
                 }
-*/
+                */
+                else if (sensorDataID == 23)
                 // sensor.locomotion.front_left.wheel_pod_limit_extended
 // sensor.locomotion.front_right.wheel_pod_limit_extended
 // sensor.locomotion.back_left.wheel_pod_limit_extended
