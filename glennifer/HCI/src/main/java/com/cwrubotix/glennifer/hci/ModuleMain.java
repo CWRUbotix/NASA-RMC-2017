@@ -471,127 +471,153 @@ public class ModuleMain {
 									   AMQP.BasicProperties properties, byte[] body) throws IOException {
 				String routingKey = envelope.getRoutingKey();
 				String[] keys = routingKey.split("\\.");
-				if(keys.length < 3) {
-					System.out.println("Failed to interpret routing key");
+				if(keys.length < 2) {
+					System.out.println("Motor control routing key must have a second element");
 					return;
-                        		}
-				if (keys[3].equals("wheel_rpm")) {
-				    int id = -1;
-				    if (keys[2].equals("front_left")) {
-				        id = 0;
-                    } else if (keys[2].equals("front_right")) {
-				        id = 1;
-                    } else if (keys[2].equals("back_left")) {
-				        id = 2;
-                    } else if (keys[2].equals("back_right")) {
-				        id = 3;
-                    } else {
-				        // TODO: handle this
+				}
+				if (keys[1].equals("locomotion")) {
+                    if(keys.length < 4) {
+                        System.out.println("Locomotion motor control routing key must have 4 elements");
+                        return;
                     }
+                    if (keys[3].equals("wheel_rpm")) {
+                        int id = -1;
+                        if (keys[2].equals("front_left")) {
+                            id = 0;
+                        } else if (keys[2].equals("front_right")) {
+                            id = 1;
+                        } else if (keys[2].equals("back_left")) {
+                            id = 2;
+                        } else if (keys[2].equals("back_right")) {
+                            id = 3;
+                        } else {
+                            System.out.println("Locomotion motor control routing key has invalid wheel");
+                            return;
+                        }
 
-                    Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
-					Actuation a = new Actuation();
-					a.override = true;
-					a.hold = true;
-					if (id % 2 == 0) {
-                        a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+                        Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        if (id % 2 == 0) {
+                            a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+                        } else {
+                            a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+                        }
+                        System.out.println("target value = " + a.targetValue);
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        System.out.println("queueing actuaton for id = " + id);
+                        hci.queueActuation(a);
+
+                    } else if (keys[3].equals("wheel_pod_pos")) {
+                        int id = -1;
+                        if (keys[2].equals("front_left")) {
+                            id = 4;
+                        } else if (keys[2].equals("front_right")) {
+                            id = 5;
+                        } else if (keys[2].equals("back_left")) {
+                            id = 6;
+                        } else if (keys[2].equals("back_right")) {
+                            id = 7;
+                        } else {
+                            System.out.println("Locomotion motor control routing key has invalid wheel");
+                            return;
+                        }
+                        Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        //a.targetValue = pcc.getPosition()*5 + 250;
+                        a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+                        System.out.println(a.targetValue);
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        hci.queueActuation(a);
+
                     } else {
-                        a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+                        System.out.println("Locomotion motor control routing key has unrecognized motor");
+                        return;
                     }
-                    System.out.println("target value = " + a.targetValue);
-					a.type = HardwareControlInterface.ActuationType.AngVel;
-					a.actuatorID = id;
-					System.out.println("queueing actuaton for id = " + id);
-					hci.queueActuation(a);
-
-				} else if (keys[3].equals("wheel_pod_pos")) {
-                    int id = -1;
-                    if (keys[2].equals("front_left")) {
-                        id = 4;
-                    } else if (keys[2].equals("front_right")) {
-                        id = 5;
-                    } else if (keys[2].equals("back_left")) {
-                        id = 6;
-                    } else if (keys[2].equals("back_right")) {
-                        id = 7;
+                } else if (keys[1].equals("excavation")) {
+                    if(keys.length < 3) {
+                        System.out.println("Excavation motor control routing key must have 3 elements");
+                        return;
+                    }
+                    if (keys[2].equals("conveyor_translation_displacement")) {
+                        Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        int id = 9;
+                        //a.targetValue = pcc.getPosition()*5 + 250;
+                        //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+                        //System.out.println(a.targetValue);
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        hci.queueActuation(a);
+                    } else if (keys[2].equals("arm_pos")) {
+                        Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        int id = 10;
+                        //a.targetValue = pcc.getPosition()*5 + 250;
+                        //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+                        //System.out.println(a.targetValue);
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        hci.queueActuation(a);
+                    } else if (keys[2].equals("bucket_conveyor_rpm")) {
+                        Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        int id = 8;
+                        //System.out.println("target value = " + a.targetValue);
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        hci.queueActuation(a);
                     } else {
-                        // TODO: handle this
+                        System.out.println("Excavation motor control routing key has unrecognized motor");
+                        return;
                     }
-					Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
-					Actuation a = new Actuation();
-					a.override = true;
-					a.hold = true;
-					//a.targetValue = pcc.getPosition()*5 + 250;
-					a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
-					System.out.println(a.targetValue);
-					a.type = HardwareControlInterface.ActuationType.AngVel;
-					a.actuatorID = id;
-					hci.queueActuation(a);
-
-				} else if (keys[2].equals("conveyor_translation_displacement")) {
-                    Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
-                    Actuation a = new Actuation();
-                    a.override = true;
-                    a.hold = true;
-                    int id = 9;
-                    //a.targetValue = pcc.getPosition()*5 + 250;
-                    //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
-                    //System.out.println(a.targetValue);
-                    a.type = HardwareControlInterface.ActuationType.AngVel;
-                    a.actuatorID = id;
-                    hci.queueActuation(a);
-
-                } else if (keys[2].equals("arm_pos")) {
-                    Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
-                    Actuation a = new Actuation();
-                    a.override = true;
-                    a.hold = true;
-                    int id = 10;
-                    //a.targetValue = pcc.getPosition()*5 + 250;
-                    //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
-                    //System.out.println(a.targetValue);
-                    a.type = HardwareControlInterface.ActuationType.AngVel;
-                    a.actuatorID = id;
-                    hci.queueActuation(a);
-
-                } else if (keys[2].equals("dump_pos")) {
-                    Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
-                    Actuation a = new Actuation();
-                    a.override = true;
-                    a.hold = true;
-                    int id = 12;
-                    //a.targetValue = pcc.getPosition()*5 + 250;
-                    //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
-                    //System.out.println(a.targetValue);
-                    a.type = HardwareControlInterface.ActuationType.AngVel;
-                    a.actuatorID = id;
-                    hci.queueActuation(a);
-
-                } else if (keys[2].equals("bucket_conveyor_rpm")) {
-                    Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
-                    Actuation a = new Actuation();
-                    a.override = true;
-                    a.hold = true;
-                    int id = 8;
-                    //System.out.println("target value = " + a.targetValue);
-                    a.type = HardwareControlInterface.ActuationType.AngVel;
-                    a.actuatorID = id;
-                    hci.queueActuation(a);
-
-                }  else if (keys[2].equals("conveyor_rpm")) {
-                    Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
-                    Actuation a = new Actuation();
-                    a.override = true;
-                    a.hold = true;
-                    int id = 11;
-                    //System.out.println("target value = " + a.targetValue);
-                    a.targetValue = scc.getRpm();
-                    a.type = HardwareControlInterface.ActuationType.AngVel;
-                    a.actuatorID = id;
-                    hci.queueActuation(a);
-
+                } else if (keys[1].equals("deposition")) {
+                    if(keys.length < 3) {
+                        System.out.println("Deposition motor control routing key must have 3 elements");
+                        return;
+                    }
+                    if (keys[2].equals("dump_pos")) {
+                        Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        int id = 12;
+                        //a.targetValue = pcc.getPosition()*5 + 250;
+                        //a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+                        //System.out.println(a.targetValue);
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        hci.queueActuation(a);
+                    } else if (keys[2].equals("conveyor_rpm")) {
+                        Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        int id = 11;
+                        //System.out.println("target value = " + a.targetValue);
+                        a.targetValue = scc.getRpm();
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        hci.queueActuation(a);
+                    } else {
+                        System.out.println("Deposition motor control routing key has unrecognized motor");
+                        return;
+                    }
+                } else {
+                    System.out.println("Motor control routing key has unrecognized subsystem");
+                    return;
                 }
-
 			}
 		};
 		channel.basicConsume(queueName, true, consumer);
