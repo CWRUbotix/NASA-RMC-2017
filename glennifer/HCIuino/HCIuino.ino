@@ -83,22 +83,22 @@ void setup() {
   // Front left wheel encoder
   sensor_infos[1].hardware = SH_RC_ENC;
   sensor_infos[1].addr = ADDRESS_RC_0;
-  sensor_infos[1].whichMotor = 0;
+  sensor_infos[1].whichMotor = 1;
   
   // Front right wheel encoder
   sensor_infos[0].hardware = SH_RC_ENC;
   sensor_infos[0].addr = ADDRESS_RC_0;
-  sensor_infos[0].whichMotor = 1;
+  sensor_infos[0].whichMotor = 2;
   
   // Back left wheel encoder
   sensor_infos[3].hardware = SH_RC_ENC;
   sensor_infos[3].addr = ADDRESS_RC_1;
-  sensor_infos[3].whichMotor = 0;
+  sensor_infos[3].whichMotor = 1;
   
   // Back right wheel encoder
   sensor_infos[2].hardware = SH_RC_ENC;
   sensor_infos[2].addr = ADDRESS_RC_1;
-  sensor_infos[2].whichMotor = 1;
+  sensor_infos[2].whichMotor = 2;
 
   // 3 is front left
   sensor_infos[4].hardware = SH_PIN_POT;
@@ -116,21 +116,21 @@ void setup() {
   // DUMMY SENSORS for setting pot mode
   sensor_infos[8].hardware = SH_RC_POT;
   sensor_infos[8].addr = ADDRESS_RC_3;
-  sensor_infos[8].whichMotor = 1;
+  sensor_infos[8].whichMotor = 2;
   
   sensor_infos[9].hardware = SH_RC_POT;
   sensor_infos[9].addr = ADDRESS_RC_2;
-  sensor_infos[9].whichMotor = 0;
+  sensor_infos[9].whichMotor = 1;
   
   sensor_infos[10].hardware = SH_RC_POT;
   sensor_infos[10].addr = ADDRESS_RC_2;
-  sensor_infos[10].whichMotor = 1;
+  sensor_infos[10].whichMotor = 2;
   // END DUMMY SENSORS
 
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
   motor_infos[1].addr = ADDRESS_RC_0;
-  motor_infos[1].whichMotor = 0;
+  motor_infos[1].whichMotor = 1;
   motor_infos[1].kp = 16;
   motor_infos[1].ki = 0;
   motor_infos[1].kd = 0;
@@ -140,7 +140,7 @@ void setup() {
   // Front right wheel motor
   motor_infos[0].hardware = MH_RC_VEL;
   motor_infos[0].addr = ADDRESS_RC_0;
-  motor_infos[0].whichMotor = 1;
+  motor_infos[0].whichMotor = 2;
   motor_infos[0].kp = 16;
   motor_infos[0].ki = 0;
   motor_infos[0].kd = 0;
@@ -150,7 +150,7 @@ void setup() {
   // Back left wheel motor
   motor_infos[3].hardware = MH_RC_VEL;
   motor_infos[3].addr = ADDRESS_RC_1;
-  motor_infos[3].whichMotor = 0;
+  motor_infos[3].whichMotor = 1;
   motor_infos[3].kp = 16;
   motor_infos[3].ki = 0;
   motor_infos[3].kd = 0;
@@ -160,7 +160,7 @@ void setup() {
   // Back right wheel motor
   motor_infos[2].hardware = MH_RC_VEL;
   motor_infos[2].addr = ADDRESS_RC_1;
-  motor_infos[2].whichMotor = 1;
+  motor_infos[2].whichMotor = 2;
   motor_infos[2].kp = 16;
   motor_infos[2].ki = 0;
   motor_infos[2].kd = 0;
@@ -207,13 +207,13 @@ void setup() {
   // Bucket Conveyor Drive motor TODO
   motor_infos[8].hardware = MH_RC_PWM;
   motor_infos[8].addr = ADDRESS_RC_3;
-  motor_infos[8].whichMotor = 0;
+  motor_infos[8].whichMotor = 1;
   motor_infos[8].scale = 1;
 
   // Bucket Conveyor Linear motor TODO
   motor_infos[9].hardware = MH_RC_POS;
   motor_infos[9].addr = ADDRESS_RC_3;
-  motor_infos[9].whichMotor = 1;
+  motor_infos[9].whichMotor = 2;
   motor_infos[9].kp = 10;
   motor_infos[9].ki = 0;
   motor_infos[9].kd = 0;
@@ -344,7 +344,7 @@ FAULT_T configure_sensors() {
     SensorInfo sensor_info = sensor_infos[i];
     switch (sensor_info.hardware) {
     case SH_RC_POT:
-      if (sensor_info.whichMotor) {
+      if (sensor_info.whichMotor == 2) {
         success = roboclaw.SetM2EncoderMode(sensor_info.addr, 0x81);
       } else {
         success = roboclaw.SetM1EncoderMode(sensor_info.addr, 0x81);
@@ -354,7 +354,7 @@ FAULT_T configure_sensors() {
       }
       break;
     case SH_RC_ENC:
-      if (sensor_info.whichMotor) {
+      if (sensor_info.whichMotor == 2) {
         success = roboclaw.SetM2EncoderMode(sensor_info.addr, 0x80);
       } else {
         success = roboclaw.SetM1EncoderMode(sensor_info.addr, 0x80);
@@ -385,7 +385,7 @@ FAULT_T configure_motors() {
       // Nothing to do, default config
       break;
     case MH_RC_VEL:
-      if (motor_info.whichMotor) {
+      if (motor_info.whichMotor == 2) {
         success = roboclaw.SetM2VelocityPID(
           motor_info.addr,
           motor_info.kp,
@@ -405,7 +405,7 @@ FAULT_T configure_motors() {
       }
       break;
     case MH_RC_POS:
-      if (motor_info.whichMotor) {
+      if (motor_info.whichMotor == 2) {
         success = roboclaw.SetM2PositionPID(
           motor_info.addr,
           motor_info.kp,
@@ -544,7 +544,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   int16_t dummy;
   switch (sensor_info.hardware) {
   case SH_RC_POT:
-    if (sensor_info.whichMotor) {
+    if (sensor_info.whichMotor == 2) {
       val32 = roboclaw.ReadEncM2(sensor_info.addr, &status, &valid);
     } else {
       val32 = roboclaw.ReadEncM1(sensor_info.addr, &status, &valid);
@@ -555,7 +555,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     *val = (int16_t)val32;
     break;
   case SH_RC_ENC:
-    if (sensor_info.whichMotor) {
+    if (sensor_info.whichMotor == 2) {
       val32 = roboclaw.ReadSpeedM2(sensor_info.addr, &status, &valid);
       //roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
     } else {
@@ -586,14 +586,14 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   int val_scaled = val * motor_infos[ID].scale;
   switch (motor_info.hardware) {
   case MH_RC_PWM:
-    if (motor_info.whichMotor) {
+    if (motor_info.whichMotor == 2) {
       success = roboclaw.DutyM2(motor_info.addr, val_scaled);
     } else {
       success = roboclaw.DutyM1(motor_info.addr, val_scaled);
     }
     break;
   case MH_RC_VEL:
-    if (motor_info.whichMotor) {
+    if (motor_info.whichMotor == 2) {
       success = roboclaw.SpeedM2(motor_info.addr, val_scaled);
     } else {
       success = roboclaw.SpeedM1(motor_info.addr, val_scaled);
@@ -603,7 +603,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     }
     break;
   case MH_RC_POS:
-    if (motor_info.whichMotor) {
+    if (motor_info.whichMotor == 2) {
       success = roboclaw.SpeedAccelDeccelPositionM2(
         motor_info.addr,
         motor_info.accel,
