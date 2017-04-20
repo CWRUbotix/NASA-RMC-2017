@@ -211,7 +211,7 @@ void setup() {
   motor_infos[8].scale = 1;
 
   // Bucket Conveyor Linear motor TODO
-  motor_infos[9].hardware = MH_RC_POS;
+  motor_infos[9].hardware = MH_ST_PWM;
   motor_infos[9].addr = ADDRESS_RC_3;
   motor_infos[9].whichMotor = 2;
   motor_infos[9].kp = 10;
