@@ -23,7 +23,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    explicit MainWindow(AMQP *amqp, QWidget *parent = 0);
+    explicit MainWindow(QString loginStr, QWidget *parent = 0);
     ~MainWindow();
     void initSubscription();
 
@@ -63,8 +63,23 @@ public slots:
     void handleBackRightWheelPodTurn();
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
+    void handleExcavationArmSet(int value);
+    void handleExcavationArmDig();
+    void handleExcavationArmJog();
+    void handleExcavationArmStore();
+    void handleExcavationTranslationSet(int value);
+    void handleExcavationTranslationExtend();
+    void handleExcavationTranslationStop();
+    void handleExcavationTranslationRetract();
+    void handleExcavationConveyor(bool checked);
+    void handleDepositionDumpSet(int value);
+    void handleDepositionDumpDump();
+    void handleDepositionDumpStop();
+    void handleDepositionDumpStore();
+    void handleDepositionConveyor(bool checked);
+    void handleSubscribe();
 
-    void handleState(State *s);
+    void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
@@ -74,6 +89,7 @@ public slots:
 private:
     Ui::MainWindow *ui;
     AMQP *m_amqp;
+    QString m_loginStr;
     QGraphicsScene *locomotionScene;
     QGraphicsScene *excavationScene;
     QGraphicsScene *depositionScene;

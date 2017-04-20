@@ -54,15 +54,7 @@ int main(int argc, char *argv[])
 
     QString loginStr = user + ":" + pass + "@" + address;
 
-    AMQP *amqp;
-    try {
-        amqp = new AMQP(loginStr.toStdString());
-    } catch (AMQPException) {
-        QMessageBox::critical(0,"Error",QString::fromStdString("AMQP connection error"));
-        return 1;
-    }
-
-    MainWindow w(amqp);
+    MainWindow w(loginStr);
     w.initSubscription();
     w.show();
 
