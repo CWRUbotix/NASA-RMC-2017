@@ -61,6 +61,7 @@ public slots:
     void handleBackRightWheelPodTurn();
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
+    void handleDepositionConveyor(bool checked);
     void handleSubscribe();
 
     void handleState(State *s);

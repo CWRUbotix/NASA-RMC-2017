@@ -221,8 +221,8 @@ void setup() {
   motor_infos[10].scale = 1;
 
   // Deposition Conveyor Motor TODO
-  motor_infos[11].hardware = MH_RC_PWM;
-  motor_infos[11].addr = ADDRESS_RC_3;
+  motor_infos[11].hardware = MH_ST_PWM;
+  motor_infos[11].addr = 3;
   motor_infos[11].whichMotor = 2;
   motor_infos[11].feedbackSensorID = 11;
   motor_infos[11].kp = 10;

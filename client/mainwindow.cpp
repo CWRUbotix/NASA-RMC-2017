@@ -140,6 +140,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelPodSet);
     QObject::connect(ui->slider_BackRightWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelPodSet);
+    QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
+                     this, &MainWindow::handleDepositionConveyor);
     QObject::connect(ui->pushButton_Subscribe, &QPushButton::clicked,
                      this, &MainWindow::handleSubscribe);
 }
@@ -641,6 +643,25 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDepositionConveyor(bool checked) {
+    SpeedContolCommand msg;
+    msg.set_rpm(checked ? -127 : 0);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.conveyor_rpm");
 
     free(msg_buff);
 }
