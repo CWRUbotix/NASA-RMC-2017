@@ -23,7 +23,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    explicit MainWindow(AMQP *amqp, QWidget *parent = 0);
+    explicit MainWindow(QString loginStr, QWidget *parent = 0);
     ~MainWindow();
     void initSubscription();
 
@@ -64,7 +64,7 @@ public slots:
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
 
-    void handleState(State *s);
+    void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
@@ -74,6 +74,7 @@ public slots:
 private:
     Ui::MainWindow *ui;
     AMQP *m_amqp;
+    QString m_loginStr;
     QGraphicsScene *locomotionScene;
     QGraphicsScene *excavationScene;
     QGraphicsScene *depositionScene;

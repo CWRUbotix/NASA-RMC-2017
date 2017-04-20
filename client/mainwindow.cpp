@@ -143,10 +143,17 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackRightWheelPodSet);
 }
 
-MainWindow::MainWindow(AMQP *amqp, QWidget *parent) :
+MainWindow::MainWindow(QString loginStr, QWidget *parent) :
     MainWindow::MainWindow(parent)
 {
-    m_amqp = amqp;
+    m_loginStr = loginStr;
+
+    try {
+        m_amqp = new AMQP(m_loginStr.toStdString());
+    } catch (AMQPException) {
+        QMessageBox::critical(0,"Error",QString::fromStdString("AMQP connection error"));
+        m_amqp = 0;
+    }
 }
 
 MainWindow::~MainWindow()
@@ -645,8 +652,8 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
 }
 
 void MainWindow::initSubscription() {
-    ConsumerThread *thread = new ConsumerThread(m_amqp);
-    connect(thread, &ConsumerThread::stateReady, this, &MainWindow::handleState);
+    ConsumerThread *thread = new ConsumerThread(m_loginStr, "abcde");
+    connect(thread, &ConsumerThread::receivedMessage, this, &MainWindow::handleState);
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
     thread->start();
 
@@ -674,11 +681,13 @@ void MainWindow::initSubscription() {
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
 }
 
-void MainWindow::handleState(State *s) {
-    rectangle1->setRotation(s->locdetailed().front_left_pos());
-    rectangle2->setRotation(-s->locdetailed().front_right_pos());
-    rectangle3->setRotation(-s->locdetailed().back_left_pos());
-    rectangle4->setRotation(s->locdetailed().back_right_pos());
+void MainWindow::handleState(QString key, QByteArray data) {
+    State s;
+    s.ParseFromArray(data.data(), data.length());
+    rectangle1->setRotation(s.locdetailed().front_left_pos());
+    rectangle2->setRotation(-s.locdetailed().front_right_pos());
+    rectangle3->setRotation(-s.locdetailed().back_left_pos());
+    rectangle4->setRotation(s.locdetailed().back_right_pos());
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {
