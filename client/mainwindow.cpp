@@ -12,7 +12,7 @@
 #include <QDebug>
 #include "consumerthread.h"
 #include <QCloseEvent>
-//#include "cameraone.cpp"
+#include "cameraone.cpp"
 
 /*
  * In this file, the state of the robot is queried by RPC.
