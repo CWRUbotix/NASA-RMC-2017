@@ -46,7 +46,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -980,7 +980,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QProgressBar" name="progressBar_FrontLeftWheePod">
+               <widget class="QProgressBar" name="progressBar_FrontLeftWheelPod">
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
                 </property>

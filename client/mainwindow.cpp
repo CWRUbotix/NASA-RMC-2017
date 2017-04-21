@@ -910,7 +910,7 @@ void MainWindow::handleState(QString key, QByteArray data) {
     ui->lcdNumber_FrontRightWheelPod->display(fr_pos);
     ui->lcdNumber_BackLeftWheelPod->display(bl_pos);
     ui->lcdNumber_BackRightWheelPod->display(br_pos);
-    ui->progressBar_FrontLeftWheePod->setValue(fl_pos);
+    ui->progressBar_FrontLeftWheelPod->setValue(fl_pos);
     ui->progressBar_FrontRightWheelPod->setValue(fr_pos);
     ui->progressBar_BackLeftWheelPod->setValue(bl_pos);
     ui->progressBar_BackRightWheelPod->setValue(br_pos);
