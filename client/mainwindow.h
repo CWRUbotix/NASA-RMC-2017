@@ -78,7 +78,6 @@ public slots:
     void handleDepositionDumpStop();
     void handleDepositionDumpStore();
     void handleDepositionConveyor(bool checked);
-    //void handleSubscribe();
 
     void handleState(QString key, QByteArray data);
 

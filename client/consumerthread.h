@@ -22,7 +22,6 @@ protected:
     void run();
 signals:
     void receivedMessage(QString key, QByteArray data);
-    //void receivedCamOne(QString key, char data);
 private:
     AMQP *m_amqp;
     QString m_topic;
