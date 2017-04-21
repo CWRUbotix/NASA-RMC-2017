@@ -12,6 +12,7 @@
 #include <QDebug>
 #include "consumerthread.h"
 #include <QCloseEvent>
+#include <QLineEdit>
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -32,6 +33,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    /*
+
+    QMap<QLineEdit*, QSlider*> lineSliders;
+
+    lineSliders.insert(ui->lineEdit_BackLeftWheel, ui->slider_BackLeftWheel);
+
+    ui->lineEdit_FrontLeftWheel->setValidator(new QIntValidator(-60, 60));
+    */
 
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
@@ -484,6 +493,8 @@ void MainWindow::handleFrontLeftWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_left.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontLeftWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontRightWheelStop() {
@@ -507,6 +518,8 @@ void MainWindow::handleFrontRightWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_right.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontRightWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleBackLeftWheelStop() {
@@ -530,6 +543,8 @@ void MainWindow::handleBackLeftWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_left.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_BackLeftWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleBackRightWheelStop() {
@@ -553,6 +568,8 @@ void MainWindow::handleBackRightWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_BackRightWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontLeftWheelPodStrafe() {
@@ -584,6 +601,8 @@ void MainWindow::handleFrontLeftWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_left.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontLeftWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontRightWheelPodStrafe() {
@@ -615,6 +634,8 @@ void MainWindow::handleFrontRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_right.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontRightWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleBackLeftWheelPodStrafe() {
@@ -646,6 +667,8 @@ void MainWindow::handleBackLeftWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_left.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_BackLeftWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleBackRightWheelPodStrafe() {
@@ -677,6 +700,8 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_BackRightWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleExcavationArmSet(int value) {
@@ -696,6 +721,8 @@ void MainWindow::handleExcavationArmSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.arm_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_ExcavationArm->setText(QString::number(value));
 }
 
 void MainWindow::handleExcavationArmDig() {
@@ -727,6 +754,8 @@ void MainWindow::handleExcavationTranslationSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.conveyor_translation_displacement");
 
     free(msg_buff);
+
+    ui->lineEdit_ExcavationTranslation->setText(QString::number(value));
 }
 
 void MainWindow::handleExcavationTranslationExtend() {
@@ -781,6 +810,8 @@ void MainWindow::handleDepositionDumpDump() {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(100));
 }
 
 void MainWindow::handleDepositionDumpStop() {
@@ -800,6 +831,8 @@ void MainWindow::handleDepositionDumpStop() {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(0));
 }
 
 void MainWindow::handleDepositionDumpStore() {
@@ -819,6 +852,8 @@ void MainWindow::handleDepositionDumpStore() {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(-100));
 }
 
 void MainWindow::handleDepositionConveyor(bool checked) {

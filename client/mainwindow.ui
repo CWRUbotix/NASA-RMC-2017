@@ -10,6 +10,9 @@
     <height>701</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -756,6 +759,16 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_FrontLeftWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::ClickFocus</enum>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
@@ -938,6 +951,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_FrontRightWheel"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1100,6 +1116,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_FrontLeftWheelPod"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1261,6 +1280,9 @@
                  <string>deg</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_FrontRightWheelPod"/>
               </item>
              </layout>
             </item>
@@ -1444,6 +1466,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_BackLeftWheel"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1626,6 +1651,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_BackRightWheel"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1787,6 +1815,9 @@
                  <string>deg</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_BackLeftWheelPod"/>
               </item>
              </layout>
             </item>
@@ -1950,6 +1981,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_BackRightWheelPod"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1981,7 +2015,7 @@
                  <number>0</number>
                 </property>
                 <property name="maximum">
-                 <number>90</number>
+                 <number>2000</number>
                 </property>
                 <property name="value">
                  <number>0</number>
@@ -2095,6 +2129,9 @@
                  <string>deg</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_ExcavationArm"/>
               </item>
              </layout>
             </item>
@@ -2254,6 +2291,9 @@
                  <string>m</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_ExcavationTranslation"/>
               </item>
              </layout>
             </item>
@@ -2509,6 +2549,9 @@
                  <string>deg</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_DepositionDump"/>
               </item>
              </layout>
             </item>
