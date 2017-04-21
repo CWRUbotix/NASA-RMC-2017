@@ -41,11 +41,11 @@ void CameraOne::handleFrame(QString key, QByteArray data) {
 void CameraOne::camOneSubscription() {
     QString login = str_login;
     ConsumerThread *thread = new ConsumerThread(str_login, "camera.one");
-    //qDebug("Got here 4");
+    qDebug("Got here 4");
     connect(thread, &ConsumerThread::receivedMessage, this, &CameraOne::handleFrame);
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
     thread->start();
-    //qDebug("Got here 7");
+    qDebug("Got here 7");
    // AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     //ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     //qDebug("Got here 6");
