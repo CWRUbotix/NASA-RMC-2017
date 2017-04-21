@@ -54,7 +54,7 @@ def getCam1():
         ret,  frame1 = cam1.read()
         imr1 = cv2.cvtColor(frame1,  cv2.COLOR_BGR2RGB)
 	print (str(imr1.shape))
-        img1 = str(bytearray(cv2.imencode('.ppm',  imr1)[1].flatten().tolist()))
+        img1 = str(bytearray(cv2.imencode('.jpg',  imr1)[1].flatten().tolist()))
         send1(img1)
     else:
          c= 1
@@ -64,7 +64,7 @@ def getCam2():
         ret,  frame2 = cam2.read()
         imr2 = cv2.cvtColor(frame2,  cv2.COLOR_BGR2RGB)
 	print (str(imr2.shape))
-        img2 = str(bytearray(cv2.imencode('.ppm',  imr2)[1].flatten().tolist()))
+        img2 = str(bytearray(cv2.imencode('.jpg',  imr2)[1].flatten().tolist()))
         send2(img2)
     else:
         c= 1
@@ -74,7 +74,7 @@ def getCam3():
         ret,  frame3 = cam3.read()
         imr3 = cv2.cvtColor(frame3,  cv2.COLOR_BGR2RGB)
 	print (str(imr3.shape))
-        img3 = str(bytearray(cv2.imencode('.ppm',  imr3)[1].flatten().tolist()))
+        img3 = str(bytearray(cv2.imencode('.jpg',  imr3)[1].flatten().tolist()))
         send3(img3)
     else:
          c= 1
@@ -84,7 +84,7 @@ def getCam4():
         ret,  frame4 = cam4.read()
         imr4 = cv2.cvtColor(frame4,  cv2.COLOR_BGR2RGB)
 	print (str(imr4.shape))
-        img4 = str(bytearray(cv2.imencode('.ppm',  imr4)[1].flatten().tolist()))
+        img4 = str(bytearray(cv2.imencode('.jpg',  imr4)[1].flatten().tolist()))
         send4(img4)
     else:
          c= 1
@@ -94,7 +94,7 @@ def getCam5():
         ret,  frame5 = cam5.read()
         imr5 = cv2.cvtColor(frame5,  cv2.COLOR_BGR2RGB)
 	print (str(imr5.shape))
-        img5 = str(bytearray(cv2.imencode('.ppm',  imr5)[1].flatten().tolist()))
+        img5 = str(bytearray(cv2.imencode('.jpg',  imr5)[1].flatten().tolist()))
 	#print (str(imr5.shape))
         send5(img5)
     else:
