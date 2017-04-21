@@ -873,10 +873,50 @@ void MainWindow::initSubscription() {
 void MainWindow::handleState(QString key, QByteArray data) {
     State s;
     s.ParseFromArray(data.data(), data.length());
-    rectangle1->setRotation(s.locdetailed().front_left_pos());
-    rectangle2->setRotation(-s.locdetailed().front_right_pos());
-    rectangle3->setRotation(-s.locdetailed().back_left_pos());
-    rectangle4->setRotation(s.locdetailed().back_right_pos());
+    float fl_rpm = s.locdetailed().front_left_rpm();
+    float fr_rpm = s.locdetailed().front_right_rpm();
+    float bl_rpm = s.locdetailed().back_left_rpm();
+    float br_rpm = s.locdetailed().back_right_rpm();
+    float fl_pos = s.locdetailed().front_left_pos();
+    float fr_pos = s.locdetailed().front_right_pos();
+    float bl_pos = s.locdetailed().back_left_pos();
+    float br_pos = s.locdetailed().back_right_pos();
+    ui->lcdNumber_FrontLeftWheel->display(fl_rpm);
+    if (fl_rpm >= 0) {
+        ui->progressBar_FrontLeftWheelForwards->setValue(fl_rpm);
+    } else {
+        ui->progressBar_FrontLeftWheelBackwards->setValue(-fl_rpm);
+    }
+    ui->lcdNumber_FrontRightWheel->display(fr_rpm);
+    if (fr_rpm >= 0) {
+        ui->progressBar_FrontRightWheelForwards->setValue(fr_rpm);
+    } else {
+        ui->progressBar_FrontRightWheelBackwards->setValue(-fr_rpm);
+    }
+    ui->lcdNumber_BackLeftWheel->display(bl_rpm);
+    if (bl_rpm >= 0) {
+        ui->progressBar_BackLeftWheelForwards->setValue(bl_rpm);
+    } else {
+        ui->progressBar_BackLeftWheelBackwards->setValue(-bl_rpm);
+    }
+    ui->lcdNumber_BackRightWheel->display(br_rpm);
+    if (br_rpm >= 0) {
+        ui->progressBar_BackRightWheelForwards->setValue(br_rpm);
+    } else {
+        ui->progressBar_BackRightWheeBackwards->setValue(-br_rpm);
+    }
+    ui->lcdNumber_FrontLeftWheelPod->display(fl_pos);
+    ui->lcdNumber_FrontRightWheelPod->display(fr_pos);
+    ui->lcdNumber_BackLeftWheelPod->display(bl_pos);
+    ui->lcdNumber_BackRightWheelPod->display(br_pos);
+    ui->progressBar_FrontLeftWheePod->setValue(fl_pos);
+    ui->progressBar_FrontRightWheelPod->setValue(fr_pos);
+    ui->progressBar_BackLeftWheelPod->setValue(bl_pos);
+    ui->progressBar_BackRightWheelPod->setValue(br_pos);
+    rectangle1->setRotation(fl_pos);
+    rectangle2->setRotation(-fr_pos);
+    rectangle3->setRotation(-bl_pos);
+    rectangle4->setRotation(br_pos);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {
