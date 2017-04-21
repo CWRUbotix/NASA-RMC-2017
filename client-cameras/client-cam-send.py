@@ -31,7 +31,8 @@ def send5(msg):
     
 #Camera Capture
 #Change Capture Device Index to correspinding index
-#for corresponding cameracam1 = cv2.VideoCapture(0)#
+#for corresponding camera
+cam1 = cv2.VideoCapture(0)
 cam1.set(3, 720)
 cam1.set(4, 576)
 cam2 = cv2.VideoCapture(1)
