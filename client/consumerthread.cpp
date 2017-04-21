@@ -65,9 +65,18 @@ int handleReceivedMessage(AMQPMessage *message) {
         qDebug() << "No data";
         return 1;
     }
+   /* QString x = "camera.one";
+    if(QString::compare(key, x, Qt::CaseInsensitive) == 0) {
+        emit data;
+        return 0;
+    }*/
     QByteArray dataArray = QByteArray::fromRawData(data, len);
     emit foundConsumerThread->receivedMessage(key, dataArray);
     return 0;
+}
+
+void receivedCamOne(QString key, char data) {
+    emit data;
 }
 
 QMap<QString, ConsumerThread*> consumerThreadInstances;

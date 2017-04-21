@@ -10,6 +10,7 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QCloseEvent>
+#include "cameraone.h"
 
 using namespace com::cwrubotix::glennifer;
 
@@ -77,7 +78,7 @@ public slots:
     void handleDepositionDumpStop();
     void handleDepositionDumpStore();
     void handleDepositionConveyor(bool checked);
-    void handleSubscribe();
+    //void handleSubscribe();
 
     void handleState(QString key, QByteArray data);
 
@@ -85,6 +86,9 @@ public slots:
     void keyReleaseEvent(QKeyEvent *ev);
     void wheelEvent(QWheelEvent* event);
     void closeEvent(QCloseEvent *event);
+
+private slots:
+    void on_commandLinkButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -99,6 +103,8 @@ private:
     QGraphicsRectItem *rectangle4;
     int m_desiredConfig = 0; // 0 is straight, 1 is turn, 2 is strafe
     int m_configSpeeds[3] = {100, 60, 50};
+
+    CameraOne *cameraOne;
 };
 
 #endif // MAINWINDOW_H

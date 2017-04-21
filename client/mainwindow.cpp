@@ -12,6 +12,7 @@
 #include <QDebug>
 #include "consumerthread.h"
 #include <QCloseEvent>
+//#include "cameraone.cpp"
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -986,4 +987,10 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.unsubscribe");
+}
+
+void MainWindow::on_commandLinkButton_clicked()
+{
+    cameraOne = new CameraOne(this);
+    cameraOne->show();
 }

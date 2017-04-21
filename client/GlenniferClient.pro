@@ -15,15 +15,18 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
     messages.pb.cc \
-    consumerthread.cpp
+    consumerthread.cpp \
+    cameraone.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
     messages.pb.h \
-    consumerthread.h
+    consumerthread.h \
+    cameraone.h
 
 FORMS    += mainwindow.ui \
-    connectiondialog.ui
+    connectiondialog.ui \
+    cameraone.ui
 
 CONFIG += conan_basic_setup
 include(conanbuildinfo.pri)
