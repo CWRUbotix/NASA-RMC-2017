@@ -34,20 +34,20 @@ def send5(msg):
 #for corresponding camera
 # cam1.set(3,  480)
 #cam1.set(4, 320)
-cam1 = cv2.VideoCapture(0)
-cam1.set(3, 720)
+cam1 = cv2.VideoCapture(0)#
+cam1.set(3, 720)#
 cam1.set(4, 576)
 cam2 = cv2.VideoCapture(1)
-cam2.set(3, 720)
+#cam2.set(3, 720)#
 cam2.set(4, 576)
-cam3 = cv2.VideoCapture(2)
+cam3 = cv2.VideoCapture(2)#
 cam3.set(3, 720)
-cam3.set(4, 576)
-cam4 = cv2.VideoCapture(3)
+#cam3.set(4, 576)
+cam4 = cv2.VideoCapture(3)#
 cam4.set(3, 720)
-cam4.set(4, 576)
+#cam4.set(4, 576)#
 cam5 = cv2.VideoCapture(4)
-cam5.set(3, 720)
+#cam5.set(3, 720)
 cam5.set(4, 576)
 def getCam1():
     if (cam1.isOpened() is True):
