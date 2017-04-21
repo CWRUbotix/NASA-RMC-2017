@@ -31,7 +31,7 @@ void CameraOne::handleFrame(QString key, QByteArray data) {
     frame = image;*/
     //frame = cv::imdecode(data, CV_LOAD_IMAGE_COLOR);
     std::vector<byte> bufferToCompress(data.begin(), data.end());
-    cv::Mat image = cv::Mat(1080,1920,CV_8UC3,bufferToCompress.data()).clone(); // copy
+    cv::Mat image = cv::Mat(576,720,CV_8UC3,bufferToCompress.data()).clone(); // copy
     //480,640
     frame = image;
     CameraOne::on_label_linkActivated();
