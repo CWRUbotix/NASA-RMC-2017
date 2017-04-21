@@ -991,6 +991,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 void MainWindow::on_commandLinkButton_clicked()
 {
+    //reset frame and img to make sure it is not conflicting
     cameraOne = new CameraOne(this, m_loginStr);
     cameraOne->CameraOne::camOneStream();
     //qDebug("Got here 5");
