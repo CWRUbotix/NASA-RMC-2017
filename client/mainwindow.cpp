@@ -881,6 +881,7 @@ void MainWindow::handleState(QString key, QByteArray data) {
     float fr_pos = s.locdetailed().front_right_pos();
     float bl_pos = s.locdetailed().back_left_pos();
     float br_pos = s.locdetailed().back_right_pos();
+    float speed = s.locsummary().speed();
     ui->lcdNumber_FrontLeftWheel->display(fl_rpm);
     if (fl_rpm >= 0) {
         ui->progressBar_FrontLeftWheelForwards->setValue(fl_rpm);
@@ -917,6 +918,8 @@ void MainWindow::handleState(QString key, QByteArray data) {
     rectangle2->setRotation(-fr_pos);
     rectangle3->setRotation(-bl_pos);
     rectangle4->setRotation(br_pos);
+    ui->speedometer->setSpeed(speed);
+    ui->speedometer->setPower((speed * 100) / 0.7F);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {

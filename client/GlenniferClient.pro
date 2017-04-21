@@ -15,12 +15,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
     messages.pb.cc \
-    consumerthread.cpp
+    consumerthread.cpp \
+    speedometer.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
     messages.pb.h \
-    consumerthread.h
+    consumerthread.h \
+    speedometer.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui
