@@ -992,5 +992,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 void MainWindow::on_commandLinkButton_clicked()
 {
     cameraOne = new CameraOne(this);
+    cameraOne->CameraOne::camOneStream();
     cameraOne->show();
 }
