@@ -993,7 +993,8 @@ void MainWindow::on_commandLinkButton_clicked()
 {
     //reset frame and img to make sure it is not conflicting
     cameraOne = new CameraOne(this, m_loginStr);
+    //cameraOne->show();
     cameraOne->CameraOne::camOneStream();
-    //qDebug("Got here 5");
+    qDebug("Got here 5");
     cameraOne->show();
 }
