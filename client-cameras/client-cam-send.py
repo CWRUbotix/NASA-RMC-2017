@@ -33,26 +33,27 @@ def send5(msg):
 #Change Capture Device Index to correspinding index
 #for corresponding camera
 cam1 = cv2.VideoCapture(0)
-#cam1.set(3, 720)
-#cam1.set(4, 576)
+#cam1.set(3, 1920)
+#cam1.set(4, 1080)
 cam2 = cv2.VideoCapture(1)
-#cam2.set(3, 720)
-#cam2.set(4, 576)
+#cam2.set(3, 1920)
+#cam2.set(4, 1080)
 cam3 = cv2.VideoCapture(2)
-#cam3.set(3, 720)
-#cam3.set(4, 576)
+#cam3.set(3, 1920)
+#cam3.set(4, 1080)
 cam4 = cv2.VideoCapture(3)
-#cam4.set(3, 720)
-#cam4.set(4, 576)
+#cam4.set(3, 1920)
+#cam4.set(4, 1080)
 cam5 = cv2.VideoCapture(4)
-#cam5.set(3, 720)
-#cam5.set(4, 576)
+#cam5.set(3, 1920)
+#cam5.set(4, 1080)
 def getCam1():
     if (cam1.isOpened() is True):
         ret,  frame1 = cam1.read()
-        imr1 = cv2.cvtColor(frame1,  cv2.COLOR_BGR2RGB)
-	print (str(imr1.shape))
-        img1 = str(bytearray(cv2.imencode('.jpg',  imr1)[1].flatten().tolist()))
+        #imr1 = cv2.cvtColor(frame1,  cv2.COLOR_BGR2RGB)
+	#print (str(imr1.shape))
+        img1 = str(bytearray(cv2.imencode('.png',  frame1)[1].flatten().tolist()))
+	#img1 = cv2.imencode('.jpg', imr1)[1].tostring()
         send1(img1)
     else:
          c= 1
@@ -61,7 +62,7 @@ def getCam2():
     if (cam2.isOpened() is True):
         ret,  frame2 = cam2.read()
         imr2 = cv2.cvtColor(frame2,  cv2.COLOR_BGR2RGB)
-	print (str(imr2.shape))
+	#print (str(imr2.shape))
         img2 = str(bytearray(cv2.imencode('.jpg',  imr2)[1].flatten().tolist()))
         send2(img2)
     else:
@@ -71,7 +72,7 @@ def getCam3():
     if (cam3.isOpened() is True):
         ret,  frame3 = cam3.read()
         imr3 = cv2.cvtColor(frame3,  cv2.COLOR_BGR2RGB)
-	print (str(imr3.shape))
+	#print (str(imr3.shape))
         img3 = str(bytearray(cv2.imencode('.jpg',  imr3)[1].flatten().tolist()))
         send3(img3)
     else:
@@ -81,7 +82,7 @@ def getCam4():
     if (cam4.isOpened() is True):
         ret,  frame4 = cam4.read()
         imr4 = cv2.cvtColor(frame4,  cv2.COLOR_BGR2RGB)
-	print (str(imr4.shape))
+	#print (str(imr4.shape))
         img4 = str(bytearray(cv2.imencode('.jpg',  imr4)[1].flatten().tolist()))
         send4(img4)
     else:
@@ -91,7 +92,7 @@ def getCam5():
     if (cam5.isOpened() is True):
         ret,  frame5 = cam5.read()
         imr5 = cv2.cvtColor(frame5,  cv2.COLOR_BGR2RGB)
-	print (str(imr5.shape))
+	#print (str(imr5.shape))
         img5 = str(bytearray(cv2.imencode('.jpg',  imr5)[1].flatten().tolist()))
 	#print (str(imr5.shape))
         send5(img5)
@@ -109,4 +110,5 @@ while(True):
     #Camera Four Update
     getCam4()
     #Camera Five Update
-getCam5()
+    getCam5()
+    time.sleep(2)
