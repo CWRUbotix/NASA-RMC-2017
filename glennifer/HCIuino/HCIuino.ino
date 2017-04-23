@@ -38,6 +38,7 @@ typedef struct SensorInfo {
   uint8_t addr; // When hardware = SH_RC_*
   uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
+  uint8_t lastLimitVal;
 } SensorInfo;
 
 enum MotorHardware {
@@ -48,7 +49,7 @@ enum MotorHardware {
   MH_RC_POS_BOTH,
   MH_ST_PWM,
   MH_ST_POS,
-  MH_ST_POS_BOTH
+  MH_ST_PWM_BOTH
 };
 
 typedef struct MotorInfo {
@@ -127,17 +128,25 @@ void setup() {
   sensor_infos[10].whichMotor = 2;
   // END DUMMY SENSORS
 
+  //BC Limit Switch A Retracted
   sensor_infos[23].hardware = SH_PIN_LIMIT;
   sensor_infos[23].whichPin = 36;
+  sensor_infos[23].lastLimitVal = LOW;
 
+  //BC Limit Switch A Extended
   sensor_infos[24].hardware = SH_PIN_LIMIT;
   sensor_infos[24].whichPin = 37;
+  sensor_infos[24].lastLimitVal = LOW;
 
+  //BC Limit Switch B Retracted
   sensor_infos[25].hardware = SH_PIN_LIMIT;
   sensor_infos[25].whichPin = 38;
+  sensor_infos[25].lastLimitVal = LOW;
 
+  //BC Limit Switch B Extended
   sensor_infos[26].hardware = SH_PIN_LIMIT;
   sensor_infos[26].whichPin = 39;
+  sensor_infos[26].lastLimitVal = LOW;
   
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
@@ -179,7 +188,7 @@ void setup() {
   motor_infos[2].qpps = 865000;
   motor_infos[2].scale = 100;
 
-  // Actuator FL addr 0 motor 1
+  // Actuator FL 
   motor_infos[4].hardware = MH_ST_POS;
   motor_infos[4].addr = 0;
   motor_infos[4].whichMotor = 1;
@@ -188,7 +197,7 @@ void setup() {
   motor_infos[4].deadband = 15;
   motor_infos[4].scale = 1;
   
-  // Actuator FR addr 0 motor 2
+  // Actuator FR 
   motor_infos[5].hardware = MH_ST_POS;
   motor_infos[5].addr = 1;
   motor_infos[5].whichMotor = 2;
@@ -197,7 +206,7 @@ void setup() {
   motor_infos[5].deadband = 15;
   motor_infos[5].scale = 1;
   
-  // Actuator BL addr 1 motor 1
+  // Actuator BL
   motor_infos[6].hardware = MH_ST_POS;
   motor_infos[6].addr = 1;
   motor_infos[6].whichMotor = 1;
@@ -206,7 +215,7 @@ void setup() {
   motor_infos[6].deadband = 15;
   motor_infos[6].scale = 1;
   
-  // Actuator BR addr 1 motor 2
+  // Actuator BR
   motor_infos[7].hardware = MH_ST_POS;
   motor_infos[7].addr = 0;
   motor_infos[7].whichMotor = 2;
@@ -248,7 +257,7 @@ void setup() {
   motor_infos[11].scale = 1;
 
   // Deposition Actuators
-  motor_infos[12].hardware = MH_ST_POS_BOTH;
+  motor_infos[12].hardware = MH_ST_PWM_BOTH;
   motor_infos[12].addr = 2;
   motor_infos[12].scale = 1;
 
@@ -440,7 +449,7 @@ FAULT_T configure_motors() {
     case MH_ST_POS:
       // Nothing to do, default config
       break;
-    case MH_ST_POS_BOTH:
+    case MH_ST_PWM_BOTH:
       // Nothing to do, default config  
     case MH_RC_POS_BOTH:
       success = roboclaw.SetM1PositionPID(
@@ -572,7 +581,16 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     *val = (int16_t)val32;
     break;
   case SH_PIN_LIMIT:
-    // TODO
+    //if the pin limit switch is for BC translation:
+    if(ID >= 23 && ID <= 26){
+      if(digitalRead(sensor_info.whichPin) == HIGH && sensor_info.lastLimitVal == LOW) {
+        //something just changed from low to high, stop actuation.
+        sabretooth[motor_infos[9].addr].motor(motor_infos[9].whichMotor, 0);
+      }
+      //else we should be ok
+    }
+
+    
     break;
   case SH_PIN_POT:
     *val = (int16_t)analogRead(sensor_info.whichPin);
@@ -629,6 +647,19 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     }
     break;
   case MH_ST_PWM:
+    //whenever we try to move the BC translation motor, we check if limits are pressed
+    //jank solution with hardcoded values yay
+    if(ID == 9) {
+      if(val > 0 && (digitalRead(37) == HIGH || digitalRead(39) == HIGH)) {
+        //We hit a switch and are trying to move in the same direction, stop!
+        sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+      }
+      else if(val < 0 && (digitalRead(36) == HIGH || digitalRead(38) == HIGH)) {
+        //We hit a switch and are trying to move in the same direction, stop!
+        sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+      }
+    }
+    break;
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
     break;
   case MH_ST_POS:
@@ -650,8 +681,8 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       return FAULT_LOST_ROBOCLAW;
     }
     break;
-  case MH_ST_POS_BOTH:
-    sabretooth[motor_info.addr].motor(1, val_scaled);
+  case MH_ST_PWM_BOTH:
+    sabretooth[motor_info.addr].motor(1, -val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
   default:
     break;
