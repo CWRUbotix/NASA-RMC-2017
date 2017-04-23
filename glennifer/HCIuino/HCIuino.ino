@@ -48,7 +48,7 @@ enum MotorHardware {
   MH_RC_POS_BOTH,
   MH_ST_PWM,
   MH_ST_POS,
-  MH_ST_PWM_BOTH
+  MH_ST_POS_BOTH
 };
 
 typedef struct MotorInfo {
@@ -190,7 +190,7 @@ void setup() {
   
   // Actuator FR addr 0 motor 2
   motor_infos[5].hardware = MH_ST_POS;
-  motor_infos[5].addr = 0;
+  motor_infos[5].addr = 1;
   motor_infos[5].whichMotor = 2;
   motor_infos[5].feedbackSensorID = 5;
   motor_infos[5].kp = -2;
@@ -208,7 +208,7 @@ void setup() {
   
   // Actuator BR addr 1 motor 2
   motor_infos[7].hardware = MH_ST_POS;
-  motor_infos[7].addr = 1;
+  motor_infos[7].addr = 0;
   motor_infos[7].whichMotor = 2;
   motor_infos[7].feedbackSensorID = 7;
   motor_infos[7].kp = -2;
@@ -248,7 +248,7 @@ void setup() {
   motor_infos[11].scale = 1;
 
   // Deposition Actuators
-  motor_infos[12].hardware = MH_ST_PWM_BOTH;
+  motor_infos[12].hardware = MH_ST_POS_BOTH;
   motor_infos[12].addr = 2;
   motor_infos[12].scale = 1;
 
@@ -440,7 +440,7 @@ FAULT_T configure_motors() {
     case MH_ST_POS:
       // Nothing to do, default config
       break;
-    case MH_ST_PWM_BOTH:
+    case MH_ST_POS_BOTH:
       // Nothing to do, default config  
     case MH_RC_POS_BOTH:
       success = roboclaw.SetM1PositionPID(
@@ -650,7 +650,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       return FAULT_LOST_ROBOCLAW;
     }
     break;
-  case MH_ST_PWM_BOTH:
+  case MH_ST_POS_BOTH:
     sabretooth[motor_info.addr].motor(1, val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
   default:
