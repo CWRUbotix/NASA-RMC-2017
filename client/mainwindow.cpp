@@ -12,7 +12,6 @@
 #include <QDebug>
 #include "consumerthread.h"
 #include <QCloseEvent>
-//#include "cameraone.cpp"
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -704,7 +703,7 @@ void MainWindow::handleExcavationArmDig() {
 }
 
 void MainWindow::handleExcavationArmJog() {
-    ui->slider_ExcavationArm->setValue(10);
+    ui->slider_ExcavationArm->setValue(60);
 }
 
 void MainWindow::handleExcavationArmStore() {
@@ -993,8 +992,22 @@ void MainWindow::on_commandLinkButton_clicked()
 {
     //reset frame and img to make sure it is not conflicting
     cameraOne = new CameraOne(this, m_loginStr);
-    //cameraOne->show();
     cameraOne->CameraOne::camOneStream();
-    qDebug("Got here 5");
     cameraOne->show();
+
+    cameraTwo = new CameraTwo(this, m_loginStr);
+    cameraTwo->CameraTwo::camTwoStream();
+    cameraTwo->show();
+
+    cameraThree = new CameraThree(this, m_loginStr);
+    cameraThree->CameraThree::camThreeStream();
+    cameraThree->show();
+
+    cameraFour = new CameraFour(this, m_loginStr);
+    cameraFour->CameraFour::camFourStream();
+    cameraFour->show();
+
+    cameraFive = new CameraFive(this, m_loginStr);
+    cameraFive->CameraFive::camFiveStream();
+    cameraFive->show();
 }

@@ -1,5 +1,5 @@
-#ifndef CAMERAONE_H
-#define CAMERAONE_H
+#ifndef CAMERAFOUR_H
+#define CAMERAFOUR_H
 #include <opencv2/core/core.hpp>
 #include <opencv2/video.hpp>
 #include <opencv/cv.h>
@@ -14,29 +14,29 @@
 #include <opencv2/imgproc.hpp>
 
 namespace Ui {
-class CameraOne;
+class CameraFour;
 }
 
-class CameraOne : public QDialog
+class CameraFour : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit CameraOne(QWidget *parent = 0, QString login = "login");
-    ~CameraOne();
+    explicit CameraFour(QWidget *parent = 0, QString login = "login");
+    ~CameraFour();
 
 public slots:
     void handleFrame(QString key, QByteArray data);
-    void camOneStream();
-    void camOneSubscription();
+    void camFourStream();
+    void camFourSubscription();
 
 private slots:
 
 
 private:
-    Ui::CameraOne *ui;
+    Ui::CameraFour *ui;
     QString str_login;
     AMQP *m_amqp;
 };
 
-#endif // CAMERAONE_H
+#endif // CAMERAFOUR_H

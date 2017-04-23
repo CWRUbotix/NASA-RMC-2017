@@ -11,7 +11,10 @@
 #include <QWheelEvent>
 #include <QCloseEvent>
 #include "cameraone.h"
-
+#include "cameratwo.h"
+#include "camerathree.h"
+#include "camerafour.h"
+#include "camerafive.h"
 using namespace com::cwrubotix::glennifer;
 
 namespace Ui {
@@ -104,6 +107,10 @@ private:
     int m_configSpeeds[3] = {100, 60, 50};
 
     CameraOne *cameraOne;
+    CameraTwo *cameraTwo;
+    CameraThree *cameraThree;
+    CameraFour *cameraFour;
+    CameraFive *cameraFive;
 };
 
 #endif // MAINWINDOW_H

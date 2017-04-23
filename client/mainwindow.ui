@@ -46,7 +46,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -1995,7 +1995,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Dig</string>
+                   <string>GTFO</string>
                   </property>
                  </widget>
                 </item>
@@ -2021,7 +2021,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Jog</string>
+                   <string>Dig</string>
                   </property>
                  </widget>
                 </item>
