@@ -2,9 +2,18 @@
 #include "ui_cameraone.h"
 #include "consumerthread.h"
 //#include "messages.pb.h"
+#include <opencv/cv.h>
+#include <opencv2/cvconfig.h>
+#include <opencv2/imgcodecs/imgcodecs.hpp>
+#include <opencv2/imgcodecs/imgcodecs_c.h>
+//#include <opencv2/imgcodecs/ios.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <io.h>
+#include <iostream>
 typedef unsigned char byte;
 
 //using namespace std;
+using namespace cv;
 CameraOne::CameraOne(QWidget *parent, QString login) :
     QDialog(parent),
     ui(new Ui::CameraOne)
@@ -28,9 +37,20 @@ void CameraOne::on_label_linkActivated(cv::Mat mat) { //took argument off cv::Ma
 }
 
 void CameraOne::handleFrame(QString key, QByteArray data) {
-    QImage image((uchar*)data.data(), 640, 480, QImage::Format_RGB888);
-    qDebug("Image loaded");
-    ui->cam1lbl->setPixmap(QPixmap::fromImage(image));
+    //##############################################
+    //QImage image((uchar*)data.data(), 640, 480, QImage::Format_RGB888);
+    //qDebug("Image loaded");
+    //ui->cam1lbl->setPixmap(QPixmap::fromImage(image));
+
+    //###########################################
+    //cv::Mat img(480, 640, CV_8UC3);
+    //std::vector<byte> buffer(data.begin(), data.end());
+    QPixmap pix;
+    pix.loadFromData((uchar*)data.data(), 64300, "JPEG");
+    ui->cam1lbl->setPixmap(pix);
+    //Mat img = cv::imdecode(buffer,1);
+
+    //###########################################
 
     /*qDebug("Start handleFrame");
     cv::Mat inmat(std::vector<uchar>(data.begin(), data.end()));
@@ -62,7 +82,7 @@ void CameraOne::handleFrame(QString key, QByteArray data) {
 
     //ui->cam1lbl->setPixmap(QPixmap::fromImage(img));
     //ui->cam1lbl->setPixmap(pixmap); qDebug("pixmap set to label");
-    qDebug("ui-setPixmap");
+    //qDebug("ui-setPixmap");
     //CameraOne::on_label_linkActivated(inmat);
 
     //DOESNT CRASH UP TO HERE YAY!
