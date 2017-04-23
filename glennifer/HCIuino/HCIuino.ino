@@ -38,6 +38,7 @@ typedef struct SensorInfo {
   uint8_t addr; // When hardware = SH_RC_*
   uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
+  uint8_t lastLimitVal;
 } SensorInfo;
 
 enum MotorHardware {
@@ -122,22 +123,38 @@ void setup() {
   sensor_infos[9].addr = ADDRESS_RC_2;
   sensor_infos[9].whichMotor = 1;
   
-  sensor_infos[10].hardware = SH_RC_POT;
-  sensor_infos[10].addr = ADDRESS_RC_2;
-  sensor_infos[10].whichMotor = 2;
+  //sensor_infos[10].hardware = SH_RC_POT;
+  //sensor_infos[10].addr = ADDRESS_RC_2;
+  //sensor_infos[10].whichMotor = 2;
   // END DUMMY SENSORS
 
+  //BC Arm position pin pot A
+  sensor_infos[10].hardware == SH_PIN_POT;
+  sensor_infos[10].whichPin = 4;
+
+   //BC Arm position pin pot B
+  sensor_infos[11].hardware == SH_PIN_POT;
+  sensor_infos[11].whichPin = 5;
+
+  //BC Limit Switch A Retracted
   sensor_infos[23].hardware = SH_PIN_LIMIT;
   sensor_infos[23].whichPin = 36;
+  sensor_infos[23].lastLimitVal = LOW;
 
+  //BC Limit Switch A Extended
   sensor_infos[24].hardware = SH_PIN_LIMIT;
   sensor_infos[24].whichPin = 37;
+  sensor_infos[24].lastLimitVal = LOW;
 
+  //BC Limit Switch B Retracted
   sensor_infos[25].hardware = SH_PIN_LIMIT;
   sensor_infos[25].whichPin = 38;
+  sensor_infos[25].lastLimitVal = LOW;
 
+  //BC Limit Switch B Extended
   sensor_infos[26].hardware = SH_PIN_LIMIT;
   sensor_infos[26].whichPin = 39;
+  sensor_infos[26].lastLimitVal = LOW;
   
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
@@ -179,7 +196,7 @@ void setup() {
   motor_infos[2].qpps = 865000;
   motor_infos[2].scale = 100;
 
-  // Actuator FL addr 0 motor 1
+  // Actuator FL 
   motor_infos[4].hardware = MH_ST_POS;
   motor_infos[4].addr = 0;
   motor_infos[4].whichMotor = 1;
@@ -188,16 +205,16 @@ void setup() {
   motor_infos[4].deadband = 15;
   motor_infos[4].scale = 1;
   
-  // Actuator FR addr 0 motor 2
+  // Actuator FR 
   motor_infos[5].hardware = MH_ST_POS;
-  motor_infos[5].addr = 0;
+  motor_infos[5].addr = 1;
   motor_infos[5].whichMotor = 2;
   motor_infos[5].feedbackSensorID = 5;
   motor_infos[5].kp = -2;
   motor_infos[5].deadband = 15;
   motor_infos[5].scale = 1;
   
-  // Actuator BL addr 1 motor 1
+  // Actuator BL
   motor_infos[6].hardware = MH_ST_POS;
   motor_infos[6].addr = 1;
   motor_infos[6].whichMotor = 1;
@@ -206,9 +223,9 @@ void setup() {
   motor_infos[6].deadband = 15;
   motor_infos[6].scale = 1;
   
-  // Actuator BR addr 1 motor 2
+  // Actuator BR
   motor_infos[7].hardware = MH_ST_POS;
-  motor_infos[7].addr = 1;
+  motor_infos[7].addr = 0;
   motor_infos[7].whichMotor = 2;
   motor_infos[7].feedbackSensorID = 7;
   motor_infos[7].kp = -2;
@@ -231,15 +248,15 @@ void setup() {
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
   motor_infos[10].addr = ADDRESS_RC_2;
-  motor_infos[10].kp = 10;
+  motor_infos[10].kp = 100;
   motor_infos[10].ki = 0;
   motor_infos[10].kd = 0;
   motor_infos[10].qpps = 200;
-  motor_infos[10].deadband = 10;
+  motor_infos[10].deadband = 5;
   motor_infos[10].minpos = 0;
   motor_infos[10].maxpos = 2047;
   motor_infos[10].accel = 9999999;
-  motor_infos[10].scale = 1;
+  motor_infos[10].scale = 100;
 
   // Deposition Conveyor Motor TODO
   motor_infos[11].hardware = MH_ST_PWM;
@@ -572,7 +589,15 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     *val = (int16_t)val32;
     break;
   case SH_PIN_LIMIT:
-    // TODO
+    //if the pin limit switch is for BC translation:
+    if(ID >= 23 && ID <= 26){
+      if(digitalRead(sensor_info.whichPin) == HIGH && sensor_info.lastLimitVal == LOW) {
+        //something just changed from low to high, stop actuation.
+        sabretooth[motor_infos[9].addr].motor(motor_infos[9].whichMotor, 0);
+      }
+      //else we should be ok
+    }
+    sensor_info.lastLimitVal = digitalRead(sensor_info.whichPin);
     break;
   case SH_PIN_POT:
     *val = (int16_t)analogRead(sensor_info.whichPin);
@@ -629,29 +654,28 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     }
     break;
   case MH_ST_PWM:
+    //whenever we try to move the BC translation motor, we check if limits are pressed
+    //jank solution with hardcoded values yay
+    if(ID == 9) {
+      if(val > 0 && (digitalRead(37) == HIGH || digitalRead(39) == HIGH)) {
+        //We hit a switch and are trying to move in the same direction, stop!
+        sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+      }
+      else if(val < 0 && (digitalRead(36) == HIGH || digitalRead(38) == HIGH)) {
+        //We hit a switch and are trying to move in the same direction, stop!
+        sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+      }
+    }
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
     break;
   case MH_ST_POS:
     motor_setpoints[ID] = val_scaled;
     break;
   case MH_RC_POS_BOTH:
-    success = roboclaw.SpeedAccelDeccelPositionM1M2(
-        motor_info.addr,
-        motor_info.accel,
-        motor_info.qpps,
-        motor_info.accel,
-        val_scaled,
-        motor_info.accel,
-        motor_info.qpps,
-        motor_info.accel,
-        val_scaled,
-        0);
-    if (!success) {
-      return FAULT_LOST_ROBOCLAW;
-    }
+    motor_setpoints[ID] = val_scaled;
     break;
   case MH_ST_PWM_BOTH:
-    sabretooth[motor_info.addr].motor(1, val_scaled);
+    sabretooth[motor_info.addr].motor(1, -val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
   default:
     break;
@@ -663,7 +687,7 @@ void hciWait() {
   do {
     for (int id = 0; id < 256; id++) {
       MotorInfo motor_info = motor_infos[id];
-      if (motor_info.hardware == MH_ST_POS) {
+      if (motor_info.hardware == MH_ST_POS || motor_info.hardware == MH_RC_POS_BOTH) {
         int16_t pos;
         getSensor(id, &pos); // TODO: detect fault
         int err = motor_setpoints[id] - pos;
@@ -686,7 +710,23 @@ void hciWait() {
         if (val < -127) {
           val = -127;
         }
-        sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
+        if(motor_info.hardware == MH_ST_POS) {
+          sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
+        }
+        else if(motor_info.hardware == MH_RC_POS_BOTH){
+          bool success;
+          success = roboclaw.SpeedAccelDeccelPositionM1M2(
+           motor_info.addr,
+           motor_info.accel,
+           motor_info.qpps,
+           motor_info.accel,
+           val,
+           motor_info.accel,
+           motor_info.qpps,
+           motor_info.accel,
+           val,
+           0);
+        }  
       }
     }
   } while (!SerialUSB.available());
