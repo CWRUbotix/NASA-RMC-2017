@@ -123,10 +123,18 @@ void setup() {
   sensor_infos[9].addr = ADDRESS_RC_2;
   sensor_infos[9].whichMotor = 1;
   
-  sensor_infos[10].hardware = SH_RC_POT;
-  sensor_infos[10].addr = ADDRESS_RC_2;
-  sensor_infos[10].whichMotor = 2;
+  //sensor_infos[10].hardware = SH_RC_POT;
+  //sensor_infos[10].addr = ADDRESS_RC_2;
+  //sensor_infos[10].whichMotor = 2;
   // END DUMMY SENSORS
+
+  //BC Arm position pin pot A
+  sensor_infos[10].hardware == SH_PIN_POT;
+  sensor_infos[10].whichPin = 4;
+
+   //BC Arm position pin pot B
+  sensor_infos[11].hardware == SH_PIN_POT;
+  sensor_infos[11].whichPin = 5;
 
   //BC Limit Switch A Retracted
   sensor_infos[23].hardware = SH_PIN_LIMIT;
@@ -240,15 +248,15 @@ void setup() {
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
   motor_infos[10].addr = ADDRESS_RC_2;
-  motor_infos[10].kp = 10;
+  motor_infos[10].kp = 100;
   motor_infos[10].ki = 0;
   motor_infos[10].kd = 0;
   motor_infos[10].qpps = 200;
-  motor_infos[10].deadband = 10;
+  motor_infos[10].deadband = 5;
   motor_infos[10].minpos = 0;
   motor_infos[10].maxpos = 2047;
   motor_infos[10].accel = 9999999;
-  motor_infos[10].scale = 1;
+  motor_infos[10].scale = 100;
 
   // Deposition Conveyor Motor TODO
   motor_infos[11].hardware = MH_ST_PWM;
@@ -589,8 +597,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
       }
       //else we should be ok
     }
-
-    
+    sensor_info.lastLimitVal = digitalRead(sensor_info.whichPin);
     break;
   case SH_PIN_POT:
     *val = (int16_t)analogRead(sensor_info.whichPin);
@@ -659,27 +666,13 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
         sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
       }
     }
-    break;
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
     break;
   case MH_ST_POS:
     motor_setpoints[ID] = val_scaled;
     break;
   case MH_RC_POS_BOTH:
-    success = roboclaw.SpeedAccelDeccelPositionM1M2(
-        motor_info.addr,
-        motor_info.accel,
-        motor_info.qpps,
-        motor_info.accel,
-        val_scaled,
-        motor_info.accel,
-        motor_info.qpps,
-        motor_info.accel,
-        val_scaled,
-        0);
-    if (!success) {
-      return FAULT_LOST_ROBOCLAW;
-    }
+    motor_setpoints[ID] = val_scaled;
     break;
   case MH_ST_PWM_BOTH:
     sabretooth[motor_info.addr].motor(1, -val_scaled);
@@ -694,7 +687,7 @@ void hciWait() {
   do {
     for (int id = 0; id < 256; id++) {
       MotorInfo motor_info = motor_infos[id];
-      if (motor_info.hardware == MH_ST_POS) {
+      if (motor_info.hardware == MH_ST_POS || motor_info.hardware == MH_RC_POS_BOTH) {
         int16_t pos;
         getSensor(id, &pos); // TODO: detect fault
         int err = motor_setpoints[id] - pos;
@@ -717,7 +710,23 @@ void hciWait() {
         if (val < -127) {
           val = -127;
         }
-        sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
+        if(motor_info.hardware == MH_ST_POS) {
+          sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
+        }
+        else if(motor_info.hardware == MH_RC_POS_BOTH){
+          bool success;
+          success = roboclaw.SpeedAccelDeccelPositionM1M2(
+           motor_info.addr,
+           motor_info.accel,
+           motor_info.qpps,
+           motor_info.accel,
+           val,
+           motor_info.accel,
+           motor_info.qpps,
+           motor_info.accel,
+           val,
+           0);
+        }  
       }
     }
   } while (!SerialUSB.available());
