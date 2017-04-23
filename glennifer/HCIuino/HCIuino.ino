@@ -129,11 +129,11 @@ void setup() {
   // END DUMMY SENSORS
 
   //BC Arm position pin pot A
-  sensor_infos[10].hardware == SH_PIN_POT;
+  sensor_infos[10].hardware = SH_PIN_POT;
   sensor_infos[10].whichPin = 4;
 
    //BC Arm position pin pot B
-  sensor_infos[11].hardware == SH_PIN_POT;
+  sensor_infos[11].hardware = SH_PIN_POT;
   sensor_infos[11].whichPin = 5;
 
   //BC Limit Switch A Retracted
@@ -248,15 +248,15 @@ void setup() {
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
   motor_infos[10].addr = ADDRESS_RC_2;
-  motor_infos[10].kp = 100;
+  motor_infos[10].kp = 4;
   motor_infos[10].ki = 0;
   motor_infos[10].kd = 0;
   motor_infos[10].qpps = 200;
-  motor_infos[10].deadband = 5;
+  motor_infos[10].deadband = 50;
   motor_infos[10].minpos = 0;
   motor_infos[10].maxpos = 2047;
-  motor_infos[10].accel = 9999999;
-  motor_infos[10].scale = 100;
+  motor_infos[10].accel = 1000;
+  motor_infos[10].scale = 1;
 
   // Deposition Conveyor Motor TODO
   motor_infos[11].hardware = MH_ST_PWM;
@@ -310,6 +310,7 @@ void setup() {
 
 void setup_comms() {
   SerialUSB.begin(9600);
+  Serial.begin(9600);
 }
 
 void setup_sabretooth() {
@@ -707,25 +708,37 @@ void hciWait() {
         if (val > 127) {
           val = 127;
         }
-        if (val < -127) {
+        else if (val < -127) {
           val = -127;
         }
+        bool success;
         if(motor_info.hardware == MH_ST_POS) {
           sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
         }
         else if(motor_info.hardware == MH_RC_POS_BOTH){
-          bool success;
-          success = roboclaw.SpeedAccelDeccelPositionM1M2(
-           motor_info.addr,
-           motor_info.accel,
-           motor_info.qpps,
-           motor_info.accel,
-           val,
-           motor_info.accel,
-           motor_info.qpps,
-           motor_info.accel,
-           val,
-           0);
+          Serial.print(motor_setpoints[id]);
+          Serial.print(" ");
+          Serial.print(pos);
+          Serial.print(" ");
+          Serial.print(err);
+          Serial.print(" ");
+          Serial.print(val);
+          if(val >= 0){
+            success = roboclaw.BackwardM1(motor_info.addr, val);
+            Serial.print(" ");
+            Serial.print(success);
+            success = roboclaw.BackwardM2(motor_info.addr, val);
+            Serial.print(" ");
+            Serial.println(success);
+          }
+          else{
+            success = roboclaw.ForwardM1(motor_info.addr, -val);
+            Serial.print(" ");
+            Serial.print(success);
+            success = roboclaw.ForwardM2(motor_info.addr, -val);
+            Serial.print(" ");
+            Serial.println(success);
+          }      
         }  
       }
     }
