@@ -46,7 +46,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -232,7 +232,7 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="text">
-                 <string>Straight</string>
+                 <string>Forward</string>
                 </property>
                </widget>
               </item>
