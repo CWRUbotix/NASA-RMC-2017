@@ -26,7 +26,7 @@ CameraFour::~CameraFour()
 
 void CameraFour::handleFrame(QString key, QByteArray data) {
     QPixmap pix;
-    pix.loadFromData((uchar*)data.data(), 64300, "JPEG");
+    pix.loadFromData((uchar*)data.data(), data.length(), "JPEG");
     ui->cam4lbl->setPixmap(pix);
 }
 
