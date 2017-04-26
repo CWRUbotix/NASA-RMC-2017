@@ -373,7 +373,7 @@ public class ModuleMain {
 
 		ActuatorConfig configLBA = new ActuatorConfig();
 		configLBA.ID = 4;
-		configLBA.name = "Left Rear Turning Actuator";
+		configLBA.name = "Front Left Turning Actuator";
 		configLBA.description = "Progressive Automations PA-14P-4-150";
 		configLBA.anglin = false;
 		configLBA.nomVoltage = 12;
@@ -385,15 +385,15 @@ public class ModuleMain {
 
 		ActuatorConfig configRBA = configLBA.copy();
 		configRBA.ID = 5;
-		configRBA.name = "Right Rear Turning Actuator";
+		configRBA.name = "Front Right Turning Actuator";
 
 		ActuatorConfig configLFA = configLBA.copy();
 		configLFA.ID = 6;
-		configLFA.name = "Left Front Turning Actuator";
+		configLFA.name = "Back Left Turning Actuator";
 
 		ActuatorConfig configRFA = configLBA.copy();
 		configRFA.ID = 7;
-		configRFA.name = "Right Front Turning Actuator";
+		configRFA.name = "Back Right Turning Actuator";
 
         ActuatorConfig configBCDM = new ActuatorConfig();
         configBCDM.ID = 8;
@@ -524,7 +524,7 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
-                        System.out.println(a.targetValue);
+                        System.out.println("Motor ID: " + id + ", Target value: " + a.targetValue);
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
                         hci.queueActuation(a);
@@ -547,6 +547,7 @@ public class ModuleMain {
                         a.targetValue = (pcc.getPosition() / 100.0F) * 127;
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
+			System.out.println("conv_translation for val: " + a.targetValue);
                         hci.queueActuation(a);
                     } else if (keys[2].equals("arm_pos")) {
                         Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
@@ -554,9 +555,10 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         int id = 10;
-                        a.targetValue = pcc.getPosition();
+                        a.targetValue = ((90- pcc.getPosition()) * 6.111) ;
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
+			System.out.println("arm position actuation for val: " + a.targetValue);
                         hci.queueActuation(a);
                     } else if (keys[2].equals("bucket_conveyor_rpm")) {
                         Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
@@ -567,6 +569,7 @@ public class ModuleMain {
                         a.targetValue = (scc.getRpm() / 100.0F) * 32767;
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
+			System.out.println("BC conveyor rpm command for val: " + a.targetValue);
                         hci.queueActuation(a);
                     } else {
                         System.out.println("Excavation motor control routing key has unrecognized motor");
@@ -586,6 +589,7 @@ public class ModuleMain {
                         a.targetValue = (pcc.getPosition() / 100.0F) * 127;
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
+			System.out.println("dump_pos command for val: " + a.targetValue);
                         hci.queueActuation(a);
                     } else if (keys[2].equals("conveyor_rpm")) {
                         Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
@@ -596,6 +600,7 @@ public class ModuleMain {
                         a.targetValue = (scc.getRpm() / 100.0F) * 127;
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
+			System.out.println("Deposition conveyor rpm for val: " + a.targetValue);
                         hci.queueActuation(a);
                     } else {
                         System.out.println("Deposition motor control routing key has unrecognized motor");
