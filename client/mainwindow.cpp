@@ -868,6 +868,8 @@ void MainWindow::initSubscription() {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
+
+    on_commandLinkButton_clicked();
 }
 
 void MainWindow::handleState(QString key, QByteArray data) {
