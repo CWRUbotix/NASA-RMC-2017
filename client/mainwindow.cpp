@@ -703,7 +703,7 @@ void MainWindow::handleExcavationArmDig() {
 }
 
 void MainWindow::handleExcavationArmJog() {
-    ui->slider_ExcavationArm->setValue(10);
+    ui->slider_ExcavationArm->setValue(60);
 }
 
 void MainWindow::handleExcavationArmStore() {
@@ -868,6 +868,8 @@ void MainWindow::initSubscription() {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
+
+    on_commandLinkButton_clicked();
 }
 
 void MainWindow::handleState(QString key, QByteArray data) {
@@ -986,4 +988,28 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.unsubscribe");
+}
+
+void MainWindow::on_commandLinkButton_clicked()
+{
+    //reset frame and img to make sure it is not conflicting
+    cameraOne = new CameraOne(this, m_loginStr);
+    cameraOne->CameraOne::camOneStream();
+    cameraOne->show();
+
+    cameraTwo = new CameraTwo(this, m_loginStr);
+    cameraTwo->CameraTwo::camTwoStream();
+    cameraTwo->show();
+
+    cameraThree = new CameraThree(this, m_loginStr);
+    cameraThree->CameraThree::camThreeStream();
+    cameraThree->show();
+
+    cameraFour = new CameraFour(this, m_loginStr);
+    cameraFour->CameraFour::camFourStream();
+    cameraFour->show();
+
+    cameraFive = new CameraFive(this, m_loginStr);
+    cameraFive->CameraFive::camFiveStream();
+    cameraFive->show();
 }
