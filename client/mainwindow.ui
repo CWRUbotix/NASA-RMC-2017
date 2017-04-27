@@ -261,7 +261,7 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="text">
-                 <string>Straight</string>
+                 <string>Forward</string>
                 </property>
                </widget>
               </item>
@@ -1064,7 +1064,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1226,7 +1226,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1752,7 +1752,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1914,7 +1914,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -2024,7 +2024,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Dig</string>
+                   <string>GTFO</string>
                   </property>
                  </widget>
                 </item>
@@ -2050,7 +2050,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Jog</string>
+                   <string>Dig</string>
                   </property>
                  </widget>
                 </item>
@@ -3062,6 +3062,13 @@
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCommandLinkButton" name="commandLinkButton">
+      <property name="text">
+       <string>Connect to Visual</string>
+      </property>
      </widget>
     </item>
    </layout>
