@@ -49,7 +49,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -106,13 +106,13 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="locomotion_LeftButton">
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="locomotion_DownButton">
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Left</string>
+                   <string>Down</string>
                   </property>
                  </widget>
                 </item>
@@ -126,13 +126,13 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="locomotion_DownButton">
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="locomotion_LeftButton">
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Down</string>
+                   <string>Left</string>
                   </property>
                  </widget>
                 </item>
@@ -143,6 +143,26 @@
                   </property>
                   <property name="text">
                    <string>Stop</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="tankPivotButtonR">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Tank Pivot Right</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="tankPivotButtonL">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Tank Pivot Left</string>
                   </property>
                  </widget>
                 </item>
@@ -157,16 +177,10 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QSlider" name="slider_LocomotionSpeed">
+                <item row="1" column="1">
+                 <widget class="QSlider" name="horizontalSlider_6">
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="value">
-                   <number>100</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -180,10 +194,33 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QSlider" name="horizontalSlider_6">
+                <item row="2" column="1">
+                 <widget class="QSlider" name="slider_UpsetSpeed">
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_10">
+                  <property name="text">
+                   <string>Upset</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QSlider" name="slider_LocomotionSpeed">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>100</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -264,7 +301,7 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="text">
-                 <string>Straight</string>
+                 <string>Forward</string>
                 </property>
                </widget>
               </item>
@@ -1080,7 +1117,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1245,7 +1282,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1780,7 +1817,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1945,7 +1982,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -2058,25 +2095,9 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Dig</string>
+                   <string>GTFO</string>
                   </property>
                  </widget>
-                </item>
-                <item>
-                 <spacer name="verticalSpacer_7">
-                  <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_ExcavationArmJog">
@@ -2084,7 +2105,14 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Jog</string>
+                   <string>Dig</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_ExcavationArmDrive">
+                  <property name="text">
+                   <string>Drive</string>
                   </property>
                  </widget>
                 </item>
@@ -3105,6 +3133,16 @@
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCommandLinkButton" name="commandLinkButton">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>Connect to Visual</string>
+      </property>
      </widget>
     </item>
    </layout>

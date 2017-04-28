@@ -178,6 +178,20 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleDepositionDumpStore);
     QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
                      this, &MainWindow::handleDepositionConveyor);
+
+    //add tankPivotButtonR and tankPivotButtonL
+    QObject::connect(ui->tankPivotButtonR, &QPushButton::clicked,
+                     this, &MainWindow::handleTankPivotR);
+    QObject::connect(ui->tankPivotButtonR, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
+    QObject::connect(ui->tankPivotButtonL, &QPushButton::clicked,
+                     this, &MainWindow::handleTankPivotL);
+    QObject::connect(ui->tankPivotButtonL, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
+
+    //Drive Configuration
+    QObject::connect(ui->pushButton_ExcavationArmDrive, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmDrive);
 }
 
 MainWindow::MainWindow(QString loginStr, QWidget *parent) :
@@ -730,7 +744,7 @@ void MainWindow::handleExcavationArmDig() {
 }
 
 void MainWindow::handleExcavationArmJog() {
-    ui->slider_ExcavationArm->setValue(10);
+    ui->slider_ExcavationArm->setValue(60);
 }
 
 void MainWindow::handleExcavationArmStore() {
@@ -903,6 +917,8 @@ void MainWindow::initSubscription() {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
+
+    on_commandLinkButton_clicked();
 }
 
 void MainWindow::handleState(QString key, QByteArray data) {
@@ -992,6 +1008,12 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         case (Qt::Key_K):
             ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + 10);
             break;
+        case (Qt::Key_R):
+            handleTankPivotRK();
+            break;
+        case (Qt::Key_L):
+            handleTankPivotLK();
+            break;
         default:
             QWidget::keyPressEvent(ev);
             break;
@@ -1027,6 +1049,12 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
         case (Qt::Key_J):
             break;
         case (Qt::Key_K):
+            break;
+        case (Qt::Key_R):
+            handleLocomotionStop();
+            break;
+        case (Qt::Key_L):
+            handleLocomotionStop();
             break;
         default:
             QWidget::keyReleaseEvent(ev);
@@ -1064,4 +1092,89 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.unsubscribe");
+}
+
+void MainWindow::on_commandLinkButton_clicked()
+{
+    //reset frame and img to make sure it is not conflicting
+    cameraOne = new CameraOne(this, m_loginStr);
+    cameraOne->CameraOne::camOneStream();
+    cameraOne->show();
+
+    cameraTwo = new CameraTwo(this, m_loginStr);
+    cameraTwo->CameraTwo::camTwoStream();
+    cameraTwo->show();
+
+    cameraThree = new CameraThree(this, m_loginStr);
+    cameraThree->CameraThree::camThreeStream();
+    cameraThree->show();
+
+    cameraFour = new CameraFour(this, m_loginStr);
+    cameraFour->CameraFour::camFourStream();
+    cameraFour->show();
+
+    cameraFive = new CameraFive(this, m_loginStr);
+    cameraFive->CameraFive::camFiveStream();
+    cameraFive->show();
+}
+
+
+void MainWindow::handleTankPivotR() {
+    if (0 == m_desiredConfig) { // straight
+        int leftSide = (ui->slider_LocomotionSpeed->value()); //left wheel speed
+        int rightSide = (ui->slider_UpsetSpeed->value()* (-1)); //right wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleTankPivotL() {
+    if (0 == m_desiredConfig) { // straight
+        int rightSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int leftSide = (ui->slider_UpsetSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleExcavationArmDrive() {
+    ui->slider_ExcavationArm->setValue(2);
+}
+
+void MainWindow::handleTankPivotRK() {
+    if (0 == m_desiredConfig) { // straight
+        int leftSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int rightSide = (ui->slider_LocomotionSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleTankPivotLK() {
+    if (0 == m_desiredConfig) { // straight
+        int rightSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int leftSide = (ui->slider_LocomotionSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
 }
