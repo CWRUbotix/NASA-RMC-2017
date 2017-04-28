@@ -930,6 +930,12 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         case (Qt::Key_K):
             ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + 10);
             break;
+        case (Qt::Key_R):
+            handleTankPivotRK();
+            break;
+        case (Qt::Key_L):
+            handleTankPivotLK();
+            break;
         default:
             QWidget::keyPressEvent(ev);
             break;
@@ -965,6 +971,12 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
         case (Qt::Key_J):
             break;
         case (Qt::Key_K):
+            break;
+        case (Qt::Key_R):
+            handleLocomotionStop();
+            break;
+        case (Qt::Key_L):
+            handleLocomotionStop();
             break;
         default:
             QWidget::keyReleaseEvent(ev);
@@ -1059,4 +1071,32 @@ void MainWindow::handleTankPivotL() {
 
 void MainWindow::handleExcavationArmDrive() {
     ui->slider_ExcavationArm->setValue(2);
+}
+
+void MainWindow::handleTankPivotRK() {
+    if (0 == m_desiredConfig) { // straight
+        int leftSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int rightSide = (ui->slider_LocomotionSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleTankPivotLK() {
+    if (0 == m_desiredConfig) { // straight
+        int rightSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int leftSide = (ui->slider_LocomotionSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
 }
