@@ -82,6 +82,14 @@ public slots:
     void handleDepositionDumpStore();
     void handleDepositionConveyor(bool checked);
 
+    void handleTankPivotR();
+    void handleTankPivotL();
+
+    void handleExcavationArmDrive();
+
+    void handleTankPivotRK();
+    void handleTankPivotLK();
+
     void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);
