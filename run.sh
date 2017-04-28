@@ -29,6 +29,6 @@ nohup python3 locomotion.py &> "/home/cwrubotix/logs/$datestring/LocomotionPyOut
 cd ../../..
 
 cd client-cameras
-nohup python3 client-cam-send.py &> "/home/cwrubotix/logs/$datestring/CameraSendPyOutput.log" &
+nohup python client-cam-send.py &> "/home/cwrubotix/logs/$datestring/CameraSendPyOutput.log" &
 cd ..
 

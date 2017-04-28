@@ -169,6 +169,16 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleDepositionDumpStore);
     QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
                      this, &MainWindow::handleDepositionConveyor);
+
+    //add tankPivotButtonR and tankPivotButtonL
+    QObject::connect(ui->tankPivotButtonR, &QPushButton::clicked,
+                     this, &MainWindow::handleTankPivotR);
+    QObject::connect(ui->tankPivotButtonR, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
+    QObject::connect(ui->tankPivotButtonL, &QPushButton::clicked,
+                     this, &MainWindow::handleTankPivotL);
+    QObject::connect(ui->tankPivotButtonL, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
 }
 
 MainWindow::MainWindow(QString loginStr, QWidget *parent) :
@@ -1012,4 +1022,33 @@ void MainWindow::on_commandLinkButton_clicked()
     cameraFive = new CameraFive(this, m_loginStr);
     cameraFive->CameraFive::camFiveStream();
     cameraFive->show();
+}
+
+
+void MainWindow::handleTankPivotR() {
+    if (0 == m_desiredConfig) { // straight
+        int leftSide = (ui->slider_LocomotionSpeed->value()); //left wheel speed
+        int rightSide = (ui->slider_UpsetSpeed->value()* (-1)); //right wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleTankPivotL() {
+    if (0 == m_desiredConfig) { // straight
+        int rightSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int leftSide = (ui->slider_UpsetSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
 }
