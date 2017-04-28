@@ -38,8 +38,6 @@ typedef struct SensorInfo {
   uint8_t addr; // When hardware = SH_RC_*
   uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
-  uint8_t lastLimitVal;
-  uint16_t storedVal = 0;
   float responsiveness = 0.5;
 } SensorInfo;
 
@@ -73,6 +71,8 @@ typedef struct MotorInfo {
 SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
 MotorInfo motor_infos[256] = {}; // All initialized to MH_NONE
 int16_t motor_setpoints[256] = {0,0,0,0,1000,1000,1000,1000}; // All others initialized to 0
+uint8_t sensor_lastLimitVals[256] = {}; // All initialized to 0
+int16_t sensor_storedVals[256] = {}; // All initialized to 0
 int16_t loopIterations = 0;
 
 RoboClaw roboclaw(&Serial1,10000);
@@ -142,22 +142,18 @@ void setup() {
   //BC Limit Switch A Retracted
   sensor_infos[23].hardware = SH_PIN_LIMIT;
   sensor_infos[23].whichPin = 36;
-  sensor_infos[23].lastLimitVal = LOW;
 
   //BC Limit Switch A Extended
   sensor_infos[24].hardware = SH_PIN_LIMIT;
   sensor_infos[24].whichPin = 37;
-  sensor_infos[24].lastLimitVal = LOW;
 
   //BC Limit Switch B Retracted
   sensor_infos[25].hardware = SH_PIN_LIMIT;
   sensor_infos[25].whichPin = 38;
-  sensor_infos[25].lastLimitVal = LOW;
 
   //BC Limit Switch B Extended
   sensor_infos[26].hardware = SH_PIN_LIMIT;
   sensor_infos[26].whichPin = 39;
-  sensor_infos[26].lastLimitVal = LOW;
   
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
@@ -599,18 +595,18 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   case SH_PIN_LIMIT:
     //if the pin limit switch is for BC translation:
     if(ID >= 23 && ID <= 26){
-      if(digitalRead(sensor_info.whichPin) == HIGH && sensor_info.lastLimitVal == LOW) {
+      if(digitalRead(sensor_info.whichPin) == HIGH && sensor_lastLimitVals[ID] == LOW) {
         //something just changed from low to high, stop actuation.
         sabretooth[motor_infos[9].addr].motor(motor_infos[9].whichMotor, 0);
       }
       //else we should be ok
     }
-    sensor_info.lastLimitVal = digitalRead(sensor_info.whichPin);
+    sensor_lastLimitVals[ID] = digitalRead(sensor_info.whichPin);
     break;
   case SH_PIN_POT:
     readVal = (int16_t)analogRead(sensor_info.whichPin);
-    sensor_info.storedVal = (sensor_info.storedVal * (1 - sensor_info.responsiveness)) + readVal * sensor_info.responsiveness;
-    *val = sensor_info.storedVal;
+    sensor_storedVals[ID] = (sensor_storedVals[ID] * (1 - sensor_info.responsiveness)) + readVal * sensor_info.responsiveness;
+    *val = sensor_storedVals[ID];
     break;
   default:
     break;
