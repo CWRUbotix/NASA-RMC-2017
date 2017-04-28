@@ -179,6 +179,10 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleTankPivotL);
     QObject::connect(ui->tankPivotButtonL, &QPushButton::released,
                      this, &MainWindow::handleLocomotionRelease);
+
+    //Drive Configuration
+    QObject::connect(ui->pushButton_ExcavationArmDrive, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmDrive);
 }
 
 MainWindow::MainWindow(QString loginStr, QWidget *parent) :
@@ -1051,4 +1055,8 @@ void MainWindow::handleTankPivotL() {
     } else {
         ui->consoleOutputTextBrowser->append("Wrong config");
     }
+}
+
+void MainWindow::handleExcavationArmDrive() {
+    ui->slider_ExcavationArm->setValue(2);
 }

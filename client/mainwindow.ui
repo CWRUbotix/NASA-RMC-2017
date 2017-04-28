@@ -46,7 +46,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -2037,28 +2037,19 @@
                  </widget>
                 </item>
                 <item>
-                 <spacer name="verticalSpacer_7">
-                  <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
                  <widget class="QPushButton" name="pushButton_ExcavationArmJog">
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
                    <string>Dig</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_ExcavationArmDrive">
+                  <property name="text">
+                   <string>Drive</string>
                   </property>
                  </widget>
                 </item>

@@ -85,6 +85,8 @@ public slots:
     void handleTankPivotR();
     void handleTankPivotL();
 
+    void handleExcavationArmDrive();
+
     void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);
