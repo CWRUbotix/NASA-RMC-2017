@@ -38,8 +38,6 @@ def send5(msg):
 #Camera Capture
 #Change Capture Device Index to correspinding index
 #for corresponding camera
-# cam1.set(3,  480)
-#cam1.set(4, 320)
 cam1 = cv2.VideoCapture(0)
 #cam1.set(3, 240)
 #cam1.set(4, 160)
@@ -60,11 +58,11 @@ def getCam1():
         ret,  frame1 = cam1.read()
         imr1 = cv2.cvtColor(frame1,  cv2.COLOR_BGR2RGB)
         #img1 = str(bytearray(cv2.imencode('.png',  frame1)[1].flatten().tolist()))
-	img1 = cv2.imencode('.jpeg',  imr1)[1].tostring()
+        img1 = cv2.imencode('.jpeg',  imr1)[1].tostring()
         #print(len(img1))
         send1(img1)
     else:
-         c= 1
+        c= 1
         
 def getCam2():
     if (cam2.isOpened() is True):

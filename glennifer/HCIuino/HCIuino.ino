@@ -39,6 +39,7 @@ typedef struct SensorInfo {
   uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
   float responsiveness = 0.5;
+  uint16_t scale; // 1 unless needed
 } SensorInfo;
 
 enum MotorHardware {
@@ -88,72 +89,84 @@ void setup() {
   sensor_infos[1].hardware = SH_RC_ENC;
   sensor_infos[1].addr = ADDRESS_RC_0;
   sensor_infos[1].whichMotor = 1;
+  sensor_infos[1].scale = 100;
   
   // Front right wheel encoder
   sensor_infos[0].hardware = SH_RC_ENC;
   sensor_infos[0].addr = ADDRESS_RC_0;
   sensor_infos[0].whichMotor = 2;
+  sensor_infos[0].scale = 100;
   
   // Back left wheel encoder
   sensor_infos[3].hardware = SH_RC_ENC;
   sensor_infos[3].addr = ADDRESS_RC_1;
   sensor_infos[3].whichMotor = 1;
+  sensor_infos[3].scale = 100;
   
   // Back right wheel encoder
   sensor_infos[2].hardware = SH_RC_ENC;
   sensor_infos[2].addr = ADDRESS_RC_1;
   sensor_infos[2].whichMotor = 2;
+  sensor_infos[2].scale = 100;
 
   // 3 is front left
   sensor_infos[4].hardware = SH_PIN_POT;
   sensor_infos[4].whichPin = 3;
+  sensor_infos[4].scale = 1;
   // 2 is front right
   sensor_infos[5].hardware = SH_PIN_POT;
   sensor_infos[5].whichPin = 2;
+  sensor_infos[5].scale = 1;
   // Back left wheel pod potentiometer
   sensor_infos[6].hardware = SH_PIN_POT;
   sensor_infos[6].whichPin = 1;
+  sensor_infos[6].scale = 1;
   // 0 is back right
   sensor_infos[7].hardware = SH_PIN_POT;
   sensor_infos[7].whichPin = 0;
+  sensor_infos[7].scale = 1;
 
   // DUMMY SENSORS for setting pot mode
   sensor_infos[8].hardware = SH_RC_POT;
   sensor_infos[8].addr = ADDRESS_RC_3;
   sensor_infos[8].whichMotor = 2;
+  sensor_infos[8].scale = 1;
   
   sensor_infos[9].hardware = SH_RC_POT;
   sensor_infos[9].addr = ADDRESS_RC_2;
   sensor_infos[9].whichMotor = 1;
-  
-  //sensor_infos[10].hardware = SH_RC_POT;
-  //sensor_infos[10].addr = ADDRESS_RC_2;
-  //sensor_infos[10].whichMotor = 2;
+  sensor_infos[9].scale = 1;
   // END DUMMY SENSORS
 
   //BC Arm position pin pot A
   sensor_infos[10].hardware = SH_PIN_POT;
   sensor_infos[10].whichPin = 4;
+  sensor_infos[10].scale = 1;
 
    //BC Arm position pin pot B
   sensor_infos[11].hardware = SH_PIN_POT;
   sensor_infos[11].whichPin = 5;
+  sensor_infos[11].scale = 1;
 
   //BC Limit Switch A Retracted
   sensor_infos[23].hardware = SH_PIN_LIMIT;
   sensor_infos[23].whichPin = 36;
+  sensor_infos[23].scale = 1;
 
   //BC Limit Switch A Extended
   sensor_infos[24].hardware = SH_PIN_LIMIT;
   sensor_infos[24].whichPin = 37;
+  sensor_infos[24].scale = 1;
 
   //BC Limit Switch B Retracted
   sensor_infos[25].hardware = SH_PIN_LIMIT;
   sensor_infos[25].whichPin = 38;
+  sensor_infos[25].scale = 1;
 
   //BC Limit Switch B Extended
   sensor_infos[26].hardware = SH_PIN_LIMIT;
   sensor_infos[26].whichPin = 39;
+  sensor_infos[26].scale = 1;
   
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
@@ -577,7 +590,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     if (!valid){
       return FAULT_LOST_ROBOCLAW;
     }
-    *val = (int16_t)val32;
+    *val = (int16_t)(val32 / sensor_info.scale);
     break;
   case SH_RC_ENC:
     if (sensor_info.whichMotor == 2) {
@@ -590,7 +603,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     if (!valid){
       return FAULT_LOST_ROBOCLAW;
     }
-    *val = (int16_t)val32;
+    *val = (int16_t)(val32 / sensor_info.scale);
     break;
   case SH_PIN_LIMIT:
     //if the pin limit switch is for BC translation:
@@ -604,7 +617,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     sensor_lastLimitVals[ID] = digitalRead(sensor_info.whichPin);
     break;
   case SH_PIN_POT:
-    readVal = (int16_t)analogRead(sensor_info.whichPin);
+    readVal = (int16_t)analogRead(sensor_info.whichPin / sensor_info.scale);
     sensor_storedVals[ID] = (sensor_storedVals[ID] * (1 - sensor_info.responsiveness)) + readVal * sensor_info.responsiveness;
     *val = sensor_storedVals[ID];
     break;
