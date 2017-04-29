@@ -26,6 +26,7 @@ public class ModuleMain {
 
 	public static void runWithConnectionExceptions() throws IOException, TimeoutException {
 		// Read connection config
+		Mechanics.initialize();
 		InputStream input = new FileInputStream("config/connection.yml");
 		Yaml yaml = new Yaml();
 		Object connectionConfigObj = yaml.load(input);
