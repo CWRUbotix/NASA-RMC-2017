@@ -260,15 +260,16 @@ void setup() {
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
   motor_infos[10].addr = ADDRESS_RC_2;
-  motor_infos[10].kp = 4;
+  motor_infos[10].kp = 10;
   motor_infos[10].ki = 0;
   motor_infos[10].kd = 0;
   motor_infos[10].qpps = 200;
-  motor_infos[10].deadband = 40;
+  motor_infos[10].deadband = 10;
   motor_infos[10].minpos = 0;
   motor_infos[10].maxpos = 2047;
   motor_infos[10].accel = 1000;
   motor_infos[10].scale = 1;
+  motor_setpoints[10] = 200;
 
   // Deposition Conveyor Motor TODO
   motor_infos[11].hardware = MH_ST_PWM;
