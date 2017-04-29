@@ -38,8 +38,6 @@ def send5(msg):
 #Camera Capture
 #Change Capture Device Index to correspinding index
 #for corresponding camera
-# cam1.set(3,  480)
-#cam1.set(4, 320)
 cam1 = cv2.VideoCapture(0)
 cam1.set(3, 240)
 cam1.set(4, 160)
@@ -65,7 +63,7 @@ def getCam1():
         #print(len(img1))
         send1(img1)
     else:
-         c= 1
+        c= 1
         
 def getCam2():
     if (cam2.isOpened() is True):

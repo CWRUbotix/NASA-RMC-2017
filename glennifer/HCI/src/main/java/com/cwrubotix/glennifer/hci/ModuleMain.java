@@ -555,7 +555,7 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         int id = 10;
-                        a.targetValue = ((90- pcc.getPosition()) * 6.277) + 50;
+                        a.targetValue = ((90- pcc.getPosition()) * 5.555) + 100 ;
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
 			System.out.println("arm position actuation for val: " + a.targetValue);
