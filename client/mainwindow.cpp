@@ -12,6 +12,7 @@
 #include <QDebug>
 #include "consumerthread.h"
 #include <QCloseEvent>
+#include "doubleedit.h"
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -32,6 +33,40 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    /*
+
+    QMap<QLineEdit*, QSlider*> lineSliders;
+
+    lineSliders.insert(ui->lineEdit_BackLeftWheel, ui->slider_BackLeftWheel);
+
+    ui->lineEdit_FrontLeftWheel->setValidator(new QIntValidator(-60, 60));
+    */
+
+    /*
+    ui->lineEdit_FrontLeftWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_FrontRightWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_BackLeftWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_BackRightWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_FrontLeftWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_FrontRightWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_BackLeftWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_BackRightWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_DepositionDump->setValidator(new QDoubleValidator(-100, 100, 0));
+    ui->lineEdit_ExcavationArm->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_ExcavationTranslation->setValidator(new QDoubleValidator(-100, 100, 0));
+    */
+
+    connect(ui->lineEdit_FrontLeftWheel, &IntEdit::valueEdited, ui->slider_FrontLeftWheel, &QSlider::setValue);
+    connect(ui->lineEdit_FrontRightWheel, &IntEdit::valueEdited, ui->slider_FrontRightWheel, &QSlider::setValue);
+    connect(ui->lineEdit_BackLeftWheel, &IntEdit::valueEdited, ui->slider_BackLeftWheel, &QSlider::setValue);
+    connect(ui->lineEdit_BackRightWheel, &IntEdit::valueEdited, ui->slider_BackRightWheel, &QSlider::setValue);
+    connect(ui->lineEdit_FrontLeftWheelPod, &IntEdit::valueEdited, ui->slider_FrontLeftWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_FrontRightWheelPod, &IntEdit::valueEdited, ui->slider_FrontRightWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_BackLeftWheelPod, &IntEdit::valueEdited, ui->slider_BackLeftWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_BackRightWheelPod, &IntEdit::valueEdited, ui->slider_BackRightWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_DepositionDump, &IntEdit::valueEdited, ui->slider_DepositionDump, &QSlider::setValue);
+    connect(ui->lineEdit_ExcavationArm, &IntEdit::valueEdited, ui->slider_ExcavationArm, &QSlider::setValue);
+    connect(ui->lineEdit_ExcavationTranslation, &IntEdit::valueEdited, ui->slider_ExcavationTranslation, &QSlider::setValue);
 
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
@@ -169,7 +204,10 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleDepositionDumpStore);
     QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
                      this, &MainWindow::handleDepositionConveyor);
-
+    /*
+    QObject::connect(ui->lineEdit_FrontLeftWheel, &QLineEdit::textChanged,
+                     ui->slider_BackLeftWheel, &QSlider::setValue)
+*/
     //add tankPivotButtonR and tankPivotButtonL
     QObject::connect(ui->tankPivotButtonR, &QPushButton::clicked,
                      this, &MainWindow::handleTankPivotR);
@@ -498,6 +536,8 @@ void MainWindow::handleFrontLeftWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_left.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontLeftWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontRightWheelStop() {
@@ -521,6 +561,8 @@ void MainWindow::handleFrontRightWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_right.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontRightWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleBackLeftWheelStop() {
@@ -544,6 +586,8 @@ void MainWindow::handleBackLeftWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_left.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_BackLeftWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleBackRightWheelStop() {
@@ -567,6 +611,8 @@ void MainWindow::handleBackRightWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_BackRightWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontLeftWheelPodStrafe() {
@@ -598,6 +644,8 @@ void MainWindow::handleFrontLeftWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_left.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontLeftWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontRightWheelPodStrafe() {
@@ -629,6 +677,8 @@ void MainWindow::handleFrontRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_right.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontRightWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleBackLeftWheelPodStrafe() {
@@ -660,6 +710,8 @@ void MainWindow::handleBackLeftWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_left.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_BackLeftWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleBackRightWheelPodStrafe() {
@@ -691,6 +743,8 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_BackRightWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleExcavationArmSet(int value) {
@@ -710,6 +764,8 @@ void MainWindow::handleExcavationArmSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.arm_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_ExcavationArm->setText(QString::number(value));
 }
 
 void MainWindow::handleExcavationArmDig() {
@@ -741,6 +797,8 @@ void MainWindow::handleExcavationTranslationSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.conveyor_translation_displacement");
 
     free(msg_buff);
+
+    ui->lineEdit_ExcavationTranslation->setText(QString::number(value));
 }
 
 void MainWindow::handleExcavationTranslationExtend() {
@@ -795,6 +853,8 @@ void MainWindow::handleDepositionDumpDump() {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(100));
 }
 
 void MainWindow::handleDepositionDumpStop() {
@@ -814,6 +874,8 @@ void MainWindow::handleDepositionDumpStop() {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(0));
 }
 
 void MainWindow::handleDepositionDumpStore() {
@@ -833,6 +895,8 @@ void MainWindow::handleDepositionDumpStore() {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(-100));
 }
 
 void MainWindow::handleDepositionConveyor(bool checked) {
@@ -1113,7 +1177,7 @@ void MainWindow::handleTankPivotL() {
 }
 
 void MainWindow::handleExcavationArmDrive() {
-    ui->slider_ExcavationArm->setValue(2);
+    ui->slider_ExcavationArm->setValue(10);
 }
 
 void MainWindow::handleTankPivotRK() {

@@ -38,8 +38,8 @@ typedef struct SensorInfo {
   uint8_t addr; // When hardware = SH_RC_*
   uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
+  float responsiveness = 0.5;
   uint16_t scale; // 1 unless needed
-  uint8_t lastLimitVal;
 } SensorInfo;
 
 enum MotorHardware {
@@ -72,6 +72,9 @@ typedef struct MotorInfo {
 SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
 MotorInfo motor_infos[256] = {}; // All initialized to MH_NONE
 int16_t motor_setpoints[256] = {0,0,0,0,1000,1000,1000,1000}; // All others initialized to 0
+uint8_t sensor_lastLimitVals[256] = {}; // All initialized to 0
+int16_t sensor_storedVals[256] = {}; // All initialized to 0
+int16_t loopIterations = 0;
 
 RoboClaw roboclaw(&Serial1,10000);
 Sabertooth sabretooth[4] = {
@@ -149,25 +152,21 @@ void setup() {
   sensor_infos[23].hardware = SH_PIN_LIMIT;
   sensor_infos[23].whichPin = 36;
   sensor_infos[23].scale = 1;
-  sensor_infos[23].lastLimitVal = LOW;
 
   //BC Limit Switch A Extended
   sensor_infos[24].hardware = SH_PIN_LIMIT;
   sensor_infos[24].whichPin = 37;
   sensor_infos[24].scale = 1;
-  sensor_infos[24].lastLimitVal = LOW;
 
   //BC Limit Switch B Retracted
   sensor_infos[25].hardware = SH_PIN_LIMIT;
   sensor_infos[25].whichPin = 38;
   sensor_infos[25].scale = 1;
-  sensor_infos[25].lastLimitVal = LOW;
 
   //BC Limit Switch B Extended
   sensor_infos[26].hardware = SH_PIN_LIMIT;
   sensor_infos[26].whichPin = 39;
   sensor_infos[26].scale = 1;
-  sensor_infos[26].lastLimitVal = LOW;
   
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
@@ -261,15 +260,16 @@ void setup() {
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
   motor_infos[10].addr = ADDRESS_RC_2;
-  motor_infos[10].kp = 4;
+  motor_infos[10].kp = 10;
   motor_infos[10].ki = 0;
   motor_infos[10].kd = 0;
   motor_infos[10].qpps = 200;
-  motor_infos[10].deadband = 50;
+  motor_infos[10].deadband = 10;
   motor_infos[10].minpos = 0;
   motor_infos[10].maxpos = 2047;
   motor_infos[10].accel = 1000;
   motor_infos[10].scale = 1;
+  motor_setpoints[10] = 200;
 
   // Deposition Conveyor Motor TODO
   motor_infos[11].hardware = MH_ST_PWM;
@@ -520,7 +520,10 @@ void loop() {
       // cmd is valid
       execute(cmd);
     }
+    Serial.println("loopIterations");
+    loopIterations++;
   }
+  
 }
 
 void execute(byte cmd[]) {
@@ -545,7 +548,7 @@ void execute(byte cmd[]) {
         }
         bool overflow = rpy_sense_add_sensor(rpy, id, val);
         if (overflow) {
-          // do nothing
+          // do nothing'  
         }
       }
       rpy_finalize(rpy);
@@ -577,6 +580,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   bool valid;
   int32_t val32;
   int16_t dummy;
+  int16_t readVal;
   switch (sensor_info.hardware) {
   case SH_RC_POT:
     if (sensor_info.whichMotor == 2) {
@@ -605,16 +609,18 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   case SH_PIN_LIMIT:
     //if the pin limit switch is for BC translation:
     if(ID >= 23 && ID <= 26){
-      if(digitalRead(sensor_info.whichPin) == HIGH && sensor_info.lastLimitVal == LOW) {
+      if(digitalRead(sensor_info.whichPin) == HIGH && sensor_lastLimitVals[ID] == LOW) {
         //something just changed from low to high, stop actuation.
         sabretooth[motor_infos[9].addr].motor(motor_infos[9].whichMotor, 0);
       }
       //else we should be ok
     }
-    sensor_info.lastLimitVal = digitalRead(sensor_info.whichPin);
+    sensor_lastLimitVals[ID] = digitalRead(sensor_info.whichPin);
     break;
   case SH_PIN_POT:
-    *val = (int16_t)(analogRead(sensor_info.whichPin) / sensor_info.scale);
+    readVal = (int16_t)analogRead(sensor_info.whichPin / sensor_info.scale);
+    sensor_storedVals[ID] = (sensor_storedVals[ID] * (1 - sensor_info.responsiveness)) + readVal * sensor_info.responsiveness;
+    *val = sensor_storedVals[ID];
     break;
   default:
     break;
@@ -704,10 +710,11 @@ void hciWait() {
       if (motor_info.hardware == MH_ST_POS || motor_info.hardware == MH_RC_POS_BOTH) {
         int16_t pos;
         getSensor(id, &pos); // TODO: detect fault
-        int err = motor_setpoints[id] - pos;
+        int err = motor_setpoints[id] - pos;    
         if (err <= (signed)motor_info.deadband) {
           if (err >= -(signed)motor_info.deadband) {
             // In deadband
+            
             err = 0;
           } else {
             // Below deadband
@@ -729,28 +736,13 @@ void hciWait() {
           sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
         }
         else if(motor_info.hardware == MH_RC_POS_BOTH){
-          Serial.print(motor_setpoints[id]);
-          Serial.print(" ");
-          Serial.print(pos);
-          Serial.print(" ");
-          Serial.print(err);
-          Serial.print(" ");
-          Serial.print(val);
           if(val >= 0){
             success = roboclaw.BackwardM1(motor_info.addr, val);
-            Serial.print(" ");
-            Serial.print(success);
             success = roboclaw.BackwardM2(motor_info.addr, val);
-            Serial.print(" ");
-            Serial.println(success);
           }
           else{
             success = roboclaw.ForwardM1(motor_info.addr, -val);
-            Serial.print(" ");
-            Serial.print(success);
             success = roboclaw.ForwardM2(motor_info.addr, -val);
-            Serial.print(" ");
-            Serial.println(success);
           }      
         }  
       }
