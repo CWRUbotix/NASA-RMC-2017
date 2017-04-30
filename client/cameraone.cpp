@@ -9,6 +9,8 @@
 #include <io.h>
 #include <iostream>
 
+/* Deleted All other Camera Windows */
+
 typedef unsigned char byte;
 
 CameraOne::CameraOne(QWidget *parent, QString login) :
