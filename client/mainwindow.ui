@@ -2052,7 +2052,7 @@
                  <number>0</number>
                 </property>
                 <property name="maximum">
-                 <number>2000</number>
+                 <number>130</number>
                 </property>
                 <property name="value">
                  <number>0</number>
@@ -2189,10 +2189,13 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="minimum">
-                 <number>-100</number>
+                 <number>-40</number>
                 </property>
                 <property name="maximum">
-                 <number>100</number>
+                 <number>40</number>
+                </property>
+                <property name="pageStep">
+                 <number>1</number>
                 </property>
                 <property name="value">
                  <number>0</number>
@@ -2406,6 +2409,25 @@
              </layout>
             </item>
             <item>
+             <widget class="QSlider" name="slider_ExcavationConveyor">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>-100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_2">
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
@@ -2447,10 +2469,10 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="minimum">
-                 <number>0</number>
+                 <number>-100</number>
                 </property>
                 <property name="maximum">
-                 <number>90</number>
+                 <number>100</number>
                 </property>
                 <property name="value">
                  <number>0</number>
@@ -2662,6 +2684,25 @@
                </spacer>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QSlider" name="slider_DepositionConveyor">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>-100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
             </item>
             <item>
              <spacer name="horizontalSpacer_4">

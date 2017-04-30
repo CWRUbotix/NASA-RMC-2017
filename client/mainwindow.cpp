@@ -769,15 +769,19 @@ void MainWindow::handleExcavationArmSet(int value) {
 }
 
 void MainWindow::handleExcavationArmDig() {
-    ui->slider_ExcavationArm->setValue(90);
+    ui->slider_ExcavationArm->setValue(100);
 }
 
 void MainWindow::handleExcavationArmJog() {
-    ui->slider_ExcavationArm->setValue(60);
+    ui->slider_ExcavationArm->setValue(70);
+}
+
+void MainWindow::handleExcavationArmDrive() {
+    ui->slider_ExcavationArm->setValue(20);
 }
 
 void MainWindow::handleExcavationArmStore() {
-    ui->slider_ExcavationArm->setValue(0);
+    ui->slider_ExcavationArm->setValue(10);
 }
 
 void MainWindow::handleExcavationTranslationSet(int value) {
@@ -802,7 +806,7 @@ void MainWindow::handleExcavationTranslationSet(int value) {
 }
 
 void MainWindow::handleExcavationTranslationExtend() {
-    ui->slider_ExcavationTranslation->setValue(100);
+    ui->slider_ExcavationTranslation->setValue(12);
 }
 
 void MainWindow::handleExcavationTranslationStop() {
@@ -810,12 +814,13 @@ void MainWindow::handleExcavationTranslationStop() {
 }
 
 void MainWindow::handleExcavationTranslationRetract() {
-    ui->slider_ExcavationTranslation->setValue(-100);
+    ui->slider_ExcavationTranslation->setValue(-20);
 }
 
 void MainWindow::handleExcavationConveyor(bool checked) {
     SpeedContolCommand msg;
-    msg.set_rpm(checked ? 100 : 0);
+    int speed = ui->slider_ExcavationConveyor->value();
+    msg.set_rpm(checked ? speed : 0);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -901,7 +906,8 @@ void MainWindow::handleDepositionDumpStore() {
 
 void MainWindow::handleDepositionConveyor(bool checked) {
     SpeedContolCommand msg;
-    msg.set_rpm(checked ? -100 : 0);
+    int speed = ui->slider_DepositionConveyor->value();
+    msg.set_rpm(checked ? speed : 0);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -927,12 +933,12 @@ void MainWindow::initSubscription() {
     StateSubscribe msg;
     msg.set_replykey("abcde");
     msg.set_interval(0.2F);
-    msg.set_locomotion_summary(false);
+    msg.set_locomotion_summary(true);
     msg.set_locomotion_detailed(true);
-    msg.set_deposition_summary(false);
-    msg.set_deposition_detailed(false);
-    msg.set_excavation_summary(false);
-    msg.set_excavation_detailed(false);
+    msg.set_deposition_summary(true);
+    msg.set_deposition_detailed(true);
+    msg.set_excavation_summary(true);
+    msg.set_excavation_detailed(true);
 
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -1174,10 +1180,6 @@ void MainWindow::handleTankPivotL() {
     } else {
         ui->consoleOutputTextBrowser->append("Wrong config");
     }
-}
-
-void MainWindow::handleExcavationArmDrive() {
-    ui->slider_ExcavationArm->setValue(10);
 }
 
 void MainWindow::handleTankPivotRK() {
