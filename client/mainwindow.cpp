@@ -1128,9 +1128,13 @@ void MainWindow::on_commandLinkButton_clicked()
     //reset frame and img to make sure it is not conflicting
     cameraOne = new CameraOne(this, m_loginStr);
     cameraOne->CameraOne::camOneStream();
+    cameraOne->CameraOne::camTwoStream();
+    cameraOne->CameraOne::camThreeStream();
+    cameraOne->CameraOne::camFourStream();
+    cameraOne->CameraOne::camFiveStream();
     cameraOne->show();
 
-    cameraTwo = new CameraTwo(this, m_loginStr);
+    /*cameraTwo = new CameraTwo(this, m_loginStr);
     cameraTwo->CameraTwo::camTwoStream();
     cameraTwo->show();
 
@@ -1144,7 +1148,7 @@ void MainWindow::on_commandLinkButton_clicked()
 
     cameraFive = new CameraFive(this, m_loginStr);
     cameraFive->CameraFive::camFiveStream();
-    cameraFive->show();
+    cameraFive->show();*/
 }
 
 
