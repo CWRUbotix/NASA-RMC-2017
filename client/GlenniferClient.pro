@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     cameratwo.cpp \
     camerathree.cpp \
     camerafour.cpp \
-    camerafive.cpp
+    camerafive.cpp \
+    doubleedit.cpp \
+    intedit.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
@@ -32,7 +34,9 @@ HEADERS  += mainwindow.h \
     cameratwo.h \
     camerathree.h \
     camerafour.h \
-    camerafive.h
+    camerafive.h \
+    doubleedit.h \
+    intedit.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui \

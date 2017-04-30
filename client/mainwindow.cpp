@@ -12,7 +12,7 @@
 #include <QDebug>
 #include "consumerthread.h"
 #include <QCloseEvent>
-#include <QLineEdit>
+#include "doubleedit.h"
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -41,6 +41,32 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lineEdit_FrontLeftWheel->setValidator(new QIntValidator(-60, 60));
     */
+
+    /*
+    ui->lineEdit_FrontLeftWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_FrontRightWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_BackLeftWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_BackRightWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_FrontLeftWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_FrontRightWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_BackLeftWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_BackRightWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_DepositionDump->setValidator(new QDoubleValidator(-100, 100, 0));
+    ui->lineEdit_ExcavationArm->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_ExcavationTranslation->setValidator(new QDoubleValidator(-100, 100, 0));
+    */
+
+    connect(ui->lineEdit_FrontLeftWheel, &IntEdit::valueEdited, ui->slider_FrontLeftWheel, &QSlider::setValue);
+    connect(ui->lineEdit_FrontRightWheel, &IntEdit::valueEdited, ui->slider_FrontRightWheel, &QSlider::setValue);
+    connect(ui->lineEdit_BackLeftWheel, &IntEdit::valueEdited, ui->slider_BackLeftWheel, &QSlider::setValue);
+    connect(ui->lineEdit_BackRightWheel, &IntEdit::valueEdited, ui->slider_BackRightWheel, &QSlider::setValue);
+    connect(ui->lineEdit_FrontLeftWheelPod, &IntEdit::valueEdited, ui->slider_FrontLeftWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_FrontRightWheelPod, &IntEdit::valueEdited, ui->slider_FrontRightWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_BackLeftWheelPod, &IntEdit::valueEdited, ui->slider_BackLeftWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_BackRightWheelPod, &IntEdit::valueEdited, ui->slider_BackRightWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_DepositionDump, &IntEdit::valueEdited, ui->slider_DepositionDump, &QSlider::setValue);
+    connect(ui->lineEdit_ExcavationArm, &IntEdit::valueEdited, ui->slider_ExcavationArm, &QSlider::setValue);
+    connect(ui->lineEdit_ExcavationTranslation, &IntEdit::valueEdited, ui->slider_ExcavationTranslation, &QSlider::setValue);
 
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
@@ -178,7 +204,10 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleDepositionDumpStore);
     QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
                      this, &MainWindow::handleDepositionConveyor);
-
+    /*
+    QObject::connect(ui->lineEdit_FrontLeftWheel, &QLineEdit::textChanged,
+                     ui->slider_BackLeftWheel, &QSlider::setValue)
+*/
     //add tankPivotButtonR and tankPivotButtonL
     QObject::connect(ui->tankPivotButtonR, &QPushButton::clicked,
                      this, &MainWindow::handleTankPivotR);
@@ -1148,7 +1177,7 @@ void MainWindow::handleTankPivotL() {
 }
 
 void MainWindow::handleExcavationArmDrive() {
-    ui->slider_ExcavationArm->setValue(2);
+    ui->slider_ExcavationArm->setValue(10);
 }
 
 void MainWindow::handleTankPivotRK() {

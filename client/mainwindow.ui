@@ -49,7 +49,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -797,7 +797,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_FrontLeftWheel">
+               <widget class="IntEdit" name="lineEdit_FrontLeftWheel">
                 <property name="focusPolicy">
                  <enum>Qt::ClickFocus</enum>
                 </property>
@@ -989,7 +989,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_FrontRightWheel"/>
+               <widget class="IntEdit" name="lineEdit_FrontRightWheel"/>
               </item>
              </layout>
             </item>
@@ -1154,7 +1154,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_FrontLeftWheelPod"/>
+               <widget class="IntEdit" name="lineEdit_FrontLeftWheelPod"/>
               </item>
              </layout>
             </item>
@@ -1319,7 +1319,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_FrontRightWheelPod"/>
+               <widget class="IntEdit" name="lineEdit_FrontRightWheelPod"/>
               </item>
              </layout>
             </item>
@@ -1504,7 +1504,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_BackLeftWheel"/>
+               <widget class="IntEdit" name="lineEdit_BackLeftWheel"/>
               </item>
              </layout>
             </item>
@@ -1689,7 +1689,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_BackRightWheel"/>
+               <widget class="IntEdit" name="lineEdit_BackRightWheel"/>
               </item>
              </layout>
             </item>
@@ -1854,7 +1854,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_BackLeftWheelPod"/>
+               <widget class="IntEdit" name="lineEdit_BackLeftWheelPod"/>
               </item>
              </layout>
             </item>
@@ -2019,7 +2019,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_BackRightWheelPod"/>
+               <widget class="IntEdit" name="lineEdit_BackRightWheelPod"/>
               </item>
              </layout>
             </item>
@@ -2159,7 +2159,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_ExcavationArm"/>
+               <widget class="IntEdit" name="lineEdit_ExcavationArm"/>
               </item>
              </layout>
             </item>
@@ -2321,7 +2321,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_ExcavationTranslation"/>
+               <widget class="IntEdit" name="lineEdit_ExcavationTranslation"/>
               </item>
              </layout>
             </item>
@@ -2579,7 +2579,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_DepositionDump"/>
+               <widget class="IntEdit" name="lineEdit_DepositionDump"/>
               </item>
              </layout>
             </item>
@@ -3174,6 +3174,11 @@
    <extends>QWidget</extends>
    <header>speedometer.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>IntEdit</class>
+   <extends>QLineEdit</extends>
+   <header>intedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
