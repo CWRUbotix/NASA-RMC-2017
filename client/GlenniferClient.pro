@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     camerafour.cpp \
     camerafive.cpp \
     doubleedit.cpp \
-    intedit.cpp
+    intedit.cpp \
+    ledindicator.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
@@ -36,7 +37,8 @@ HEADERS  += mainwindow.h \
     camerafour.h \
     camerafive.h \
     doubleedit.h \
-    intedit.h
+    intedit.h \
+    ledindicator.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui \
