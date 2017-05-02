@@ -26,6 +26,7 @@ public class ModuleMain {
 
 	public static void runWithConnectionExceptions() throws IOException, TimeoutException {
 		// Read connection config
+		Mechanics.initialize();
 		InputStream input = new FileInputStream("config/connection.yml");
 		Yaml yaml = new Yaml();
 		Object connectionConfigObj = yaml.load(input);
@@ -466,10 +467,12 @@ public class ModuleMain {
 					a.override = true;
 					a.hold = true;
 					if (id % 2 == 0) {
-                        a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
-                    } else {
-                        a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
-                    }
+                        //a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+						a.targetValue = -Mechanics.wheelRPMToValue(scc.getRpm());
+					} else {
+                        //a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+						a.targetValue = Mechanics.wheelRPMToValue(scc.getRpm());
+					}
                     System.out.println("target value = " + a.targetValue);
 					a.type = HardwareControlInterface.ActuationType.AngVel;
 					a.actuatorID = id;
@@ -494,7 +497,8 @@ public class ModuleMain {
 					a.override = true;
 					a.hold = true;
 					//a.targetValue = pcc.getPosition()*5 + 250;
-					a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+					//a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+					a.targetValue = Mechanics.wheelPodPosToValue(pcc.getPosition());
 					System.out.println(a.targetValue);
 					a.type = HardwareControlInterface.ActuationType.AngVel;
 					a.actuatorID = id;
@@ -518,59 +522,82 @@ public class ModuleMain {
 						.build(); 
 				
 				//first check if 0,1,2,3 RPM
+				//Wheel_value_RPM
 				if(sensorDataID == 0){
-					value = -100.0F * value * 60.0F / 270 / 4096;
+					// value = -100.0F * value * 60.0F / 270 / 4096;
+					value = -(Mechanics.wheelValueToRPM(value));
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 1){
-					value = 100.0F * value * 60.0F / 270 / 4096;
+					// value = 100.0F * value * 60.0F / 270 / 4096;
+					value = Mechanics.wheelValueToRPM(value);
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 2){
-					value = -100.0F * value * 60.0F / 270 / 4096;
+					// value = -100.0F * value * 60.0F / 270 / 4096;
+					value = -(Mechanics.wheelValueToRPM(value));
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 3){
-					value = 100.0F * value * 60.0F / 270 / 4096;
+					//value = 100.0F * value * 60.0F / 270 / 4096;
+					value = Mechanics.wheelValueToRPM(value);
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_rpm", null, msg.toByteArray());
 				} else if(sensorDataID == 4){
-
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 +360.38;
-
+					//value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+					value = Mechanics.wheelPodValueToPos(value);
+					if (value > 1) value = 1;
+					if (value < -1) value = -1;
+					//value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					value = Mechanics.wheelPosToRad(value);
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 5){
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 + 360.38;
+					//value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+					value = Mechanics.wheelPodValueToPos(value);
+					if (value > 1) value = 1;
+					if (value < -1) value = -1;
+					//value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					value = Mechanics.wheelPosToRad(value);
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 6){
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 + 360.38;
+					//value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+					value = Mechanics.wheelPodValueToPos(value);
+					if (value > 1) value = 1;
+					if (value < -1) value = -1;
+					//value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					value = Mechanics.wheelPosToRad(value);
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_pod_pos", null, msg.toByteArray());
 				} else if(sensorDataID == 7){
-					value = 180.2324 / Math.PI * Math.asin((((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586)) / 1.50175) - 316.63691 + 360.89;
+					//value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+					value = Mechanics.wheelPodValueToPos(value);
+					if (value > 1) value = 1;
+					if (value < -1) value = -1;
+					//value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					value = Mechanics.wheelPosToRad(value);
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)

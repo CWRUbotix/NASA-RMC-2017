@@ -51,11 +51,11 @@ MainWindow::MainWindow(QWidget *parent) :
     rectangle1 = locomotionScene->addRect(-50, -80, 10, 20, outlinePen, greenBrush);
     rectangle1->setTransformOriginPoint(-45, -70);
     rectangle2 = locomotionScene->addRect(50, -80, 10, 20, outlinePen, greenBrush);
-    rectangle1->setTransformOriginPoint(55, -70);
+    rectangle2->setTransformOriginPoint(55, -70);
     rectangle3 = locomotionScene->addRect(-50, 80, 10, 20, outlinePen, greenBrush);
-    rectangle1->setTransformOriginPoint(-45, 90);
+    rectangle3->setTransformOriginPoint(-45, 90);
     rectangle4 = locomotionScene->addRect(50, 80, 10, 20, outlinePen, greenBrush);
-    rectangle1->setTransformOriginPoint(55, 90);
+    rectangle4->setTransformOriginPoint(55, 90);
 
     excavationScene->addRect(-80, -20, 160, 40, outlinePen, grayBrush);
     excavationScene->addRect(-100, -10, 160, 20, outlinePen, blueBrush);
@@ -764,19 +764,4 @@ void MainWindow::wheelEvent(QWheelEvent* event) {
     int delta = event->angleDelta().y();
     delta = (delta > 0) ? 5 : -5;
     ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + delta);
-}
-
-void MainWindow::updateAngle(int x){
-
-    rectangle1->setTransformOriginPoint(QPoint(-195,10));
-    rectangle1->setRotation(x);
-
-    rectangle2->setTransformOriginPoint(QPoint(85,10));
-    rectangle2->setRotation(x);
-
-    rectangle3->setTransformOriginPoint(QPoint(-195,90));
-    rectangle3->setRotation(x);
-
-    rectangle4->setTransformOriginPoint(QPoint(85,90));
-    rectangle4->setRotation(x);
 }
