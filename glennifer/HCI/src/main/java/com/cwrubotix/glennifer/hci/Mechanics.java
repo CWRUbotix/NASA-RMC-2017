@@ -8,11 +8,6 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 public class Mechanics {
-	// These constants I don't know the values of, but I know they need to be
-	// here
-	public static final double wheelShaftOffsetX = 1f;
-	public static final double wheelShaftOffsetY = 1f;
-	public static final double wheelActuatorMinLength = 1f;
 
 	// I'm not sure what these constants are, but they are used for Wheel Pod
 	// Position.
@@ -29,7 +24,7 @@ public class Mechanics {
 	public static double WHEEL_POD_POS_PARAM_K;
 
 	// I think this is for the correct order of magnitude, but not sure
-	//public static final double unknown = 100.0;
+	public static double unknown = 100.0;
 
 	// I think these are what the constants are.
 	public static double secToMin;
@@ -44,20 +39,67 @@ public class Mechanics {
 		Map<String, Double> mechanicsConfig = (Map<String, Double>) connectionConfigObj;
 		
 		WHEEL_POD_POS_PARAM_A = mechanicsConfig.get("WHEEL_POD_POS_PARAM_A");
+		if (WHEEL_POD_POS_PARAM_A == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_A");
+		}
 		WHEEL_POD_POS_PARAM_B = mechanicsConfig.get("WHEEL_POD_POS_PARAM_B");
+		if (WHEEL_POD_POS_PARAM_B == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_B");
+		}
 		WHEEL_POD_POS_PARAM_C = mechanicsConfig.get("WHEEL_POD_POS_PARAM_C");
+		if (WHEEL_POD_POS_PARAM_C == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_C");
+		}
 		WHEEL_POD_POS_PARAM_D = mechanicsConfig.get("WHEEL_POD_POS_PARAM_D");
+		if (WHEEL_POD_POS_PARAM_D == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_D");
+		}
 		WHEEL_POD_POS_PARAM_E = mechanicsConfig.get("WHEEL_POD_POS_PARAM_E");
+		if (WHEEL_POD_POS_PARAM_E == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_E");
+		}
 		WHEEL_POD_POS_PARAM_F = mechanicsConfig.get("WHEEL_POD_POS_PARAM_F");
+		if (WHEEL_POD_POS_PARAM_F == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_F");
+		}
 		WHEEL_POD_POS_PARAM_G = mechanicsConfig.get("WHEEL_POD_POS_PARAM_G");
+		if (WHEEL_POD_POS_PARAM_G == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_G");
+		}
 		WHEEL_POD_POS_PARAM_H = mechanicsConfig.get("WHEEL_POD_POS_PARAM_H");
+		if (WHEEL_POD_POS_PARAM_H == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_H");
+		}
 		WHEEL_POD_POS_PARAM_I = mechanicsConfig.get("WHEEL_POD_POS_PARAM_I");
+		if (WHEEL_POD_POS_PARAM_I == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_I");
+		}
 		WHEEL_POD_POS_PARAM_J = mechanicsConfig.get("WHEEL_POD_POS_PARAM_J");
+		if (WHEEL_POD_POS_PARAM_J == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_J");
+		}
 		WHEEL_POD_POS_PARAM_K = mechanicsConfig.get("WHEEL_POD_POS_PARAM_K");
+		if (WHEEL_POD_POS_PARAM_K == 0) {
+			throw new RuntimeException("Config file missing WHEEL_POD_POS_PARAM_K");
+		}
 		
 		secToMin = mechanicsConfig.get("secToMin");
+		if (secToMin == 0) {
+			throw new RuntimeException("Config file missing secToMin");
+		}
 		tickRate = mechanicsConfig.get("tickRate");
+		if (tickRate == 0) {
+			throw new RuntimeException("Config file missing tickRate");
+		}
 		gearRatio = mechanicsConfig.get("gearRatio");
+		if (gearRatio == 0) {
+			throw new RuntimeException("Config file missing gearRatio");
+		}
+		
+		unknown = mechanicsConfig.get("unknown");
+		if (unknown == 0){
+			throw new RuntimeException("Config file missing unknown (a constant)");
+		}
 		
 		return mechanicsConfig;
 	}
@@ -100,61 +142,12 @@ public class Mechanics {
 				* (WHEEL_POD_POS_PARAM_C / WHEEL_POD_POS_PARAM_B);
 
 	}
-}
+
 	// Quick sanity verification
 //	public static void main(String args[]) throws IOException {
-//
 //		Map<String, Double> mechanicsConfig = initialize();
-//		System.out.println("unknown " + mechanicsConfig.get("unknown"));
-		
-//		double testVal = 100;
-//		double val1;
-//		double val2;
-//
-//		val1 = (-(testVal / 60.0F) * 270 * 4096 / 100.0F);
-//		val2 = -Mechanics.wheelRPMToValue(testVal);
-//
-//		if (val1 != val2) {
-//			System.out.println("Problem at wheelRPMToValue");
-//		}
-//
-//		val1 = 1023 - (.04624 + 0.79547 * (1.03586 + 1.50175 * Math.sin(Math.PI * (testVal + 316.63691) / 180.2324)))
-//				* (1024 / 3.3);
-//		val2 = Mechanics.wheelPodPosToValue(testVal);
-//
-//		if (val1 != val2) {
-//			System.out.println("Problem at wheelPodPosToValue");
-//		}
-//
-//		val1 = -100.0F * testVal * 60.0F / 270 / 4096;
-//		val2 = -(Mechanics.wheelValueToRPM(testVal));
-//
-//		if (val1 != val2) {
-//			System.out.println("Problem at wheelPValueToRPM");
-//		}
-//
-//		// Test PoDValueToPos followed by PosToRad
-//		val1 = ((3.3 / 1024 * (1023 - testVal) - 0.04624) / 0.79547 - 1.03586);
-//		val2 = Mechanics.wheelPodValueToPos(testVal);
-//
-//		// System.out.println("Val1: " + val1);
-//		// System.out.println("Val2: " + val2);
-//		if (val1 != val2) {
-//
-//			System.out.println("Problem at wheelPodValueToPos");
-//		}
-//
-//		val1 = 1;
-//		val2 = 1;
-//
-//		val1 = 180.2324 / Math.PI * Math.asin(val1 / 1.50175) - 316.63691 + 360;
-//		val2 = Mechanics.wheelPosToRad(val2);
-//
-//		if (val1 != val2) {
-//			System.out.println("Val1: " + val1);
-//			System.out.println("Val2: " + val2);
-//			System.out.println("Problem at wheelPosToRad");
-//		}
-//
+//		System.out.println("unknown " + unknown);
+//		System.out.println("gearRatio " + gearRatio);
+//		
 //	}
-//}
+}

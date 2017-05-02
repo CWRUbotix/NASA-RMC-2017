@@ -3,15 +3,15 @@
 #----------------------------------------------------------------------------------
 WHEEL_POD_POS_PARAM_A: 180.2324
 WHEEL_POD_POS_PARAM_B: 3.3
-WHEEL_POD_POS_PARAM_C: 1024
-WHEEL_POD_POS_PARAM_D: 1023
+WHEEL_POD_POS_PARAM_C: 1024.0
+WHEEL_POD_POS_PARAM_D: 1023.0
 WHEEL_POD_POS_PARAM_E: 0.04624
 WHEEL_POD_POS_PARAM_F: 0.79547
 WHEEL_POD_POS_PARAM_G: 1.03586
 WHEEL_POD_POS_PARAM_H: 1.50175
 WHEEL_POD_POS_PARAM_I: 316.63691
-WHEEL_POD_POS_PARAM_J: 180.2324;
-WHEEL_POD_POS_PARAM_K: 360.0;
+WHEEL_POD_POS_PARAM_J: 180.2324
+WHEEL_POD_POS_PARAM_K: 360.0
 #-------------------------------------------------------------------
 # I think this is for the correct order of magnitude, but not sure.
 #-------------------------------------------------------------------
@@ -20,6 +20,6 @@ unknown: 100.0
 #-------------------------------------------
 # I think these are what the constants are.
 #-------------------------------------------
-secToMin: 60.0;
-tickRate: 4096;
-gearRatio: 270;
+secToMin: 60.0
+tickRate: 4096.0
+gearRatio: 270.0
