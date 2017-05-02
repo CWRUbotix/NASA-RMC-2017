@@ -38,7 +38,7 @@ typedef struct SensorInfo {
   uint8_t addr; // When hardware = SH_RC_*
   uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
-  float responsiveness = 0.5;
+  float responsiveness = 0.1;
   uint16_t scale; // 1 unless needed
 } SensorInfo;
 
@@ -269,7 +269,7 @@ void setup() {
   motor_infos[10].maxpos = 2047;
   motor_infos[10].accel = 1000;
   motor_infos[10].scale = 1;
-  motor_setpoints[10] = 200;
+  motor_setpoints[10] = 300; 
 
   // Deposition Conveyor Motor TODO
   motor_infos[11].hardware = MH_ST_PWM;
@@ -399,7 +399,14 @@ FAULT_T configure_sensors() {
       }
       break;
     case SH_PIN_LIMIT:
-      // TODO
+      pinMode(36,INPUT);
+      pinMode(37,INPUT);
+      pinMode(38,INPUT);
+      pinMode(39,INPUT);
+      digitalWrite(36,HIGH);
+      digitalWrite(37,HIGH);
+      digitalWrite(38,HIGH);
+      digitalWrite(39,HIGH);
       break;
     case SH_PIN_POT:
       // Nothing to do here
