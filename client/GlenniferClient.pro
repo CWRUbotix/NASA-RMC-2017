@@ -15,15 +15,24 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     connectiondialog.cpp \
     messages.pb.cc \
-    consumerthread.cpp
+    consumerthread.cpp \
+    speedometer.cpp \
+    cameraone.cpp \
+    doubleedit.cpp \
+    intedit.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
     messages.pb.h \
-    consumerthread.h
+    consumerthread.h \
+    speedometer.h \
+    cameraone.h \
+    doubleedit.h \
+    intedit.h
 
 FORMS    += mainwindow.ui \
-    connectiondialog.ui
+    connectiondialog.ui \
+    cameraone.ui
 
 CONFIG += conan_basic_setup
 include(conanbuildinfo.pri)
