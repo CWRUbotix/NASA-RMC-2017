@@ -4,6 +4,9 @@
 #include <QThread>
 #include <AMQPcpp.h>
 #include "messages.pb.h"
+#include <QString>
+#include <QMap>
+#include <QByteArray>
 
 using namespace com::cwrubotix::glennifer;
 
@@ -11,18 +14,21 @@ class ConsumerThread : public QThread
 {
     Q_OBJECT
 public:
-    ConsumerThread(AMQP *amqp);
+    ConsumerThread();
+    ConsumerThread(QString loginStr, QString topic);
+    ~ConsumerThread();
+    bool isValid() const;
 protected:
     void run();
 signals:
-    void stateReady(State *s);
+    void receivedMessage(QString key, QByteArray data);
 private:
     AMQP *m_amqp;
-
+    QString m_topic;
 };
 
-extern ConsumerThread *instance;
+extern QMap<QString, ConsumerThread*> consumerThreadInstances;
 
-int handleReceivedState(AMQPMessage *message);
+int handleReceivedMessage(AMQPMessage *message);
 
 #endif // CONSUMERTHREAD_H

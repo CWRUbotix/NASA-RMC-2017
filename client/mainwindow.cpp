@@ -11,6 +11,8 @@
 #include <QWheelEvent>
 #include <QDebug>
 #include "consumerthread.h"
+#include <QCloseEvent>
+#include "doubleedit.h"
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -31,6 +33,40 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    /*
+
+    QMap<QLineEdit*, QSlider*> lineSliders;
+
+    lineSliders.insert(ui->lineEdit_BackLeftWheel, ui->slider_BackLeftWheel);
+
+    ui->lineEdit_FrontLeftWheel->setValidator(new QIntValidator(-60, 60));
+    */
+
+    /*
+    ui->lineEdit_FrontLeftWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_FrontRightWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_BackLeftWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_BackRightWheel->setValidator(new QDoubleValidator(-60, 60, 0));
+    ui->lineEdit_FrontLeftWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_FrontRightWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_BackLeftWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_BackRightWheelPod->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_DepositionDump->setValidator(new QDoubleValidator(-100, 100, 0));
+    ui->lineEdit_ExcavationArm->setValidator(new QDoubleValidator(0, 90, 0));
+    ui->lineEdit_ExcavationTranslation->setValidator(new QDoubleValidator(-100, 100, 0));
+    */
+
+    connect(ui->lineEdit_FrontLeftWheel, &IntEdit::valueEdited, ui->slider_FrontLeftWheel, &QSlider::setValue);
+    connect(ui->lineEdit_FrontRightWheel, &IntEdit::valueEdited, ui->slider_FrontRightWheel, &QSlider::setValue);
+    connect(ui->lineEdit_BackLeftWheel, &IntEdit::valueEdited, ui->slider_BackLeftWheel, &QSlider::setValue);
+    connect(ui->lineEdit_BackRightWheel, &IntEdit::valueEdited, ui->slider_BackRightWheel, &QSlider::setValue);
+    connect(ui->lineEdit_FrontLeftWheelPod, &IntEdit::valueEdited, ui->slider_FrontLeftWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_FrontRightWheelPod, &IntEdit::valueEdited, ui->slider_FrontRightWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_BackLeftWheelPod, &IntEdit::valueEdited, ui->slider_BackLeftWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_BackRightWheelPod, &IntEdit::valueEdited, ui->slider_BackRightWheelPod, &QSlider::setValue);
+    connect(ui->lineEdit_DepositionDump, &IntEdit::valueEdited, ui->slider_DepositionDump, &QSlider::setValue);
+    connect(ui->lineEdit_ExcavationArm, &IntEdit::valueEdited, ui->slider_ExcavationArm, &QSlider::setValue);
+    connect(ui->lineEdit_ExcavationTranslation, &IntEdit::valueEdited, ui->slider_ExcavationTranslation, &QSlider::setValue);
 
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
@@ -140,14 +176,64 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleBackLeftWheelPodSet);
     QObject::connect(ui->slider_BackRightWheelPod, &QSlider::valueChanged,
                      this, &MainWindow::handleBackRightWheelPodSet);
-    QObject::connect(ui->pushButton_Subscribe, &QPushButton::clicked,
-                     this, &MainWindow::handleSubscribe);
+    QObject::connect(ui->slider_ExcavationArm, &QSlider::valueChanged,
+                     this, &MainWindow::handleExcavationArmSet);
+    QObject::connect(ui->pushButton_ExcavationArmDig, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmDig);
+    QObject::connect(ui->pushButton_ExcavationArmJog, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmJog);
+    QObject::connect(ui->pushButton_ExcavationArmStore, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmStore);
+    QObject::connect(ui->slider_ExcavationTranslation, &QSlider::valueChanged,
+                     this, &MainWindow::handleExcavationTranslationSet);
+    QObject::connect(ui->pushButton_ExcavationTranslationExtend, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationTranslationExtend);
+    QObject::connect(ui->pushButton_ExcavationTranslationStop, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationTranslationStop);
+    QObject::connect(ui->pushButton_ExcavationTranslationRetract, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationTranslationRetract);
+    QObject::connect(ui->checkBox_ExcavationConveyor, &QCheckBox::stateChanged,
+                     this, &MainWindow::handleExcavationConveyor);
+    QObject::connect(ui->slider_DepositionDump, &QSlider::valueChanged,
+                     this, &MainWindow::handleDepositionDumpSet);
+    QObject::connect(ui->pushButton_DepositionDumpDump, &QPushButton::clicked,
+                     this, &MainWindow::handleDepositionDumpDump);
+    QObject::connect(ui->pushButton_DepositionDumpStop, &QPushButton::clicked,
+                     this, &MainWindow::handleDepositionDumpStop);
+    QObject::connect(ui->pushButton_DepositionDumpStore, &QPushButton::clicked,
+                     this, &MainWindow::handleDepositionDumpStore);
+    QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
+                     this, &MainWindow::handleDepositionConveyor);
+    /*
+    QObject::connect(ui->lineEdit_FrontLeftWheel, &QLineEdit::textChanged,
+                     ui->slider_BackLeftWheel, &QSlider::setValue)
+*/
+    //add tankPivotButtonR and tankPivotButtonL
+    QObject::connect(ui->tankPivotButtonR, &QPushButton::clicked,
+                     this, &MainWindow::handleTankPivotR);
+    QObject::connect(ui->tankPivotButtonR, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
+    QObject::connect(ui->tankPivotButtonL, &QPushButton::clicked,
+                     this, &MainWindow::handleTankPivotL);
+    QObject::connect(ui->tankPivotButtonL, &QPushButton::released,
+                     this, &MainWindow::handleLocomotionRelease);
+
+    //Drive Configuration
+    QObject::connect(ui->pushButton_ExcavationArmDrive, &QPushButton::clicked,
+                     this, &MainWindow::handleExcavationArmDrive);
 }
 
-MainWindow::MainWindow(AMQP *amqp, QWidget *parent) :
+MainWindow::MainWindow(QString loginStr, QWidget *parent) :
     MainWindow::MainWindow(parent)
 {
-    m_amqp = amqp;
+    m_loginStr = loginStr;
+
+    try {
+        m_amqp = new AMQP(m_loginStr.toStdString());
+    } catch (AMQPException) {
+        QMessageBox::critical(0,"Error",QString::fromStdString("AMQP connection error"));
+        m_amqp = 0;
+    }
 }
 
 MainWindow::~MainWindow()
@@ -450,6 +536,8 @@ void MainWindow::handleFrontLeftWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_left.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontLeftWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontRightWheelStop() {
@@ -473,6 +561,8 @@ void MainWindow::handleFrontRightWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_right.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontRightWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleBackLeftWheelStop() {
@@ -496,6 +586,8 @@ void MainWindow::handleBackLeftWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_left.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_BackLeftWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleBackRightWheelStop() {
@@ -519,6 +611,8 @@ void MainWindow::handleBackRightWheelSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_rpm");
 
     free(msg_buff);
+
+    ui->lineEdit_BackRightWheel->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontLeftWheelPodStrafe() {
@@ -550,6 +644,8 @@ void MainWindow::handleFrontLeftWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_left.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontLeftWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleFrontRightWheelPodStrafe() {
@@ -581,6 +677,8 @@ void MainWindow::handleFrontRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.front_right.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_FrontRightWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleBackLeftWheelPodStrafe() {
@@ -612,6 +710,8 @@ void MainWindow::handleBackLeftWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_left.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_BackLeftWheelPod->setText(QString::number(value));
 }
 
 void MainWindow::handleBackRightWheelPodStrafe() {
@@ -643,23 +743,202 @@ void MainWindow::handleBackRightWheelPodSet(int value) {
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.locomotion.back_right.wheel_pod_pos");
 
     free(msg_buff);
+
+    ui->lineEdit_BackRightWheelPod->setText(QString::number(value));
 }
 
-void MainWindow::handleSubscribe() {
-    ConsumerThread *thread = new ConsumerThread(m_amqp);
-    connect(thread, &ConsumerThread::stateReady, this, &MainWindow::handleState);
+void MainWindow::handleExcavationArmSet(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.arm_pos");
+
+    free(msg_buff);
+
+    ui->lineEdit_ExcavationArm->setText(QString::number(value));
+}
+
+void MainWindow::handleExcavationArmDig() {
+    ui->slider_ExcavationArm->setValue(100);
+}
+
+void MainWindow::handleExcavationArmJog() {
+    ui->slider_ExcavationArm->setValue(70);
+}
+
+void MainWindow::handleExcavationArmDrive() {
+    ui->slider_ExcavationArm->setValue(20);
+}
+
+void MainWindow::handleExcavationArmStore() {
+    ui->slider_ExcavationArm->setValue(10);
+}
+
+void MainWindow::handleExcavationTranslationSet(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.conveyor_translation_displacement");
+
+    free(msg_buff);
+
+    ui->lineEdit_ExcavationTranslation->setText(QString::number(value));
+}
+
+void MainWindow::handleExcavationTranslationExtend() {
+    ui->slider_ExcavationTranslation->setValue(12);
+}
+
+void MainWindow::handleExcavationTranslationStop() {
+    ui->slider_ExcavationTranslation->setValue(0);
+}
+
+void MainWindow::handleExcavationTranslationRetract() {
+    ui->slider_ExcavationTranslation->setValue(-20);
+}
+
+void MainWindow::handleExcavationConveyor(bool checked) {
+    SpeedContolCommand msg;
+    int speed = ui->slider_ExcavationConveyor->value();
+    msg.set_rpm(checked ? speed : 0);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.bucket_conveyor_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDepositionDumpSet(int value) {
+    ui->consoleOutputTextBrowser->append("Dump actuators do not have position control\n");
+}
+
+void MainWindow::handleDepositionDumpDump() {
+    PositionContolCommand msg;
+    msg.set_position(100);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
+
+    free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(100));
+}
+
+void MainWindow::handleDepositionDumpStop() {
+    PositionContolCommand msg;
+    msg.set_position(0);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
+
+    free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(0));
+}
+
+void MainWindow::handleDepositionDumpStore() {
+    PositionContolCommand msg;
+    msg.set_position(-100);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.dump_pos");
+
+    free(msg_buff);
+
+    ui->lineEdit_DepositionDump->setText(QString::number(-100));
+}
+
+void MainWindow::handleDepositionConveyor(bool checked) {
+    SpeedContolCommand msg;
+    int speed = ui->slider_DepositionConveyor->value();
+    msg.set_rpm(checked ? speed : 0);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.conveyor_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::initSubscription() {
+    ConsumerThread *thread = new ConsumerThread(m_loginStr, "abcde");
+    connect(thread, &ConsumerThread::receivedMessage, this, &MainWindow::handleState);
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
     thread->start();
 
     StateSubscribe msg;
     msg.set_replykey("abcde");
     msg.set_interval(0.2F);
-    msg.set_locomotion_summary(false);
+    msg.set_locomotion_summary(true);
     msg.set_locomotion_detailed(true);
-    msg.set_deposition_summary(false);
-    msg.set_deposition_detailed(false);
-    msg.set_excavation_summary(false);
-    msg.set_excavation_detailed(false);
+    msg.set_deposition_summary(true);
+    msg.set_deposition_detailed(true);
+    msg.set_excavation_summary(true);
+    msg.set_excavation_detailed(true);
 
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -673,13 +952,60 @@ void MainWindow::handleSubscribe() {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
+
+    //on_commandLinkButton_clicked();
 }
 
-void MainWindow::handleState(State *s) {
-    rectangle1->setRotation(s->locdetailed().front_left_pos());
-    rectangle2->setRotation(s->locdetailed().front_right_pos());
-    rectangle3->setRotation(s->locdetailed().back_left_pos());
-    rectangle4->setRotation(s->locdetailed().back_right_pos());
+void MainWindow::handleState(QString key, QByteArray data) {
+    State s;
+    s.ParseFromArray(data.data(), data.length());
+    float fl_rpm = s.locdetailed().front_left_rpm();
+    float fr_rpm = s.locdetailed().front_right_rpm();
+    float bl_rpm = s.locdetailed().back_left_rpm();
+    float br_rpm = s.locdetailed().back_right_rpm();
+    float fl_pos = s.locdetailed().front_left_pos();
+    float fr_pos = s.locdetailed().front_right_pos();
+    float bl_pos = s.locdetailed().back_left_pos();
+    float br_pos = s.locdetailed().back_right_pos();
+    float speed = s.locsummary().speed();
+    ui->lcdNumber_FrontLeftWheel->display(fl_rpm);
+    if (fl_rpm >= 0) {
+        ui->progressBar_FrontLeftWheelForwards->setValue(fl_rpm);
+    } else {
+        ui->progressBar_FrontLeftWheelBackwards->setValue(-fl_rpm);
+    }
+    ui->lcdNumber_FrontRightWheel->display(fr_rpm);
+    if (fr_rpm >= 0) {
+        ui->progressBar_FrontRightWheelForwards->setValue(fr_rpm);
+    } else {
+        ui->progressBar_FrontRightWheelBackwards->setValue(-fr_rpm);
+    }
+    ui->lcdNumber_BackLeftWheel->display(bl_rpm);
+    if (bl_rpm >= 0) {
+        ui->progressBar_BackLeftWheelForwards->setValue(bl_rpm);
+    } else {
+        ui->progressBar_BackLeftWheelBackwards->setValue(-bl_rpm);
+    }
+    ui->lcdNumber_BackRightWheel->display(br_rpm);
+    if (br_rpm >= 0) {
+        ui->progressBar_BackRightWheelForwards->setValue(br_rpm);
+    } else {
+        ui->progressBar_BackRightWheeBackwards->setValue(-br_rpm);
+    }
+    ui->lcdNumber_FrontLeftWheelPod->display(fl_pos);
+    ui->lcdNumber_FrontRightWheelPod->display(fr_pos);
+    ui->lcdNumber_BackLeftWheelPod->display(bl_pos);
+    ui->lcdNumber_BackRightWheelPod->display(br_pos);
+    ui->progressBar_FrontLeftWheelPod->setValue(fl_pos);
+    ui->progressBar_FrontRightWheelPod->setValue(fr_pos);
+    ui->progressBar_BackLeftWheelPod->setValue(bl_pos);
+    ui->progressBar_BackRightWheelPod->setValue(br_pos);
+    rectangle1->setRotation(fl_pos);
+    rectangle2->setRotation(-fr_pos);
+    rectangle3->setRotation(-bl_pos);
+    rectangle4->setRotation(br_pos);
+    ui->speedometer->setSpeed(speed);
+    ui->speedometer->setPower((speed * 100) / 0.7F);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {
@@ -717,6 +1043,12 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         case (Qt::Key_K):
             ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + 10);
             break;
+        case (Qt::Key_R):
+            handleTankPivotRK();
+            break;
+        case (Qt::Key_L):
+            handleTankPivotLK();
+            break;
         default:
             QWidget::keyPressEvent(ev);
             break;
@@ -753,6 +1085,12 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
             break;
         case (Qt::Key_K):
             break;
+        case (Qt::Key_R):
+            handleLocomotionStop();
+            break;
+        case (Qt::Key_L):
+            handleLocomotionStop();
+            break;
         default:
             QWidget::keyReleaseEvent(ev);
             break;
@@ -764,4 +1102,114 @@ void MainWindow::wheelEvent(QWheelEvent* event) {
     int delta = event->angleDelta().y();
     delta = (delta > 0) ? 5 : -5;
     ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + delta);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    StateSubscribe msg;
+    msg.set_replykey("abcde");
+    msg.set_interval(0.2F);
+    msg.set_locomotion_summary(false);
+    msg.set_locomotion_detailed(true);
+    msg.set_deposition_summary(false);
+    msg.set_deposition_detailed(false);
+    msg.set_excavation_summary(false);
+    msg.set_excavation_detailed(false);
+
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "state.unsubscribe");
+}
+
+void MainWindow::on_commandLinkButton_clicked()
+{
+    //reset frame and img to make sure it is not conflicting
+    cameraOne = new CameraOne(this, m_loginStr);
+    cameraOne->CameraOne::camOneStream();
+    cameraOne->CameraOne::camTwoStream();
+    cameraOne->CameraOne::camThreeStream();
+    cameraOne->CameraOne::camFourStream();
+    cameraOne->CameraOne::camFiveStream();
+    cameraOne->show();
+
+    /*cameraTwo = new CameraTwo(this, m_loginStr);
+    cameraTwo->CameraTwo::camTwoStream();
+    cameraTwo->show();
+
+    cameraThree = new CameraThree(this, m_loginStr);
+    cameraThree->CameraThree::camThreeStream();
+    cameraThree->show();
+
+    cameraFour = new CameraFour(this, m_loginStr);
+    cameraFour->CameraFour::camFourStream();
+    cameraFour->show();
+
+    cameraFive = new CameraFive(this, m_loginStr);
+    cameraFive->CameraFive::camFiveStream();
+    cameraFive->show();*/
+}
+
+
+void MainWindow::handleTankPivotR() {
+    if (0 == m_desiredConfig) { // straight
+        int leftSide = (ui->slider_LocomotionSpeed->value()); //left wheel speed
+        int rightSide = (ui->slider_UpsetSpeed->value()* (-1)); //right wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleTankPivotL() {
+    if (0 == m_desiredConfig) { // straight
+        int rightSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int leftSide = (ui->slider_UpsetSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleTankPivotRK() {
+    if (0 == m_desiredConfig) { // straight
+        int leftSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int rightSide = (ui->slider_LocomotionSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+void MainWindow::handleTankPivotLK() {
+    if (0 == m_desiredConfig) { // straight
+        int rightSide = (ui->slider_LocomotionSpeed->value()); //right wheel speed
+        int leftSide = (ui->slider_LocomotionSpeed->value()* (-1)); //left wheel speed
+        handleFrontRightWheelSet(rightSide);
+        handleBackRightWheelSet(rightSide);
+        handleFrontLeftWheelSet(leftSide);
+        handleBackLeftWheelSet(leftSide);
+
+    } else {
+        ui->consoleOutputTextBrowser->append("Wrong config");
+    }
 }

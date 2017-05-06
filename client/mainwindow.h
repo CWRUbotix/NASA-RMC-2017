@@ -9,7 +9,8 @@
 #include <QGraphicsItem>
 #include <QKeyEvent>
 #include <QWheelEvent>
-
+#include <QCloseEvent>
+#include "cameraone.h"
 using namespace com::cwrubotix::glennifer;
 
 namespace Ui {
@@ -22,8 +23,9 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    explicit MainWindow(AMQP *amqp, QWidget *parent = 0);
+    explicit MainWindow(QString loginStr, QWidget *parent = 0);
     ~MainWindow();
+    void initSubscription();
 
     static MainWindow instance;
 
@@ -61,17 +63,43 @@ public slots:
     void handleBackRightWheelPodTurn();
     void handleBackRightWheelPodStrafe();
     void handleBackRightWheelPodSet(int value);
-    void handleSubscribe();
+    void handleExcavationArmSet(int value);
+    void handleExcavationArmDig();
+    void handleExcavationArmJog();
+    void handleExcavationArmStore();
+    void handleExcavationTranslationSet(int value);
+    void handleExcavationTranslationExtend();
+    void handleExcavationTranslationStop();
+    void handleExcavationTranslationRetract();
+    void handleExcavationConveyor(bool checked);
+    void handleDepositionDumpSet(int value);
+    void handleDepositionDumpDump();
+    void handleDepositionDumpStop();
+    void handleDepositionDumpStore();
+    void handleDepositionConveyor(bool checked);
 
-    void handleState(State *s);
+    void handleTankPivotR();
+    void handleTankPivotL();
+
+    void handleExcavationArmDrive();
+
+    void handleTankPivotRK();
+    void handleTankPivotLK();
+
+    void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
     void wheelEvent(QWheelEvent* event);
+    void closeEvent(QCloseEvent *event);
+
+private slots:
+    void on_commandLinkButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     AMQP *m_amqp;
+    QString m_loginStr;
     QGraphicsScene *locomotionScene;
     QGraphicsScene *excavationScene;
     QGraphicsScene *depositionScene;
@@ -81,6 +109,8 @@ private:
     QGraphicsRectItem *rectangle4;
     int m_desiredConfig = 0; // 0 is straight, 1 is turn, 2 is strafe
     int m_configSpeeds[3] = {100, 60, 50};
+
+    CameraOne *cameraOne;
 };
 
 #endif // MAINWINDOW_H

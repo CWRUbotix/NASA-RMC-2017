@@ -10,6 +10,9 @@
     <height>701</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -46,7 +49,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -103,13 +106,13 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="locomotion_LeftButton">
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="locomotion_DownButton">
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Left</string>
+                   <string>Down</string>
                   </property>
                  </widget>
                 </item>
@@ -123,13 +126,13 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="locomotion_DownButton">
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="locomotion_LeftButton">
                   <property name="focusPolicy">
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Down</string>
+                   <string>Left</string>
                   </property>
                  </widget>
                 </item>
@@ -143,6 +146,26 @@
                   </property>
                  </widget>
                 </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="tankPivotButtonR">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Tank Pivot Right</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="tankPivotButtonL">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Tank Pivot Left</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
               <item>
@@ -151,6 +174,40 @@
                  <widget class="QLabel" name="label_4">
                   <property name="text">
                    <string>Speed</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSlider" name="horizontalSlider_6">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>Timeout</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QSlider" name="slider_UpsetSpeed">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_10">
+                  <property name="text">
+                   <string>Upset</string>
                   </property>
                  </widget>
                 </item>
@@ -170,29 +227,12 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_7">
-                  <property name="text">
-                   <string>Timeout</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QSlider" name="horizontalSlider_6">
-                  <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
              </layout>
             </item>
             <item>
-             <spacer name="horizontalSpacer_6">
+             <spacer name="horizontalSpacer_5">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -205,14 +245,23 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_Subscribe">
-              <property name="text">
-               <string>Subscribe</string>
+             <widget class="Speedometer" name="speedometer" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>1</horstretch>
+                <verstretch>1</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_5">
+             <spacer name="horizontalSpacer_6">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -252,7 +301,7 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="text">
-                 <string>Straight</string>
+                 <string>Forward</string>
                 </property>
                </widget>
               </item>
@@ -747,6 +796,16 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_FrontLeftWheel">
+                <property name="focusPolicy">
+                 <enum>Qt::ClickFocus</enum>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
@@ -929,6 +988,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_FrontRightWheel"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -971,7 +1033,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QProgressBar" name="progressBar_FrontLeftWheePod">
+               <widget class="QProgressBar" name="progressBar_FrontLeftWheelPod">
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
                 </property>
@@ -1055,7 +1117,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1090,6 +1152,9 @@
                  <string>deg</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_FrontLeftWheelPod"/>
               </item>
              </layout>
             </item>
@@ -1217,7 +1282,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1252,6 +1317,9 @@
                  <string>deg</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_FrontRightWheelPod"/>
               </item>
              </layout>
             </item>
@@ -1435,6 +1503,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_BackLeftWheel"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1617,6 +1688,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_BackRightWheel"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1743,7 +1817,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1778,6 +1852,9 @@
                  <string>deg</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_BackLeftWheelPod"/>
               </item>
              </layout>
             </item>
@@ -1905,7 +1982,7 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Straight</string>
+                   <string>Forward</string>
                   </property>
                  </widget>
                 </item>
@@ -1941,6 +2018,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_BackRightWheelPod"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1972,7 +2052,7 @@
                  <number>0</number>
                 </property>
                 <property name="maximum">
-                 <number>90</number>
+                 <number>130</number>
                 </property>
                 <property name="value">
                  <number>0</number>
@@ -2015,25 +2095,9 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Dig</string>
+                   <string>GTFO</string>
                   </property>
                  </widget>
-                </item>
-                <item>
-                 <spacer name="verticalSpacer_7">
-                  <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_ExcavationArmJog">
@@ -2041,7 +2105,14 @@
                    <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
-                   <string>Jog</string>
+                   <string>Dig</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_ExcavationArmDrive">
+                  <property name="text">
+                   <string>Drive</string>
                   </property>
                  </widget>
                 </item>
@@ -2087,6 +2158,9 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_ExcavationArm"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -2115,9 +2189,12 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="minimum">
-                 <number>0</number>
+                 <number>-40</number>
                 </property>
                 <property name="maximum">
+                 <number>40</number>
+                </property>
+                <property name="pageStep">
                  <number>1</number>
                 </property>
                 <property name="value">
@@ -2162,6 +2239,29 @@
                   </property>
                   <property name="text">
                    <string>Extend</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_ExcavationTranslationStop">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Stop</string>
                   </property>
                  </widget>
                 </item>
@@ -2222,6 +2322,9 @@
                  <string>m</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_ExcavationTranslation"/>
               </item>
              </layout>
             </item>
@@ -2306,6 +2409,25 @@
              </layout>
             </item>
             <item>
+             <widget class="QSlider" name="slider_ExcavationConveyor">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>-100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_2">
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
@@ -2347,10 +2469,10 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="minimum">
-                 <number>0</number>
+                 <number>-100</number>
                 </property>
                 <property name="maximum">
-                 <number>90</number>
+                 <number>100</number>
                 </property>
                 <property name="value">
                  <number>0</number>
@@ -2394,6 +2516,29 @@
                   </property>
                   <property name="text">
                    <string>Dump</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_DepositionDumpStop">
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Stop</string>
                   </property>
                  </widget>
                 </item>
@@ -2454,6 +2599,9 @@
                  <string>deg</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="IntEdit" name="lineEdit_DepositionDump"/>
               </item>
              </layout>
             </item>
@@ -2536,6 +2684,25 @@
                </spacer>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QSlider" name="slider_DepositionConveyor">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>-100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
             </item>
             <item>
              <spacer name="horizontalSpacer_4">
@@ -3009,6 +3176,16 @@
       </widget>
      </widget>
     </item>
+    <item>
+     <widget class="QCommandLinkButton" name="commandLinkButton">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>Connect to Visual</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -3032,6 +3209,19 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Speedometer</class>
+   <extends>QWidget</extends>
+   <header>speedometer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>IntEdit</class>
+   <extends>QLineEdit</extends>
+   <header>intedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
