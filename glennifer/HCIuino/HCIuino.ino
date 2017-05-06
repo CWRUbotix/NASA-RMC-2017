@@ -139,14 +139,33 @@ void setup() {
   // END DUMMY SENSORS
 
   //BC Arm position pin pot A
-  sensor_infos[10].hardware = SH_PIN_POT;
-  sensor_infos[10].whichPin = 4;
-  sensor_infos[10].scale = 1;
+  sensor_infos[16].hardware = SH_PIN_POT;
+  sensor_infos[16].whichPin = 4;
+  sensor_infos[16].scale = 1;
 
    //BC Arm position pin pot B
-  sensor_infos[11].hardware = SH_PIN_POT;
-  sensor_infos[11].whichPin = 5;
-  sensor_infos[11].scale = 1;
+  sensor_infos[19].hardware = SH_PIN_POT;
+  sensor_infos[19].whichPin = 5;
+  sensor_infos[19].scale = 1;
+
+/*
+  // BC Arm Pot A
+  sensor_infos[16].hardware = SH_RC_POT;
+  sensor_infos[16].addr = ADDRESS_RC_2;
+  sensor_infos[16].whichMotor = 1;
+  sensor_infos[16].scale = 1;
+  
+  // BC Arm Pot B
+  sensor_infos[19].hardware = SH_RC_POT;
+  sensor_infos[19].addr = ADDRESS_RC_2;
+  sensor_infos[19].whichMotor = 2;
+  sensor_infos[19].scale = 1;
+*/
+  
+  // BC Translation Pot
+  sensor_infos[22].hardware = SH_PIN_POT;
+  sensor_infos[22].whichPin = 6;
+  sensor_infos[22].scale = 1;
 
   //BC Limit Switch A Retracted
   sensor_infos[23].hardware = SH_PIN_LIMIT;
@@ -269,6 +288,7 @@ void setup() {
   motor_infos[10].maxpos = 2047;
   motor_infos[10].accel = 1000;
   motor_infos[10].scale = 1;
+  motor_infos[10].feedbackSensorID = 16;
   motor_setpoints[10] = 200;
 
   // Deposition Conveyor Motor TODO
@@ -708,8 +728,9 @@ void hciWait() {
     for (int id = 0; id < 256; id++) {
       MotorInfo motor_info = motor_infos[id];
       if (motor_info.hardware == MH_ST_POS || motor_info.hardware == MH_RC_POS_BOTH) {
+        int sensorID = motor_info.feedbackSensorID;
         int16_t pos;
-        getSensor(id, &pos); // TODO: detect fault
+        getSensor(sensorID, &pos); // TODO: detect fault
         int err = motor_setpoints[id] - pos;    
         if (err <= (signed)motor_info.deadband) {
           if (err >= -(signed)motor_info.deadband) {

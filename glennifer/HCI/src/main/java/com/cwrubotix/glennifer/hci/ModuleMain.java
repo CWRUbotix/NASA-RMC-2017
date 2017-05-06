@@ -685,25 +685,19 @@ public class ModuleMain {
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
-					channel.basicPublish("amq.topic","sensor.excavation.arm_angle_pot_position_a", null, msg.toByteArray());
+					channel.basicPublish("amq.topic","sensor.excavation.arm_pos_a", null, msg.toByteArray());
 				} else if(sensorDataID == 19){
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
-					channel.basicPublish("amp.topic", "sensor.excavation.arm_angle_pot_position_b", null, msg.toByteArray());
+					channel.basicPublish("amp.topic", "sensor.excavation.arm_pos_b", null, msg.toByteArray());
 				} else if(sensorDataID == 22){
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
-					channel.basicPublish("amp.topic","sensor.excavation.translation_pot_position_a",null,msg.toByteArray());
-				} else if(sensorDataID == 24){
-					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
-							.setRpm((float)value)
-							.setTimestamp(unixTime)
-							.build();
-					channel.basicPublish("amp.topic", "sensor.excavation.translation_pot_position_b", null, msg.toByteArray());
+					channel.basicPublish("amp.topic","sensor.excavation.translation_pos", null,msg.toByteArray());
 				} else {
 					// TODO: do others
 				}
