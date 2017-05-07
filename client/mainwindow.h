@@ -86,6 +86,9 @@ public slots:
     void handleTankPivotRK();
     void handleTankPivotLK();
 
+    void actionTabRight();
+    void actionTabLeft();
+
     void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);

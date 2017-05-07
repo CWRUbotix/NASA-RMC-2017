@@ -1046,9 +1046,15 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         case (Qt::Key_R):
             handleTankPivotRK();
             break;
-        case (Qt::Key_L):
-            handleTankPivotLK();
-            break;
+        //case (Qt::Key_L):
+          //  ui->tabWidget->setCurrentIndex(3);
+          //  break;
+        case (Qt::Key_E):
+             MainWindow::actionTabRight();
+             break;
+        case (Qt::Key_Q):
+             MainWindow::actionTabLeft();
+             break;
         default:
             QWidget::keyPressEvent(ev);
             break;
@@ -1090,6 +1096,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
             break;
         case (Qt::Key_L):
             handleLocomotionStop();
+            break;
+        case (Qt::Key_E):
+            break;
+        case (Qt::Key_Q):
             break;
         default:
             QWidget::keyReleaseEvent(ev);
@@ -1211,5 +1221,25 @@ void MainWindow::handleTankPivotLK() {
 
     } else {
         ui->consoleOutputTextBrowser->append("Wrong config");
+    }
+}
+
+//Tab Right
+void MainWindow::actionTabRight() {
+    if(ui->tabWidget->currentIndex() >= -1) {
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->currentIndex()+1);
+    }
+    if(ui->tabWidget->currentIndex() >4) {
+        ui->tabWidget->setCurrentIndex(1);
+    }
+}
+
+//Tab Left
+void MainWindow::actionTabLeft() {
+    if(ui->tabWidget->currentIndex() <= 5) {
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->currentIndex()-1);
+    }
+    if(ui->tabWidget->currentIndex() < 1) {
+        ui->tabWidget->setCurrentIndex(5);
     }
 }
