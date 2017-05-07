@@ -26,6 +26,7 @@ public class ModuleMain {
 
 	public static void runWithConnectionExceptions() throws IOException, TimeoutException {
 		// Read connection config
+		Mechanics.initialize();
 		InputStream input = new FileInputStream("config/connection.yml");
 		Yaml yaml = new Yaml();
 		Object connectionConfigObj = yaml.load(input);
@@ -495,9 +496,9 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         if (id % 2 == 0) {
-                            a.targetValue = -(scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+                            a.targetValue = -Mechanics.wheelRPMToValue(scc.getRpm());
                         } else {
-                            a.targetValue = (scc.getRpm() / 60.0F) * 270 * 4096 / 100.0F;
+                            a.targetValue = Mechanics.wheelRPMToValue(scc.getRpm());
                         }
                         System.out.println("target value = " + a.targetValue);
                         a.type = HardwareControlInterface.ActuationType.AngVel;
@@ -523,7 +524,7 @@ public class ModuleMain {
                         Actuation a = new Actuation();
                         a.override = true;
                         a.hold = true;
-                        a.targetValue = 1023-(.04624+0.79547*(1.03586+1.50175*Math.sin(Math.PI*(pcc.getPosition()+316.63691)/180.2324)))*(1024/3.3);
+                        a.targetValue = Mechanics.wheelPodPosToValue(pcc.getPosition());
                         System.out.println("Motor ID: " + id + ", Target value: " + a.targetValue);
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
@@ -625,10 +626,10 @@ public class ModuleMain {
 				Messages.UnixTime unixTime = Messages.UnixTime.newBuilder()
 						.setTimeInt(time_ms / 1000)
 						.setTimeFrac((time_ms % 1000) / (1000.0F))
-						.build(); 
+						.build();
                 //LEFT WHEEL RPM    
 				if (sensorDataID == 0 || sensorDataID == 2){
-					value = -100.0F * value * 60.0F / 270 / 4096;
+                    value = -(Mechanics.wheelValueToRPM(value));
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
@@ -640,7 +641,7 @@ public class ModuleMain {
 				} 
                 //RIGHT WHEEL RPM
                 else if (sensorDataID == 1 || sensorDataID == 3){
-					value = 100.0F * value * 60.0F / 270 / 4096;
+                    value = Mechanics.wheelValueToRPM(value);
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
@@ -652,10 +653,10 @@ public class ModuleMain {
 				}
                 //WHEEL POD POSITION
                 else if (sensorDataID == 4 || sensorDataID == 7 || sensorDataID == 10 || sensorDataID == 13){
-					value = ((3.3 / 1024 * (1023 - value) - 0.04624) / 0.79547 - 1.03586);
+                    value = Mechanics.wheelPodValueToPos(value);
 					if (value > 1) value = 1;
 					if (value < -1) value = -1;
-					value = 180.2324 / Math.PI * Math.asin(value / 1.50175) - 316.63691 + 360;
+					value = Mechanics.wheelPosToRad(value);
 					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
