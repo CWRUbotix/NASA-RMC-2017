@@ -701,13 +701,13 @@ public class ModuleMain {
 // sensor.locomotion.back_right.wheel_pod_limit_extended
 				else if(sensorDataID == 16){
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
-							.setRpm((float)value)
+							.setRpm((float)convertToBCAngle(value))
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic","sensor.excavation.arm_pos_a", null, msg.toByteArray());
 				} else if(sensorDataID == 19){
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
-							.setRpm((float)value)
+							.setRpm((float)convertToBCAngle(value))
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic", "sensor.excavation.arm_pos_b", null, msg.toByteArray());
@@ -732,6 +732,24 @@ public class ModuleMain {
 		} else {
 			return 0;
 		}
+	}
+	
+	/**
+	 * Takes Voltage read from BC arm actuators and turn it into the BC angle position
+	 * If this method returns 0, the BC is horizontal to the ground.
+	 * If this method returns 90, the BC is vertical to the ground.
+	 * @param voltage
+	 * @return the angle position of BC in degrees.
+	 */
+	private static double convertToBCAngle(double voltage){
+		/*All the magic numbers are measured in SolidWorks assuming and setting the extension length and bc angle
+		 * are both 0 when BC is horizontal to the ground.*/
+		double C = 48.7892 * Math.PI / 180;
+		double a = 3.23433;
+		double b = 0.37656 + (voltage - 0.04624)/0.79547; // Paul's equation
+		double c = Math.sqrt(a*a+ b*b - 2 * a * b * Math.cos(C));
+		double rad =  Math.acos((b * b + c * c - a * a)/(2 * b * c)) - (5.10922 * Math.PI / 180);
+		return rad * 180 / Math.PI;
 	}
 
 	public static void main(String[] args) {
