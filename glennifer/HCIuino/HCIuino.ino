@@ -399,14 +399,9 @@ FAULT_T configure_sensors() {
       }
       break;
     case SH_PIN_LIMIT:
-      pinMode(36,INPUT);
-      pinMode(37,INPUT);
-      pinMode(38,INPUT);
-      pinMode(39,INPUT);
-      digitalWrite(36,HIGH);
-      digitalWrite(37,HIGH);
-      digitalWrite(38,HIGH);
-      digitalWrite(39,HIGH);
+      // Pull-up
+      pinMode(sensor_info.whichPin,INPUT);
+      digitalWrite(sensor_info.whichPin,HIGH);
       break;
     case SH_PIN_POT:
       // Nothing to do here

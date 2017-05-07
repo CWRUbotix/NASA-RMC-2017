@@ -26,9 +26,25 @@ public:
     ~CameraOne();
 
 public slots:
-    void handleFrame(QString key, QByteArray data);
+    void handleFrameOne(QString key, QByteArray data);
     void camOneStream();
     void camOneSubscription();
+
+    void handleFrameTwo(QString key, QByteArray data);
+    void camTwoStream();
+    void camTwoSubscription();
+
+    void handleFrameThree(QString key, QByteArray data);
+    void camThreeStream();
+    void camThreeSubscription();
+
+    void handleFrameFour(QString key, QByteArray data);
+    void camFourStream();
+    void camFourSubscription();
+
+    void handleFrameFive(QString key, QByteArray data);
+    void camFiveStream();
+    void camFiveSubscription();
 
 private slots:
 
@@ -36,7 +52,11 @@ private slots:
 private:
     Ui::CameraOne *ui;
     QString str_login;
-    AMQP *m_amqp;
+    AMQP *m_amqp1;
+    AMQP *m_amqp2;
+    AMQP *m_amqp3;
+    AMQP *m_amqp4;
+    AMQP *m_amqp5;
 };
 
 #endif // CAMERAONE_H

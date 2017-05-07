@@ -953,7 +953,7 @@ void MainWindow::initSubscription() {
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
 
-    on_commandLinkButton_clicked();
+    //on_commandLinkButton_clicked();
 }
 
 void MainWindow::handleState(QString key, QByteArray data) {
@@ -968,10 +968,10 @@ void MainWindow::handleState(QString key, QByteArray data) {
     float bl_pos = s.locdetailed().back_left_pos();
     float br_pos = s.locdetailed().back_right_pos();
     float speed = s.locsummary().speed();
-    bool exc_ext_left = s.excdetailed().arm_left_extended();
-    bool exc_ext_right = s.excdetailed().arm_right_extended();
-    bool exc_ret_left = s.excdetailed().arm_left_retracted();
-    bool exc_ret_right = s.excdetailed().arm_right_retracted();
+    bool exc_ext_left = s.excdetailed().translation_left_extended();
+    bool exc_ext_right = s.excdetailed().translation_right_extended();
+    bool exc_ret_left = s.excdetailed().translation_left_retracted();
+    bool exc_ret_right = s.excdetailed().translation_right_retracted();
     ui->lcdNumber_FrontLeftWheel->display(fl_rpm);
     if (fl_rpm >= 0) {
         ui->progressBar_FrontLeftWheelForwards->setValue(fl_rpm);
@@ -1142,9 +1142,13 @@ void MainWindow::on_commandLinkButton_clicked()
     //reset frame and img to make sure it is not conflicting
     cameraOne = new CameraOne(this, m_loginStr);
     cameraOne->CameraOne::camOneStream();
+    cameraOne->CameraOne::camTwoStream();
+    cameraOne->CameraOne::camThreeStream();
+    cameraOne->CameraOne::camFourStream();
+    cameraOne->CameraOne::camFiveStream();
     cameraOne->show();
 
-    cameraTwo = new CameraTwo(this, m_loginStr);
+    /*cameraTwo = new CameraTwo(this, m_loginStr);
     cameraTwo->CameraTwo::camTwoStream();
     cameraTwo->show();
 
@@ -1158,7 +1162,7 @@ void MainWindow::on_commandLinkButton_clicked()
 
     cameraFive = new CameraFive(this, m_loginStr);
     cameraFive->CameraFive::camFiveStream();
-    cameraFive->show();
+    cameraFive->show();*/
 }
 
 
