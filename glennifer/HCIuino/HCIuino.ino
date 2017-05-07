@@ -271,10 +271,14 @@ void setup() {
   motor_infos[8].scale = 1;
 
   // Bucket Conveyor Linear motor TODO
-  motor_infos[9].hardware = MH_ST_PWM;
+  motor_infos[9].hardware = MH_ST_POS;
   motor_infos[9].addr = 3;
   motor_infos[9].whichMotor = 1;
   motor_infos[9].scale = 1;
+  motor_infos[9].feedbackSensorID = 22;
+  motor_infos[9].deadband = 10;
+  motor_infos[9].kp = 1;
+  motor_setpoints[9] = digitalRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin);
 
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
@@ -699,7 +703,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   case MH_ST_PWM:
     //whenever we try to move the BC translation motor, we check if limits are pressed
     //jank solution with hardcoded values yay
-    if(ID == 9) {
+    /*if(ID == 9) {
       if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
         //We hit a switch and are trying to move in the same direction, stop!
         sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
@@ -710,7 +714,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
         sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
         break;
       }
-    }
+    }*/
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
     break;
   case MH_ST_POS:
@@ -759,6 +763,18 @@ void hciWait() {
         }
         bool success;
         if(motor_info.hardware == MH_ST_POS) {
+          if(ID == 9) {
+            if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
+              //We hit a switch and are trying to move in the same direction, stop!
+              sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+              break;
+            }
+            else if(val < 0 && (digitalRead(36) == LOW || digitalRead(38) == LOW)) {
+              //We hit a switch and are trying to move in the same direction, stop!
+              sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+              break;
+            }
+          }
           sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
         }
         else if(motor_info.hardware == MH_RC_POS_BOTH){
