@@ -710,13 +710,13 @@ public class ModuleMain {
 							.setRpm((float)convertToBCAngle(value))
 							.setTimestamp(unixTime)
 							.build();
-					channel.basicPublish("amp.topic", "sensor.excavation.arm_pos_b", null, msg.toByteArray());
+					channel.basicPublish("amq.topic", "sensor.excavation.arm_pos_b", null, msg.toByteArray());
 				} else if(sensorDataID == 22){
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
 							.setRpm((float)value)
 							.setTimestamp(unixTime)
 							.build();
-					channel.basicPublish("amp.topic","sensor.excavation.translation_pos", null,msg.toByteArray());
+					channel.basicPublish("amq.topic","sensor.excavation.translation_pos", null,msg.toByteArray());
 				} else {
 					// TODO: do others
 				}
