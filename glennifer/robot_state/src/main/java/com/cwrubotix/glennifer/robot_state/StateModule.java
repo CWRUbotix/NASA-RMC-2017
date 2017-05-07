@@ -370,15 +370,19 @@ public class StateModule {
     		Messages.StateSubscribe msg = Messages.StateSubscribe.parseFrom(body);
     		String replyKey = msg.getReplyKey();
     		int index = subscriptionThreads.indexOf(replyKey, -1);
-    		Thread t = subscriptionThreads.get(index);
-    		subscriptionThreads.remove(t);
-    		t.interrupt();
-    		try {
-				t.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            try{
+    		  Thread t = subscriptionThreads.get(index);
+    		  subscriptionThreads.remove(t);
+    		  t.interrupt();
+        		try {
+	   			t.join();
+		      	} catch (InterruptedException e) {
+			     	// TODO Auto-generated catch block
+			     	e.printStackTrace();
+                 }
+			} catch (ArrayIndexOutOfBoundsException e1) {
+                System.out.println("The Thread you are trying to terminate does not exist.");
+            }
     	}
     }
     
