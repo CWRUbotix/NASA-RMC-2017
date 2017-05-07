@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     speedometer.cpp \
     cameraone.cpp \
     doubleedit.cpp \
-    intedit.cpp
+    intedit.cpp \
+    ledindicator.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
@@ -28,7 +29,8 @@ HEADERS  += mainwindow.h \
     speedometer.h \
     cameraone.h \
     doubleedit.h \
-    intedit.h
+    intedit.h \
+    ledindicator.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui \
