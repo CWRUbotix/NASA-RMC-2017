@@ -538,7 +538,7 @@ public class ModuleMain {
                         System.out.println("Excavation motor control routing key must have 3 elements");
                         return;
                     }
-                    if (keys[2].equals("conveyor_translation_displacement")) {
+                    if (keys[2].equals("translation_pos")) {
                         Messages.PositionContolCommand pcc = Messages.PositionContolCommand.parseFrom(body);
                         Actuation a = new Actuation();
                         a.override = true;
