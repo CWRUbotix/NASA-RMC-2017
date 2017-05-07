@@ -678,6 +678,15 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     //whenever we try to move the BC translation motor, we check if limits are pressed
     //jank solution with hardcoded values yay
     if(ID == 9) {
+      Serial.print(val);
+      Serial.print(" ");
+      Serial.print(digitalRead(36));
+      Serial.print(" ");
+      Serial.print(digitalRead(37));
+      Serial.print(" ");
+      Serial.print(digitalRead(38));
+      Serial.print(" ");
+      Serial.print(digitalRead(39));
       if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
         //We hit a switch and are trying to move in the same direction, stop!
         sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
