@@ -968,10 +968,10 @@ void MainWindow::handleState(QString key, QByteArray data) {
     float bl_pos = s.locdetailed().back_left_pos();
     float br_pos = s.locdetailed().back_right_pos();
     float speed = s.locsummary().speed();
-    bool exc_ext_left = s.excdetailed().arm_left_extended();
-    bool exc_ext_right = s.excdetailed().arm_right_extended();
-    bool exc_ret_left = s.excdetailed().arm_left_retracted();
-    bool exc_ret_right = s.excdetailed().arm_right_retracted();
+    bool exc_ext_left = s.excdetailed().translation_left_extended();
+    bool exc_ext_right = s.excdetailed().translation_right_extended();
+    bool exc_ret_left = s.excdetailed().translation_left_retracted();
+    bool exc_ret_right = s.excdetailed().translation_right_retracted();
     ui->lcdNumber_FrontLeftWheel->display(fl_rpm);
     if (fl_rpm >= 0) {
         ui->progressBar_FrontLeftWheelForwards->setValue(fl_rpm);
