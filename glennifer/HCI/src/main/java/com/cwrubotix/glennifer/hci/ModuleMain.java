@@ -676,6 +676,25 @@ public class ModuleMain {
                             .setPressed();
                 }
                 */
+                // BC limits
+                else if (sensorDataID == 23 || sensorDataID == 24 || sensorDataID == 25 || sensorDataID == 26) {
+                    Messages.LimitUpdate msg = Messages.LimitUpdate.newBuilder()
+                            .setPressed(value > 0)
+                            .setTimestamp(unixTime)
+                            .build();
+                    if (sensorDataID == 23) {
+                        channel.basicPublish("amq.topic", "sensor.excavation.conveyor_translation_limit_retracted.left", null, msg.toByteArray());
+                    }
+                    else if (sensorDataID == 24) {
+                        channel.basicPublish("amq.topic", "sensor.excavation.conveyor_translation_limit_extended.left", null, msg.toByteArray());
+                    }
+                    else if (sensorDataID == 25) {
+                        channel.basicPublish("amq.topic", "sensor.excavation.conveyor_translation_limit_retracted.right", null, msg.toByteArray());
+                    }
+                    else if (sensorDataID == 26) {
+                        channel.basicPublish("amq.topic", "sensor.excavation.conveyor_translation_limit_extended.right", null, msg.toByteArray());
+                    }
+                }
                 // sensor.locomotion.front_left.wheel_pod_limit_extended
 // sensor.locomotion.front_right.wheel_pod_limit_extended
 // sensor.locomotion.back_left.wheel_pod_limit_extended
