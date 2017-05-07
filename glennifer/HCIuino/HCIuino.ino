@@ -618,7 +618,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
       }
       //else we should be ok
     }
-    sensor_lastLimitVals[ID] = digitalRead(sensor_info.whichPin);
+    sensor_lastLimitVals[ID] = *val;
     break;
   case SH_PIN_POT:
     readVal = (int16_t)analogRead(sensor_info.whichPin / sensor_info.scale);
@@ -683,10 +683,12 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
         //We hit a switch and are trying to move in the same direction, stop!
         sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+        break;
       }
       else if(val < 0 && (digitalRead(36) == LOW || digitalRead(38) == LOW)) {
         //We hit a switch and are trying to move in the same direction, stop!
         sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+        break;
       }
     }
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
