@@ -970,6 +970,10 @@ void MainWindow::handleState(QString key, QByteArray data) {
     float speed = s.locsummary().speed();
     float arm_pos = s.excsummary().arm_pos();
     float translation_pos = s.excsummary().displacement();
+    bool exc_ext_left = s.excdetailed().translation_left_extended();
+    bool exc_ext_right = s.excdetailed().translation_right_extended();
+    bool exc_ret_left = s.excdetailed().translation_left_retracted();
+    bool exc_ret_right = s.excdetailed().translation_right_retracted();
     ui->lcdNumber_FrontLeftWheel->display(fl_rpm);
     if (fl_rpm >= 0) {
         ui->progressBar_FrontLeftWheelForwards->setValue(fl_rpm);
@@ -1010,6 +1014,10 @@ void MainWindow::handleState(QString key, QByteArray data) {
     ui->speedometer->setPower((speed * 100) / 0.7F);
     ui->progressBar_ExcavationArm->setValue(arm_pos);
     ui->progressBar_ExcavationTranslation->setValue(translation_pos);
+    ui->ledIndicator_ExcavationTranslationExtendLeft->setState(exc_ext_left);
+    ui->ledIndicator_ExcavationTranslationExtendRight->setState(exc_ext_right);
+    ui->ledIndicator_ExcavationTranslationRetractLeft->setState(exc_ret_left);
+    ui->ledIndicator_ExcavationTranslationRetractRight->setState(exc_ret_right);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1001</width>
+    <width>1200</width>
     <height>701</height>
    </rect>
   </property>
@@ -2231,6 +2231,52 @@
                </widget>
               </item>
               <item>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <item>
+                 <widget class="LedIndicator" name="ledIndicator_ExcavationTranslationExtendLeft" native="true"/>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="LedIndicator" name="ledIndicator_ExcavationTranslationRetractLeft" native="true"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_8">
+                <item>
+                 <widget class="LedIndicator" name="ledIndicator_ExcavationTranslationExtendRight" native="true"/>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_6">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="LedIndicator" name="ledIndicator_ExcavationTranslationRetractRight" native="true"/>
+                </item>
+               </layout>
+              </item>
+              <item>
                <layout class="QVBoxLayout" name="verticalLayout_36">
                 <item>
                  <widget class="QPushButton" name="pushButton_ExcavationTranslationExtend">
@@ -3193,7 +3239,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1001</width>
+     <width>1200</width>
      <height>21</height>
     </rect>
    </property>
@@ -3220,6 +3266,12 @@
    <class>IntEdit</class>
    <extends>QLineEdit</extends>
    <header>intedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LedIndicator</class>
+   <extends>QWidget</extends>
+   <header>ledindicator.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
