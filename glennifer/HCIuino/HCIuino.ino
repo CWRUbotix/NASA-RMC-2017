@@ -527,8 +527,6 @@ void loop() {
       // cmd is valid
       execute(cmd);
     }
-    Serial.println("loopIterations");
-    loopIterations++;
   }
   
 }
