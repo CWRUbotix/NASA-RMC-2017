@@ -18,10 +18,6 @@ SOURCES += main.cpp\
     consumerthread.cpp \
     speedometer.cpp \
     cameraone.cpp \
-    cameratwo.cpp \
-    camerathree.cpp \
-    camerafour.cpp \
-    camerafive.cpp \
     doubleedit.cpp \
     intedit.cpp \
     ledindicator.cpp
@@ -32,21 +28,13 @@ HEADERS  += mainwindow.h \
     consumerthread.h \
     speedometer.h \
     cameraone.h \
-    cameratwo.h \
-    camerathree.h \
-    camerafour.h \
-    camerafive.h \
     doubleedit.h \
     intedit.h \
     ledindicator.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui \
-    cameraone.ui \
-    cameratwo.ui \
-    camerathree.ui \
-    camerafour.ui \
-    camerafive.ui
+    cameraone.ui
 
 CONFIG += conan_basic_setup
 include(conanbuildinfo.pri)
