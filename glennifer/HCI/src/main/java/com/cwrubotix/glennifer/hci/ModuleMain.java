@@ -660,15 +660,15 @@ public class ModuleMain {
 							.setPosition((float)value)
 							.setTimestamp(unixTime)
 							.build();
-                    if (sensorDataID == 4)        
-					    channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_pod_pos", null, msg.toByteArray());
+                    if (sensorDataID == 4)
+                        channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_pod_pos", null, msg.toByteArray());
                     else if (sensorDataID == 7)
                         channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_pod_pos", null, msg.toByteArray());
                     else if (sensorDataID == 10)
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_pod_pos", null, msg.toByteArray());
                     else if (sensorDataID == 13)
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_pod_pos", null, msg.toByteArray());
-				} 
+                }
                 //WHEEL POD LIMIT EXTENDED
                 /*
                 else if (sensorDataID == 5 || sensorDataID == 8 || sensorDataID == 11 || sensorDataID == 14){
@@ -676,12 +676,48 @@ public class ModuleMain {
                             .setPressed();
                 }
                 */
+                // BC limits
+                else if (sensorDataID == 23 || sensorDataID == 24 || sensorDataID == 25 || sensorDataID == 26) {
+                    Messages.LimitUpdate msg = Messages.LimitUpdate.newBuilder()
+                            .setPressed(value > 0)
+                            .setTimestamp(unixTime)
+                            .build();
+                    if (sensorDataID == 23) {
+                        channel.basicPublish("amq.topic", "sensor.excavation.conveyor_translation_limit_retracted.left", null, msg.toByteArray());
+                    }
+                    else if (sensorDataID == 24) {
+                        channel.basicPublish("amq.topic", "sensor.excavation.conveyor_translation_limit_extended.left", null, msg.toByteArray());
+                    }
+                    else if (sensorDataID == 25) {
+                        channel.basicPublish("amq.topic", "sensor.excavation.conveyor_translation_limit_retracted.right", null, msg.toByteArray());
+                    }
+                    else if (sensorDataID == 26) {
+                        channel.basicPublish("amq.topic", "sensor.excavation.conveyor_translation_limit_extended.right", null, msg.toByteArray());
+                    }
+                }
                 // sensor.locomotion.front_left.wheel_pod_limit_extended
 // sensor.locomotion.front_right.wheel_pod_limit_extended
 // sensor.locomotion.back_left.wheel_pod_limit_extended
 // sensor.locomotion.back_right.wheel_pod_limit_extended
-
-                else {
+				else if(sensorDataID == 16){
+					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
+							.setRpm((float)convertToBCAngle(value))
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic","sensor.excavation.arm_pos_a", null, msg.toByteArray());
+				} else if(sensorDataID == 19){
+					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
+							.setRpm((float)convertToBCAngle(value))
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic", "sensor.excavation.arm_pos_b", null, msg.toByteArray());
+				} else if(sensorDataID == 22){
+					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
+							.setRpm((float)value)
+							.setTimestamp(unixTime)
+							.build();
+					channel.basicPublish("amq.topic","sensor.excavation.translation_pos", null,msg.toByteArray());
+				} else {
 					// TODO: do others
 				}
 			}
@@ -696,6 +732,24 @@ public class ModuleMain {
 		} else {
 			return 0;
 		}
+	}
+	
+	/**
+	 * Takes Voltage read from BC arm actuators and turn it into the BC angle position
+	 * If this method returns 0, the BC is horizontal to the ground.
+	 * If this method returns 90, the BC is vertical to the ground.
+	 * @param voltage
+	 * @return the angle position of BC in degrees.
+	 */
+	private static double convertToBCAngle(double voltage){
+		/*All the magic numbers are measured in SolidWorks assuming and setting the extension length and bc angle
+		 * are both 0 when BC is horizontal to the ground.*/
+		double C = 48.7892 * Math.PI / 180;
+		double a = 3.23433;
+		double b = 0.37656 + (voltage - 0.04624)/0.79547; // Paul's equation
+		double c = Math.sqrt(a*a+ b*b - 2 * a * b * Math.cos(C));
+		double rad =  Math.acos((b * b + c * c - a * a)/(2 * b * c)) - (5.10922 * Math.PI / 180);
+		return rad * 180 / Math.PI;
 	}
 
 	public static void main(String[] args) {

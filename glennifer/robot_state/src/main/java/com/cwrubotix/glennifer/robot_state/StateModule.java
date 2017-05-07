@@ -210,10 +210,12 @@ public class StateModule {
 
                 if (sensorString.equals("conveyor_rpm")) {
                     handleConveyorRpmUpdate(body);
-                } else if (sensorString.equals("conveyor_translation_displacement")) {
-                    handleConveyorTranslationDisplacementUpdate(body);
-                }  else if (sensorString.equals("arm_pos")) {
+                } else if (sensorString.equals("translation_pos")) {
+                    handleConveyorTranslationPosUpdate(body);
+                }  else if (sensorString.equals("arm_pos_a")) {
                     handleArmPosUpdate(body);
+                }  else if (sensorString.equals("arm_pos_b")) {
+                    // do nothing for now
                 } else if (sensorString.equals("arm_limit_extended")) {
                     String sideString = keys[3];
                     ExcavationState.Side side;
@@ -262,8 +264,10 @@ public class StateModule {
                         return;
                     }
                     handleConveyorTranslationLimitRetractedUpdate(side, body);
+                } else if (sensorString.equals("arm_pos_a")) { // TODO: both sides
+                    handleConveyorTranslationPosUpdate(body);
                 } else {
-                    System.out.println("Bad sensor string in routing key");
+                    System.out.println("Bad sensor string in routing key: " + sensorString);
                     return;
                 }
             }
@@ -285,7 +289,7 @@ public class StateModule {
                         return;
                     }
                     handleDumpLoadUpdate(loadcell, body);
-                }  else if (sensorString.equals("arm_pos")) {
+                } else if (sensorString.equals("arm_pos")) {
                     handleDumpPosUpdate(body);
                 } else if (sensorString.equals("dump_limit_extended")) {
                     String sideString = keys[3];
@@ -437,12 +441,12 @@ public class StateModule {
         }
     }
 
-    private void handleConveyorTranslationDisplacementUpdate(byte[] body) throws IOException {
-        DisplacementUpdate message = DisplacementUpdate.parseFrom(body);
-        float displacement = message.getDisplacement();
+    private void handleConveyorTranslationPosUpdate(byte[] body) throws IOException {
+        PositionUpdate message = PositionUpdate.parseFrom(body);
+        float pos = message.getPosition();
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
-            excavationState.updateTranslationDisplacement(displacement, time);
+            excavationState.updateTranslationDisplacement(pos, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
