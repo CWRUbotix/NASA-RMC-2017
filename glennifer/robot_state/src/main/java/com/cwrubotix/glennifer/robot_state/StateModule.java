@@ -265,7 +265,7 @@ public class StateModule {
                 } else if (sensorString.equals("arm_pos_a")) { // TODO: both sides
                     handleConveyorTranslationPosUpdate(body);
                 } else {
-                    System.out.println("Bad sensor string in routing key");
+                    System.out.println("Bad sensor string in routing key: " + sensorString);
                     return;
                 }
             }
