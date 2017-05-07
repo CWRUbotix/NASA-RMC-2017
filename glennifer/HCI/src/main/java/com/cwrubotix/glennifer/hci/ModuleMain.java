@@ -714,6 +714,24 @@ public class ModuleMain {
 			return 0;
 		}
 	}
+	
+	/**
+	 * Takes Voltage read from BC arm actuators and turn it into the BC angle position
+	 * If this method returns 0, the BC is horizontal to the ground.
+	 * If this method returns 90, the BC is vertical to the ground.
+	 * @param voltage
+	 * @return the angle position of BC in degrees.
+	 */
+	private double converToBCAngle(double voltage){
+		/*All the magic numbers are measured in SolidWorks assuming and setting the extension length and bc angle
+		 * are both 0 when BC is horizontal to the ground.*/
+		double C = 48.7892 * Math.PI / 180;
+		double a = 3.23433;
+		double b = 0.37656 + (voltage - 0.04624)/0.79547; // Paul's equation
+		double c = Math.sqrt(a*a+ b*b - 2 * a * b * Math.cos(C));
+		double rad =  Math.acos((b * b + c * c - a * a)/(2 * b * c)) - (5.10922 * Math.PI / 180);
+		return rad * 180 / Math.PI;
+	}
 
 	public static void main(String[] args) {
 		try {
