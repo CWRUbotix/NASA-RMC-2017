@@ -1,0 +1,23 @@
+
+datestring=$(date +%Y_%m_%d_%H_%M_%S)
+cd /home/ubuntu
+mkdir -p "logs/$datestring"
+
+cd /home/ubuntu/workspace/NASA-RMC-2017/
+
+#build protobuf
+./build-pb.sh
+
+# copy config
+cp -r config glennifer/HCI/
+cp -r config glennifer/robot_state
+cp -r config glennifer/motor_dispatch/src/python
+
+# compile the things
+cd glennifer/HCI
+mvn compile
+cd ..
+
+cd robot_state
+mvn compile
+cd ..
