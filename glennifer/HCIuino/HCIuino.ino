@@ -38,7 +38,7 @@ typedef struct SensorInfo {
   uint8_t addr; // When hardware = SH_RC_*
   uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
-  float responsiveness = 0.5;
+  float responsiveness = 0.1;
   uint16_t scale; // 1 unless needed
 } SensorInfo;
 
@@ -139,14 +139,33 @@ void setup() {
   // END DUMMY SENSORS
 
   //BC Arm position pin pot A
-  sensor_infos[10].hardware = SH_PIN_POT;
-  sensor_infos[10].whichPin = 4;
-  sensor_infos[10].scale = 1;
+  sensor_infos[16].hardware = SH_PIN_POT;
+  sensor_infos[16].whichPin = 4;
+  sensor_infos[16].scale = 1;
 
    //BC Arm position pin pot B
-  sensor_infos[11].hardware = SH_PIN_POT;
-  sensor_infos[11].whichPin = 5;
-  sensor_infos[11].scale = 1;
+  sensor_infos[19].hardware = SH_PIN_POT;
+  sensor_infos[19].whichPin = 5;
+  sensor_infos[19].scale = 1;
+
+/*
+  // BC Arm Pot A
+  sensor_infos[16].hardware = SH_RC_POT;
+  sensor_infos[16].addr = ADDRESS_RC_2;
+  sensor_infos[16].whichMotor = 1;
+  sensor_infos[16].scale = 1;
+  
+  // BC Arm Pot B
+  sensor_infos[19].hardware = SH_RC_POT;
+  sensor_infos[19].addr = ADDRESS_RC_2;
+  sensor_infos[19].whichMotor = 2;
+  sensor_infos[19].scale = 1;
+*/
+  
+  // BC Translation Pot
+  sensor_infos[22].hardware = SH_PIN_POT;
+  sensor_infos[22].whichPin = 6;
+  sensor_infos[22].scale = 1;
 
   //BC Limit Switch A Retracted
   sensor_infos[23].hardware = SH_PIN_LIMIT;
@@ -269,7 +288,8 @@ void setup() {
   motor_infos[10].maxpos = 2047;
   motor_infos[10].accel = 1000;
   motor_infos[10].scale = 1;
-  motor_setpoints[10] = 200;
+  motor_infos[10].feedbackSensorID = 16;
+  motor_setpoints[10] = 300;
 
   // Deposition Conveyor Motor TODO
   motor_infos[11].hardware = MH_ST_PWM;
@@ -399,7 +419,9 @@ FAULT_T configure_sensors() {
       }
       break;
     case SH_PIN_LIMIT:
-      // TODO
+      // Pull-up
+      pinMode(sensor_info.whichPin,INPUT);
+      digitalWrite(sensor_info.whichPin,HIGH);
       break;
     case SH_PIN_POT:
       // Nothing to do here
@@ -609,13 +631,14 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
   case SH_PIN_LIMIT:
     //if the pin limit switch is for BC translation:
     if(ID >= 23 && ID <= 26){
-      if(digitalRead(sensor_info.whichPin) == HIGH && sensor_lastLimitVals[ID] == LOW) {
+      *val = !digitalRead(sensor_info.whichPin);
+      if(*val && !sensor_lastLimitVals[ID]) {
         //something just changed from low to high, stop actuation.
         sabretooth[motor_infos[9].addr].motor(motor_infos[9].whichMotor, 0);
       }
       //else we should be ok
     }
-    sensor_lastLimitVals[ID] = digitalRead(sensor_info.whichPin);
+    sensor_lastLimitVals[ID] = *val;
     break;
   case SH_PIN_POT:
     readVal = (int16_t)analogRead(sensor_info.whichPin / sensor_info.scale);
@@ -677,13 +700,15 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     //whenever we try to move the BC translation motor, we check if limits are pressed
     //jank solution with hardcoded values yay
     if(ID == 9) {
-      if(val > 0 && (digitalRead(37) == HIGH || digitalRead(39) == HIGH)) {
+      if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
         //We hit a switch and are trying to move in the same direction, stop!
         sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+        break;
       }
-      else if(val < 0 && (digitalRead(36) == HIGH || digitalRead(38) == HIGH)) {
+      else if(val < 0 && (digitalRead(36) == LOW || digitalRead(38) == LOW)) {
         //We hit a switch and are trying to move in the same direction, stop!
         sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+        break;
       }
     }
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
@@ -708,8 +733,9 @@ void hciWait() {
     for (int id = 0; id < 256; id++) {
       MotorInfo motor_info = motor_infos[id];
       if (motor_info.hardware == MH_ST_POS || motor_info.hardware == MH_RC_POS_BOTH) {
+        int sensorID = motor_info.feedbackSensorID;
         int16_t pos;
-        getSensor(id, &pos); // TODO: detect fault
+        getSensor(sensorID, &pos); // TODO: detect fault
         int err = motor_setpoints[id] - pos;    
         if (err <= (signed)motor_info.deadband) {
           if (err >= -(signed)motor_info.deadband) {
