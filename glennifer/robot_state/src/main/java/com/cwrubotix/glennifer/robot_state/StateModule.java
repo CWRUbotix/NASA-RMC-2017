@@ -287,8 +287,10 @@ public class StateModule {
                         return;
                     }
                     handleDumpLoadUpdate(loadcell, body);
-                }  else if (sensorString.equals("arm_pos")) {
+                } else if (sensorString.equals("arm_pos_a")) {
                     handleDumpPosUpdate(body);
+                } else if (sensorString.equals("arm_pos_b")) {
+                    // do nothing for now
                 } else if (sensorString.equals("dump_limit_extended")) {
                     String sideString = keys[3];
                     DepositionState.Side side;
