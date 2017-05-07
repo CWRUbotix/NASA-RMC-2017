@@ -16,10 +16,10 @@ cd ..
 
 cd motor_dispatch/src/python
 nohup python3 locomotion.py &> "/home/ubuntu/logs/$datestring/LocomotionPyOutput.log" &
-cd ../../..
+cd ../../../..
 
 cd client-cameras
-nohup python client-cam-send.py &> "/home/cwrubotix/logs/$datestring/CameraSendPyOutput.log" &
+nohup python client-cam-send.py &> "/home/ubuntu/logs/$datestring/CameraSendPyOutput.log" &
 cd ..
 
 cd ..
