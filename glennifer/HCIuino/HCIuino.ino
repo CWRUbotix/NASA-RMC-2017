@@ -612,7 +612,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     //if the pin limit switch is for BC translation:
     if(ID >= 23 && ID <= 26){
       *val = !digitalRead(sensor_info.whichPin);
-      if(*val == LOW && sensor_lastLimitVals[ID] == HIGH) {
+      if(*val && !sensor_lastLimitVals[ID]) {
         //something just changed from low to high, stop actuation.
         sabretooth[motor_infos[9].addr].motor(motor_infos[9].whichMotor, 0);
       }
