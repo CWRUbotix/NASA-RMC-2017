@@ -375,10 +375,10 @@ public class StateModule {
 		      	} catch (InterruptedException e) {
 			     	// TODO Auto-generated catch block
 			     	e.printStackTrace();
-                 }catch(ArrayIndexOutOfBoundsException e1){
-                    System.out.println("The Thread you are trying to terminate does not exist.");
                  }
-			}
+			} catch (ArrayIndexOutOfBoundsException e1) {
+                System.out.println("The Thread you are trying to terminate does not exist.");
+            }
     	}
     }
     
