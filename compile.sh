@@ -5,9 +5,6 @@ mkdir -p "logs/$datestring"
 
 cd /home/cwrubotix/workspace/NASA-RMC-2017/
 
-#build protobuf
-./build-pb.sh
-
 # copy config
 cp -r config glennifer/HCI/
 cp -r config glennifer/robot_state
