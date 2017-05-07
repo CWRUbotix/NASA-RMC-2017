@@ -682,13 +682,13 @@ public class ModuleMain {
 // sensor.locomotion.back_right.wheel_pod_limit_extended
 				else if(sensorDataID == 16){
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
-							.setRpm((float)value)
+							.setRpm((float)convertToBCAngle(value))
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic","sensor.excavation.arm_pos_a", null, msg.toByteArray());
 				} else if(sensorDataID == 19){
 					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
-							.setRpm((float)value)
+							.setRpm((float)convertToBCAngle(value))
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amp.topic", "sensor.excavation.arm_pos_b", null, msg.toByteArray());
@@ -722,7 +722,7 @@ public class ModuleMain {
 	 * @param voltage
 	 * @return the angle position of BC in degrees.
 	 */
-	private double converToBCAngle(double voltage){
+	private static double convertToBCAngle(double voltage){
 		/*All the magic numbers are measured in SolidWorks assuming and setting the extension length and bc angle
 		 * are both 0 when BC is horizontal to the ground.*/
 		double C = 48.7892 * Math.PI / 180;
