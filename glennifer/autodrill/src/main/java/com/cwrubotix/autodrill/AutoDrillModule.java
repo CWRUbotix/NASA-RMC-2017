@@ -33,14 +33,6 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			if(currentJob != null){
-				currentJob.interrupt();
-				try{
-					currentJob.join();
-				} catch(InterruptedException e){
-					e.printStackTrace();
-				}
-			}
 			//Messages.DigDeepCommand cmd = Messages.DigDeepCommand.parseFrom(body);
 			//float targetDepth = cmd.getDepth();
 			locomotionSpeedControl(0.0F);
@@ -61,14 +53,6 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			if(currentJob != null){
-				currentJob.interrupt();
-				try{
-					currentJob.join();
-				} catch(InterruptedException e){
-					e.printStackTrace();
-				}
-			}
 			//Messages.DigSurfaceCommand cmd = Messages.DigSurfaceCommand.parseFrom(body);
 			//float targetDepth = cmd.getTargetDepth();
 			//float targetRPM = cmd.getRPM();
@@ -92,13 +76,10 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			currentJob.interrupt();
-			try{
-				currentJob.join();
-			} catch(InterruptedException e){
-				e.printStackTrace();
-			}
-			currentJob = null;
+			locomotionSpeedControl(0.0F);
+			excavationTranslationControl(0.0F);
+			excavationConveyorRPM(0.0F);
+			excavationAngleControl(0.0F);
 		}
 	}
 
@@ -149,7 +130,6 @@ public class AutoDrillModule {
 	private String exchangeName;
 	private Connection connection;
 	private Channel channel;
-	private Thread currentJob;
 	
 	public AutoDrillModule(){
 		this("amq.topic");
@@ -210,8 +190,6 @@ public class AutoDrillModule {
 	}
 	
 	public void stop() throws IOException, TimeoutException, InterruptedException{
-		currentJob.interrupt();
-		currentJob.join();
 		channel.close();
 		connection.close();
 	}
