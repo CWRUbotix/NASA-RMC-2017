@@ -91,13 +91,17 @@ public slots:
 
     void digConfig();
     void dumpConfig();
-   // void forwardConfig();
+    void forwardConfig();
     void turnConfig();
     void strafeConfig();
 
-    //void changeToDump();
-    //void changeToDig();
-    //void changeToDrive();
+    void digDeep();
+    void digFwd();
+    void digRev();
+    void digEnd();
+    void bcktWdraw();
+    void bcktFwd();
+    void bcktRev();
 
     void handleState(QString key, QByteArray data);
 
@@ -125,7 +129,8 @@ private:
 
     CameraOne *cameraOne;
     int m_digConfig = 0; //0 is drive, 1 is dig, 2 is GTFO
-    //int m_dumpConfig = 0; //0 is retracted, 1 is extended (dump)
+    bool isInDig = false;
+    bool isInDump = false;
 };
 
 #endif // MAINWINDOW_H

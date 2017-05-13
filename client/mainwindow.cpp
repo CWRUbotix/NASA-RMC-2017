@@ -1318,36 +1318,65 @@ void MainWindow::actionTabLeft() {
 }
 
 //Configurations
+void MainWindow::forwardConfig() {
+    if (0 == m_desiredConfig) {
+    ui->consoleOutputTextBrowser->append("Already in forward Configuration");
+    isInDig = false;
+    isInDump = false;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Switching to forward Configuration");
+        handleLocomotionStraight();
+        isInDig = false;
+        isInDump = false;
+}
+
 void MainWindow::digConfig() {
     if (0 == m_desiredConfig) {
     ui->consoleOutputTextBrowser->append("Already in Dig Configuration");
+    isInDig = true;
+    isInDump = false;
     }
     else
         ui->consoleOutputTextBrowser->append("Switching to Dig Configuration");
         handleLocomotionStraight();
+        isInDig = true;
+        isInDump = false;
 }
 
 void MainWindow::dumpConfig() {
     if (0 == m_desiredConfig) {
     ui->consoleOutputTextBrowser->append("Already in Dump Configuration");
+    isInDig = false;
+    isInDump = true;
     }
     else
         ui->consoleOutputTextBrowser->append("Switching to Dump Configutation");
         handleLocomotionStraight();
+        isInDig = false;
+        isInDump = true;
 }
 
 void MainWindow::turnConfig() {
     if (ui->slider_ExcavationArm->value() > 20) {
-        ui->consoleOutputTextBrowser->append("Excavation rm is preventing turn configuration,\n please retract the Excavation arm");
+        ui->consoleOutputTextBrowser->append("Excavation arm is preventing turn configuration,\n please retract the Excavation arm");
+        isInDig = false;
+        isInDump = false;
     }
     else
         handleLocomotionTurn();
+        isInDig = false;
+        isInDump = false;
 }
 
 void MainWindow::strafeConfig() {
     if (ui->slider_ExcavationArm->value() > 20) {
-        ui->consoleOutputTextBrowser->append("Excavation rm is preventing strafe configuration,\n please retract the Excavation arm");
+        ui->consoleOutputTextBrowser->append("Excavation arm is preventing strafe configuration,\n please retract the Excavation arm");
+        isInDig = false;
+        isInDump = false;
     }
     else
         handleLocomotionStrafe();
+        isInDig = false;
+        isInDump = false;
 }
