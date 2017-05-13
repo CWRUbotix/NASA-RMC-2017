@@ -277,8 +277,9 @@ void setup() {
   motor_infos[9].scale = 1;
   motor_infos[9].feedbackSensorID = 22;
   motor_infos[9].deadband = 10;
-  motor_infos[9].kp = 1;
-  motor_setpoints[9] = digitalRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin);
+  motor_infos[9].kp = 10;
+  motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin);
+  sensor_storedVals[motor_infos[9].feedbackSensorID] = motor_setpoints[9];
 
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
@@ -660,6 +661,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   bool success;
   MotorInfo motor_info = motor_infos[ID];
   int val_scaled = val * motor_infos[ID].scale;
+  Serial.print(ID);
+  Serial.print(" ");
+  Serial.print(val_scaled);
   switch (motor_info.hardware) {
   case MH_RC_PWM:
     if (motor_info.whichMotor == 2) {
@@ -718,6 +722,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
     break;
   case MH_ST_POS:
+    Serial.print(ID);
+    Serial.print(" ");
+    Serial.print(val_scaled);
     motor_setpoints[ID] = val_scaled;
     break;
   case MH_RC_POS_BOTH:
@@ -763,7 +770,12 @@ void hciWait() {
         }
         bool success;
         if(motor_info.hardware == MH_ST_POS) {
-          if(ID == 9) {
+          if(id == 9) {
+           /* Serial.print(pos);
+            Serial.print(" ");
+            Serial.print(motor_setpoints[9]);
+            Serial.print(" ");
+            Serial.println(val);*/
             if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
               //We hit a switch and are trying to move in the same direction, stop!
               sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
