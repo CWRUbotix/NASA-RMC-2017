@@ -806,15 +806,15 @@ void MainWindow::handleExcavationTranslationSet(int value) {
 }
 
 void MainWindow::handleExcavationTranslationExtend() {
-    ui->slider_ExcavationTranslation->setValue(12);
+    ui->slider_ExcavationTranslation->setValue(100);
 }
 
 void MainWindow::handleExcavationTranslationStop() {
-    ui->slider_ExcavationTranslation->setValue(0);
+    ui->slider_ExcavationTranslation->setValue(50);
 }
 
 void MainWindow::handleExcavationTranslationRetract() {
-    ui->slider_ExcavationTranslation->setValue(-20);
+    ui->slider_ExcavationTranslation->setValue(0);
 }
 
 void MainWindow::handleExcavationConveyor(bool checked) {
