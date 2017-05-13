@@ -89,6 +89,16 @@ public slots:
     void actionTabRight();
     void actionTabLeft();
 
+    void digConfig();
+    void dumpConfig();
+   // void forwardConfig();
+    void turnConfig();
+    void strafeConfig();
+
+    //void changeToDump();
+    //void changeToDig();
+    //void changeToDrive();
+
     void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);
@@ -114,6 +124,8 @@ private:
     int m_configSpeeds[3] = {100, 60, 50};
 
     CameraOne *cameraOne;
+    int m_digConfig = 0; //0 is drive, 1 is dig, 2 is GTFO
+    //int m_dumpConfig = 0; //0 is retracted, 1 is extended (dump)
 };
 
 #endif // MAINWINDOW_H

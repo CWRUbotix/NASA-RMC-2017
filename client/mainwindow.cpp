@@ -470,6 +470,7 @@ void MainWindow::handleLocomotionStraight() {
 }
 
 void MainWindow::handleLocomotionTurn() {
+    //check the arm is in drive and hopper maybe if ()
     m_configSpeeds[m_desiredConfig] = ui->slider_LocomotionSpeed->value();
     m_desiredConfig = 1;
     ui->slider_LocomotionSpeed->setValue(m_configSpeeds[m_desiredConfig]);
@@ -493,6 +494,7 @@ void MainWindow::handleLocomotionTurn() {
 }
 
 void MainWindow::handleLocomotionStrafe() {
+    //check the arm is in drive and hopper maybe if ()
     m_configSpeeds[m_desiredConfig] = ui->slider_LocomotionSpeed->value();
     m_desiredConfig = 2;
     ui->slider_LocomotionSpeed->setValue(m_configSpeeds[m_desiredConfig]);
@@ -1015,6 +1017,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         switch (ev->key()) {
         case (Qt::Key_Space):
             handleLocomotionStop();
+            //stop all other motors and automatic procesess
             break;
         case (Qt::Key_W):
             handleLocomotionUp();
@@ -1032,10 +1035,10 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
             handleLocomotionStraight();
             break;
         case (Qt::Key_O):
-            handleLocomotionTurn();
+            turnConfig();
             break;
         case (Qt::Key_P):
-            handleLocomotionStrafe();
+            strafeConfig();
             break;
         case (Qt::Key_J):
             ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() - 10);
@@ -1043,17 +1046,53 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         case (Qt::Key_K):
             ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + 10);
             break;
-        case (Qt::Key_R):
-            handleTankPivotRK();
-            break;
+        //case (Qt::Key_R):
+          //  handleTankPivotRK();
+          //  break;
         //case (Qt::Key_L):
-          //  ui->tabWidget->setCurrentIndex(3);
+          //  handleTankPivotLK;
           //  break;
         case (Qt::Key_E):
              MainWindow::actionTabRight();
              break;
         case (Qt::Key_Q):
              MainWindow::actionTabLeft();
+             break;
+        case (Qt::Key_Y):
+             MainWindow::digConfig();
+             break;
+        case (Qt::Key_U):
+             MainWindow::dumpConfig();
+             break;
+        case (Qt::Key_1):
+             //dig deep
+             break;
+        case (Qt::Key_2):
+             //dig forward
+             break;
+        case (Qt::Key_3):
+             //dig rev
+             break;
+        case (Qt::Key_4):
+             //dig end
+             break;
+        case (Qt::Key_5):
+             //arm bucket retract
+             break;
+        case (Qt::Key_6):
+             //bucket forward
+             break;
+        case (Qt::Key_7):
+             //bucket rev
+             break;
+        case (Qt::Key_8):
+             //arm drive
+             break;
+        case (Qt::Key_9):
+             //arm prep
+             break;
+        case (Qt::Key_0):
+             //arm dig
              break;
         default:
             QWidget::keyPressEvent(ev);
@@ -1101,6 +1140,40 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
             break;
         case (Qt::Key_Q):
             break;
+        case (Qt::Key_Y):
+             break;
+        case (Qt::Key_U):
+             break;
+        case (Qt::Key_1):
+             //dig deep
+             break;
+        case (Qt::Key_2):
+             //dig forward
+             break;
+        case (Qt::Key_3):
+             //dig rev
+             break;
+        case (Qt::Key_4):
+             //dig end
+             break;
+        case (Qt::Key_5):
+             //arm bucket retract
+             break;
+        case (Qt::Key_6):
+             //bucket forward
+             break;
+        case (Qt::Key_7):
+             //bucket rev
+             break;
+        case (Qt::Key_8):
+             //arm drive
+             break;
+        case (Qt::Key_9):
+             //arm prep
+             break;
+        case (Qt::Key_0):
+             //arm dig
+             break;
         default:
             QWidget::keyReleaseEvent(ev);
             break;
@@ -1242,4 +1315,39 @@ void MainWindow::actionTabLeft() {
     if(ui->tabWidget->currentIndex() < 1) {
         ui->tabWidget->setCurrentIndex(5);
     }
+}
+
+//Configurations
+void MainWindow::digConfig() {
+    if (0 == m_desiredConfig) {
+    ui->consoleOutputTextBrowser->append("Already in Dig Configuration");
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Switching to Dig Configuration");
+        handleLocomotionStraight();
+}
+
+void MainWindow::dumpConfig() {
+    if (0 == m_desiredConfig) {
+    ui->consoleOutputTextBrowser->append("Already in Dump Configuration");
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Switching to Dump Configutation");
+        handleLocomotionStraight();
+}
+
+void MainWindow::turnConfig() {
+    if (ui->slider_ExcavationArm->value() > 20) {
+        ui->consoleOutputTextBrowser->append("Excavation rm is preventing turn configuration,\n please retract the Excavation arm");
+    }
+    else
+        handleLocomotionTurn();
+}
+
+void MainWindow::strafeConfig() {
+    if (ui->slider_ExcavationArm->value() > 20) {
+        ui->consoleOutputTextBrowser->append("Excavation rm is preventing strafe configuration,\n please retract the Excavation arm");
+    }
+    else
+        handleLocomotionStrafe();
 }
