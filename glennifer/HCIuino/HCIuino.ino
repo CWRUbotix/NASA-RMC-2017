@@ -771,11 +771,11 @@ void hciWait() {
         bool success;
         if(motor_info.hardware == MH_ST_POS) {
           if(id == 9) {
-           /* Serial.print(pos);
+            Serial.print(pos);
             Serial.print(" ");
             Serial.print(motor_setpoints[9]);
             Serial.print(" ");
-            Serial.println(val);*/
+            Serial.println(val);
             if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
               //We hit a switch and are trying to move in the same direction, stop!
               sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
