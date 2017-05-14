@@ -2071,7 +2071,7 @@
                  <enum>Qt::LeftToRight</enum>
                 </property>
                 <property name="maximum">
-                 <number>90</number>
+                 <number>1024</number>
                 </property>
                 <property name="value">
                  <number>0</number>
@@ -2189,10 +2189,10 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="minimum">
-                 <number>-40</number>
+                 <number>0</number>
                 </property>
                 <property name="maximum">
-                 <number>40</number>
+                 <number>100</number>
                 </property>
                 <property name="pageStep">
                  <number>1</number>
@@ -2214,7 +2214,7 @@
                  <enum>Qt::LeftToRight</enum>
                 </property>
                 <property name="maximum">
-                 <number>1</number>
+                 <number>100</number>
                 </property>
                 <property name="value">
                  <number>0</number>
