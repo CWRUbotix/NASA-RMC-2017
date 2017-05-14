@@ -744,7 +744,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   case MH_ALL:
     if(val_scaled == 0){ // we want to stop all of the motors
       for(int i = 0; i < 13; i++){
-        if(motor_infos[i].hardware != MH_ST_POS && motoR_infos[i].hardware != MH_RC_POS_BOTH){
+        if(motor_infos[i].hardware != MH_ST_POS && motor_infos[i].hardware != MH_RC_POS_BOTH){
            setActuator(i, 0);
         }
         else {
