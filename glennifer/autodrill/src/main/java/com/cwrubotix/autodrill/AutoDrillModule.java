@@ -39,6 +39,7 @@ public class AutoDrillModule {
 				}
 				catch(Exception e){
 				go = false;
+				e.printStackTrace();
 				}
 			}
 			 
