@@ -41,6 +41,12 @@ message PositionUpdate {
 	required UnixTime timestamp = 2;
 }
 
+// sensor.excavation.conveyor_current
+message CurrentUpdate {
+	required float current = 1;
+	required UnixTime timestamp = 2;
+}
+
 // sensor.locomotion.front_left.wheel_pod_limit_extended
 // sensor.locomotion.front_right.wheel_pod_limit_extended
 // sensor.locomotion.back_left.wheel_pod_limit_extended
