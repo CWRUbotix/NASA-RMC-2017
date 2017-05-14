@@ -67,6 +67,7 @@ typedef struct MotorInfo {
   uint32_t maxpos; // When hardware = MH_RC_POS
   uint32_t accel;
   uint16_t feedbackSensorID;
+  float saturation;
 } MotorInfo;
 
 SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
@@ -74,7 +75,7 @@ MotorInfo motor_infos[256] = {}; // All initialized to MH_NONE
 int16_t motor_setpoints[256] = {0,0,0,0,1000,1000,1000,1000}; // All others initialized to 0
 uint8_t sensor_lastLimitVals[256] = {}; // All initialized to 0
 int16_t sensor_storedVals[256] = {}; // All initialized to 0
-int16_t motor_integrals[256] = {}; //All initialized to 0
+float motor_integrals[256] = {}; //All initialized to 0
 int16_t motor_lastUpdateTime[256] = {}; //All initialized to 0
 int16_t loopIterations = 0;
 
@@ -279,11 +280,12 @@ void setup() {
   motor_infos[9].scale = 1;
   motor_infos[9].feedbackSensorID = 22;
   motor_infos[9].deadband = 10;
-  motor_infos[9].kp = 10;
-  motor_infos[9].ki = 1;
+  motor_infos[9].kp = 3x;
+  motor_infos[9].ki = 0.003;
   motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin);
   sensor_storedVals[motor_infos[9].feedbackSensorID] = motor_setpoints[9];
   motor_lastUpdateTime[9] = millis();
+  motor_infos[9].saturation = 127/ motor_infos[9].ki;
 
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
@@ -551,8 +553,6 @@ void loop() {
       // cmd is valid
       execute(cmd);
     }
-    Serial.println("loopIterations");
-    loopIterations++;
   }
   
 }
@@ -665,9 +665,6 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   bool success;
   MotorInfo motor_info = motor_infos[ID];
   int val_scaled = val * motor_infos[ID].scale;
-  Serial.print(ID);
-  Serial.print(" ");
-  Serial.print(val_scaled);
   switch (motor_info.hardware) {
   case MH_RC_PWM:
     if (motor_info.whichMotor == 2) {
@@ -726,9 +723,6 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
     break;
   case MH_ST_POS:
-    Serial.print(ID);
-    Serial.print(" ");
-    Serial.print(val_scaled);
     motor_setpoints[ID] = val_scaled;
     break;
   case MH_RC_POS_BOTH:
@@ -767,11 +761,11 @@ void hciWait() {
         }
         int16_t updateTime = millis();
         motor_integrals[id] += err * (updateTime - motor_lastUpdateTime[id]);
-        if (motor_integrals[id] > 1000) {
-          motor_integrals[id] = 1000;
+        if (motor_integrals[id] > motor_info.saturation) {
+          motor_integrals[id] = motor_info.saturation;
         }
-        else if (motor_integrals[id] < -1000) {
-          motor_integrals[id] = -1000;
+        else if (motor_integrals[id] < -motor_info.saturation) {
+          motor_integrals[id] = -motor_info.saturation;
         }
         motor_lastUpdateTime[id] = updateTime;
         
@@ -789,7 +783,11 @@ void hciWait() {
             Serial.print(" ");
             Serial.print(motor_setpoints[9]);
             Serial.print(" ");
-            Serial.println(val);
+            Serial.print(val);
+            Serial.print(" ");
+            Serial.print(motor_info.kp * err);
+            Serial.print(" ");
+            Serial.println(motor_info.ki * motor_integrals[id]);
             if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
               //We hit a switch and are trying to move in the same direction, stop!
               sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
