@@ -78,7 +78,7 @@ uint8_t sensor_lastLimitVals[256] = {}; // All initialized to 0
 int16_t sensor_storedVals[256] = {}; // All initialized to 0
 float motor_integrals[256] = {}; //All initialized to 0
 int16_t motor_lastUpdateTime[256] = {}; //All initialized to 0
-int16_t loopIterations = 0;
+bool stopped = false;
 
 RoboClaw roboclaw(&Serial1,10000);
 Sabertooth sabretooth[4] = {
@@ -747,12 +747,25 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
         if(motor_infos[i].hardware != MH_ST_POS && motor_infos[i].hardware != MH_RC_POS_BOTH){
            setActuator(i, 0);
         }
-        else {
-          setActuator(i, analogRead(sensor_infos[motor_infos[i].feedbackSensorID].whichPin));
+        else if(motor_infos[i].hardware == MH_ST_POS){
+          sabretooth[motor_infos[i].addr].motor(motor_infos[i].whichMotor, 0);
+        }
+        else if(motor_infos[i].hardware == MH_RC_POS_BOTH){
+          roboclaw.ForwardM1(motor_infos[i].addr, 0);
+          roboclaw.ForwardM2(motor_infos[i].addr, 0);
         }
       }
+      stopped = true; //prevents access to hciwait();
     }
-    
+    else if (val_scaled == 1){ //we can now start all the motors
+      stopped = false; //allows access to hciwait();
+      motor_setpoints[4] = analogRead(sensor_infos[motor_infos[4].feedbackSensorID].whichPin); //FL wheel actuator
+      motor_setpoints[5] = analogRead(sensor_infos[motor_infos[5].feedbackSensorID].whichPin); //FR wheel actuator
+      motor_setpoints[6] = analogRead(sensor_infos[motor_infos[6].feedbackSensorID].whichPin); //BL wheel actuator
+      motor_setpoints[7] = analogRead(sensor_infos[motor_infos[7].feedbackSensorID].whichPin); //BR wheel actuator
+      motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin); //BC translation
+      motor_setpoints[10] = analogRead(sensor_infos[motor_infos[10].feedbackSensorID].whichPin); //BC rotation
+    }
   default:
     break;
   }
@@ -761,6 +774,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
 
 void hciWait() {
   do {
+    if(stopped){
+      continue;
+    }
     for (int id = 0; id < 256; id++) {
       MotorInfo motor_info = motor_infos[id];
       if (motor_info.hardware == MH_ST_POS || motor_info.hardware == MH_RC_POS_BOTH) {
