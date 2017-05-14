@@ -305,6 +305,10 @@ public class ModuleMain {
                 configDEPOSBH.ID = 37;
                 configDEPOSBH.name = "Deposition Actuator Pot B Limit High";
                 configDEPOSBH.limitSwitch = true;
+
+                SensorConfig config123 = configDEPOSBH.copy();
+                configDEPOSBH.ID = 38;
+                configDEPOSBH.name = "Excavation bucket conveyor current";
                
 		// Add sensors
                 hci.addSensor(new Sensor(configFLRPM), configFLRPM.ID);
@@ -718,6 +722,12 @@ public class ModuleMain {
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic","sensor.excavation.translation_pos", null,msg.toByteArray());
+                } else if(sensorDataID == 38) { // Excavation conveyor current
+                    Messages.CurrentUpdate msg = Messages.CurrentUpdate.newBuilder()
+                            .setCurrent((float)value / 100.0F)
+                            .setTimestamp(unixTime)
+                            .build();
+                    channel.basicPublish("amq.topic","sensor.excavation.conveyor_current", null,msg.toByteArray());
 				} else {
 					// TODO: do others
 				}

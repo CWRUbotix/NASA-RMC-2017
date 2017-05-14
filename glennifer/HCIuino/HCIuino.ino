@@ -190,6 +190,11 @@ void setup() {
   sensor_infos[26].hardware = SH_PIN_LIMIT;
   sensor_infos[26].whichPin = 39;
   sensor_infos[26].scale = 1;
+
+  sensor_infos[38].hardware = SH_RC_CUR;
+  sensor_infos[38].addr = ADDRESS_RC_3;
+  sensor_infos[38].whichMotor = 1;
+  sensor_infos[38].scale = 1;
   
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
