@@ -50,7 +50,8 @@ enum MotorHardware {
   MH_RC_POS_BOTH,
   MH_ST_PWM,
   MH_ST_POS,
-  MH_ST_PWM_BOTH
+  MH_ST_PWM_BOTH,
+  MH_ALL
 };
 
 typedef struct MotorInfo {
@@ -280,7 +281,7 @@ void setup() {
   motor_infos[9].scale = 1;
   motor_infos[9].feedbackSensorID = 22;
   motor_infos[9].deadband = 10;
-  motor_infos[9].kp = 3x;
+  motor_infos[9].kp = 3;
   motor_infos[9].ki = 0.003;
   motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin);
   sensor_storedVals[motor_infos[9].feedbackSensorID] = motor_setpoints[9];
@@ -312,6 +313,10 @@ void setup() {
   motor_infos[12].hardware = MH_ST_PWM_BOTH;
   motor_infos[12].addr = 2;
   motor_infos[12].scale = 1;
+
+  // Send a command to all motors
+  motor_infos[50].hardware = MH_ALL;
+  motor_infos[50].scale = 1;
 
   /*
   motor_infos[2].hardware = MH_RC_POS;
@@ -505,7 +510,8 @@ FAULT_T configure_motors() {
       // Nothing to do, default config
       break;
     case MH_ST_PWM_BOTH:
-      // Nothing to do, default config  
+      // Nothing to do, default config
+      break;  
     case MH_RC_POS_BOTH:
       success = roboclaw.SetM1PositionPID(
           motor_info.addr,
@@ -532,6 +538,9 @@ FAULT_T configure_motors() {
         return FAULT_LOST_ROBOCLAW;
       }
       break;
+    case MH_ALL:
+      //nothing to do
+      break;  
     default:
       break;
     }
@@ -650,7 +659,7 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     sensor_lastLimitVals[ID] = *val;
     break;
   case SH_PIN_POT:
-    readVal = (int16_t)analogRead(sensor_info.whichPin / sensor_info.scale);
+    readVal = (int16_t)analogRead(sensor_info.whichPin) / sensor_info.scale;
     sensor_storedVals[ID] = (sensor_storedVals[ID] * (1 - sensor_info.responsiveness)) + readVal * sensor_info.responsiveness;
     *val = sensor_storedVals[ID];
     break;
@@ -731,6 +740,19 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   case MH_ST_PWM_BOTH:
     sabretooth[motor_info.addr].motor(1, -val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
+    break;
+  case MH_ALL:
+    if(val_scaled == 0){ // we want to stop all of the motors
+      for(int i = 0; i < 13; i++){
+        if(motor_infos[i].hardware != MH_ST_POS && motoR_infos[i].hardware != MH_RC_POS_BOTH){
+           setActuator(i, 0);
+        }
+        else {
+          setActuator(i, analogRead(sensor_infos[motor_infos[i].feedbackSensorID].whichPin));
+        }
+      }
+    }
+    
   default:
     break;
   }

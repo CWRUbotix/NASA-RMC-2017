@@ -607,7 +607,19 @@ public class ModuleMain {
                         System.out.println("Deposition motor control routing key has unrecognized motor");
                         return;
                     }
-                } else {
+                } else if (keys[1].equals("system")){
+                    if(keys[2].equals("stop_all")){
+                        Messages.StopAllCommand sac = Messages.StopAllCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        int i = 50; //the "50th motor tells all motors to stop"
+                        a.targetValue = 0;
+                        a.actuatorID = id;
+                        System.out.println("Stop All command issued")
+                        hci.queueActuation(a);
+                    }
+                }    else {
                     System.out.println("Motor control routing key has unrecognized subsystem");
                     return;
                 }
