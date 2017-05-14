@@ -23,8 +23,40 @@ import java.util.concurrent.TimeoutException;
  *
  */
 public class AutoDrillModule {
-		
 
+	/*Runnable to monitor the current while the module is running.*/
+	class CurrentMonitorRunnable implements Runnable{
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+			boolean go = true;
+			while(go){
+				try{
+					if(isStalled())
+						dealWithStallSituation();
+				}
+				catch(Exception e){
+				go = false;
+				}
+			}
+			 
+		}
+		
+		//TODO DO THIS!
+		private boolean isStalled(){
+			return false;
+		}
+		
+		//TODO DO THIS!
+		//TODO 1) Stop the current command and come up with what to do when BC is in stall
+		//TODO 2) Get back to the command that was in progress before.
+		private void dealWithStallSituation(){
+			/*Series of commands to deal with stalled situation.*/
+		}
+		
+	}
 	
 	private class DrillDeepConsumer extends DefaultConsumer{
 		public DrillDeepConsumer(Channel channel){
@@ -66,6 +98,7 @@ public class AutoDrillModule {
 			//locomotionSpeedControl(targetRPM);
 			//TODO Listen for current values and deal with stall situation.
 			//TODO fill in magic numbers via testing and add DigSurfaceCommand Features in protobuff so we can get desired depth and RPM from message.
+
 		}
 	}
 	
@@ -130,6 +163,7 @@ public class AutoDrillModule {
 	private String exchangeName;
 	private Connection connection;
 	private Channel channel;
+	private Thread currentMonitor;
 	
 	public AutoDrillModule(){
 		this("amq.topic");
@@ -179,6 +213,8 @@ public class AutoDrillModule {
 	
 	public void start(){
 		try{
+			currentMonitor = new Thread(new CurrentMonitorRunnable());
+			currentMonitor.run();
 			runWithExceptions();
 		} catch(Exception e){
 			try{
@@ -190,6 +226,8 @@ public class AutoDrillModule {
 	}
 	
 	public void stop() throws IOException, TimeoutException, InterruptedException{
+		currentMonitor.interrupt();
+		currentMonitor.join();
 		channel.close();
 		connection.close();
 	}
