@@ -1160,7 +1160,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
              //arm bucket retract
              break;
         case (Qt::Key_6):
-             //bucket forward
+             //bucket fwd
              break;
         case (Qt::Key_7):
              //bucket rev
@@ -1380,3 +1380,57 @@ void MainWindow::strafeConfig() {
         isInDig = false;
         isInDump = false;
 }
+
+/* * ON ALL OF THESE MAKE SURE THE KEY RELEASE WORKS AS IT IS MEANT TO * */
+
+void MainWindow::digDeep() {
+    /* CHECK FOR isInDig */
+    PositionContolCommand msg; //change to whatever this will be in protobuf
+    msg.set_position(value); //this will be, presumably, depth value
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, //digdeepcommand);
+
+    free(msg_buff);
+
+    ui->lineEdit_ExcavationArm->setText(QString::number(value));
+}
+
+void MainWindow::digFwd() {
+    /* CHECK FOR isInDig AND Modify the dig and dump flags in fwd config*/
+    //send command to hci or handle here, not sure
+    /* can make separate control structure for digfwd rev and such if it is meant
+     * to be ui controled as opposed to automated, other wise,
+     * engage sequence here with simpler structure to check for desiredConfig == 0
+     * since that is default for both dig and dump and allows for drive to occur
+     * if it is a separate call using handleLocomotion as opposed to the configs
+     * We may want to do Something else though not sure
+     */
+}
+
+void MainWindow::digRev() {
+    /* CHECK FOR isInDig AND Modify the dig and dump flags in fwd config*/
+    //send command to hci or handle here, not sure
+}
+
+void MainWindow::digEnd() {
+    //Either send stop command from hci or do something with stopAll
+    //stopAll may not affect itonly the motors but still motors
+}
+
+void MainWindow::bcktWdraw() {
+    //Check isInDig AND retract Arm?
+}
+
+//The Rest of these may require they're own function
+//if it cannot be set in reverse in the boolean check function
+
