@@ -35,7 +35,6 @@ public class AutoDrillModule {
 		}
 		
 		private class CurrentMonitorConsumer extends DefaultConsumer{
-			private float currentValue;
 			
 			public CurrentMonitorConsumer(Channel channel) {
 				super(channel);
@@ -44,92 +43,78 @@ public class AutoDrillModule {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
 				Messages.CurrentUpdate msg = Messages.CurrentUpdate.parseFrom(body);
-				this.currentValue = msg.getCurrent();
+				float currentValue = msg.getCurrent();
+				if(currentValue > getStallCurrent())
+					dealWithStallSituation();
 			}
 			
-			public float getCurrent(){
-				return currentValue;
+			private float getStallCurrent(){
+				return 0.0F; //TODO Needs to be changed
+			}
+			
+			private void dealWithStallSituation() throws IOException{
+				isStalled = true;
+				//Stopping what was going on.
+				/* TODO waiting for branches to be merged.
+				 *
+				 * Messages.StopAllCommand msg1 = Messages.StopAllCommand.newBuilder()
+				 * 		   .setTimeOut(123)
+				 *         .setStop(true)
+				 *         .build();
+				 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg1.toByteArray());
+				 *
+				 * Messages.StopAllCommand msg2 = Messages.StopAllCommand.newBuilder()
+				 *         .setTimeOut(123)
+				 *         .setStop(false)
+				 *         .build();
+				 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg2.toByteArray());
+				 *
+				 */	
+				
+				/*
+				 * TODO Come up with what to do when BC is in stall.
+				 */
+							
+				//Going back to where it was before.
+				//TODO wait for enough time between commands to make sure they are getting done one at a time.
+				if(currentJob == "drill.deep"){
+					//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
+					//excavationTranslationControl(targetDepth);
+				} else if(currentJob == "drill.surface"){
+					locomotionStraight();
+					//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
+					//excavationTranslationControl(targetDepth);
+					//locomotionSpeedControl(targetRPM);
+				} else if(currentJob == "drill.end"){
+					locomotionSpeedControl(0.0F);
+					excavationTranslationControl(0.0F);
+					excavationConveyorRPM(0.0F);
+					excavationAngleControl(0.0F);
+				} else{
+					System.out.println("Didn't do anything but BC was in stall. Something is wrong,");
+					try {
+						AutoDrillModule.this.stop();
+					} catch (IOException | TimeoutException | InterruptedException e) {
+						// Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				isStalled = false;
 			}
 		}
 		
 		@Override
 		public void run(){
 			String queueName;
-			CurrentMonitorConsumer consumer = null;
 			try {
 				queueName = channel.queueDeclare().getQueue();
 				channel.queueBind(queueName, exchangeName, "sensor.excavation.conveyor_current");
-				this.channel.basicConsume(queueName, true, consumer = new CurrentMonitorConsumer(channel));
+				this.channel.basicConsume(queueName, true, new CurrentMonitorConsumer(channel));
 			}
 			catch(IOException e){
 				e.printStackTrace();
 			}
-			
-			boolean go = true;
-			while(go){
-				try{
-					if(consumer.getCurrent() > getStallCurrent())
-						dealWithStallSituation();
-				}
-				catch(Exception e){
-				go = false;
-				e.printStackTrace();
-				}
-			}
-			 
 		}
-		
-		private float getStallCurrent(){
-			return 0.0F; //TODO Needs to be changed
-		}
-		
-		private void dealWithStallSituation() throws IOException{
-			//Stopping what was going on.
-			/* TODO waiting for branches to be merged.
-			 *
-			 * Messages.StopAllCommand msg1 = Messages.StopAllCommand.newBuilder()
-			 * 		   .setTimeOut(123)
-			 *         .setStop(true)
-			 *         .build();
-			 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg1.toByteArray());
-			 *
-			 * Messages.StopAllCommand msg2 = Messages.StopAllCommand.newBuilder()
-			 *         .setTimeOut(123)
-			 *         .setStop(false)
-			 *         .build();
-			 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg2.toByteArray());
-			 *
-			 */	
-			
-			/*
-			 * TODO Come up with what to do when BC is in stall.
-			 */
-						
-			//Going back to where it was before.
-			//TODO wait for enough time between commands to make sure they are getting done one at a time.
-			if(currentJob == "drill.deep"){
-				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-				//excavationTranslationControl(targetDepth);
-			} else if(currentJob == "drill.surface"){
-				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-				//excavationTranslationControl(targetDepth);
-				//locomotionSpeedControl(targetRPM);
-			} else if(currentJob == "drill.end"){
-				locomotionSpeedControl(0.0F);
-				excavationTranslationControl(0.0F);
-				excavationConveyorRPM(0.0F);
-				excavationAngleControl(0.0F);
-			} else{
-				System.out.println("Didn't do anything but BC is in stall. Something is very wrong,");
-				try {
-					AutoDrillModule.this.stop();
-				} catch (IOException | TimeoutException | InterruptedException e) {
-					// Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
 	}
 	
 	private class DrillDeepConsumer extends DefaultConsumer{
@@ -139,18 +124,19 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			//Messages.DigDeepCommand cmd = Messages.DigDeepCommand.parseFrom(body);
 			currentJob = "drill.deep";
-			//float targetDepth = cmd.getDepth();
-			locomotionSpeedControl(0.0F);
-			excavationTranslationControl(0.0F);
-			excavationConveyorRPM(0.0F);
-			//excavationAngleControl(THE MAGIC DIGGING ANGLE);
-			//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-			//excavationTranslationControl(targetDepth);
-			//TODO wait for enough time between commands to make sure they are getting done one at a time.
-			//TODO fill in magic numbers via testing and add DigDeepCommand Features in protobuff so we can get desired depth from message.
-			currentJob = null;
+			if(!isStalled){
+				//Messages.DigDeepCommand cmd = Messages.DigDeepCommand.parseFrom(body);
+				//float targetDepth = cmd.getDepth();
+				locomotionSpeedControl(0.0F);
+				excavationTranslationControl(0.0F);
+				excavationConveyorRPM(0.0F);
+				//excavationAngleControl(THE MAGIC DIGGING ANGLE);
+				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
+				//excavationTranslationControl(targetDepth);
+				//TODO wait for enough time between commands to make sure they are getting done one at a time.
+				//TODO fill in magic numbers via testing and add DigDeepCommand Features in protobuff so we can get desired depth from message.
+			}
 		}
 	}
 	
@@ -161,21 +147,22 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			//Messages.DigSurfaceCommand cmd = Messages.DigSurfaceCommand.parseFrom(body);
 			currentJob = "drill.surface";
-			//float targetDepth = cmd.getTargetDepth();
-			//float targetRPM = cmd.getRPM();
-			locomotionSpeedControl(0.0F);
-			excavationTranslationControl(0.0F);
-			excavationConveyorRPM(0.0F);
-			//excavationAngleControl(THE MAGIC DIGGING ANGLE);
-			//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-			//excavationTranslationControl(targetDepth);
-			locomotionStraight();
-			//locomotionSpeedControl(targetRPM);
-			//TODO wait for enough time between commands to make sure they are getting done one at a time.
-			//TODO fill in magic numbers via testing and add DigSurfaceCommand Features in protobuff so we can get desired depth and RPM from message.
-			currentJob = null;
+			if(!isStalled){
+				//Messages.DigSurfaceCommand cmd = Messages.DigSurfaceCommand.parseFrom(body);
+				//float targetDepth = cmd.getTargetDepth();
+				//float targetRPM = cmd.getRPM();
+				locomotionSpeedControl(0.0F);
+				excavationTranslationControl(0.0F);
+				excavationConveyorRPM(0.0F);
+				//excavationAngleControl(THE MAGIC DIGGING ANGLE);
+				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
+				//excavationTranslationControl(targetDepth);
+				locomotionStraight();
+				//locomotionSpeedControl(targetRPM);
+				//TODO wait for enough time between commands to make sure they are getting done one at a time.
+				//TODO fill in magic numbers via testing and add DigSurfaceCommand Features in protobuff so we can get desired depth and RPM from message.
+			}
 		}
 	}
 	
@@ -187,11 +174,12 @@ public class AutoDrillModule {
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
 			currentJob = "drill.end";
-			locomotionSpeedControl(0.0F);
-			excavationTranslationControl(0.0F);
-			excavationConveyorRPM(0.0F);
-			excavationAngleControl(0.0F);
-			currentJob = null;
+			if(!isStalled){
+				locomotionSpeedControl(0.0F);
+				excavationTranslationControl(0.0F);
+				excavationConveyorRPM(0.0F);
+				excavationAngleControl(0.0F);
+			}
 			//TODO wait for enough time between commands to make sure they are getting done one at a time.
 		}
 	}
@@ -245,6 +233,7 @@ public class AutoDrillModule {
 	private Channel channel;
 	private Thread currentMonitor;
 	private String currentJob;
+	private boolean isStalled = false;
 	
 	public AutoDrillModule(){
 		this("amq.topic");
