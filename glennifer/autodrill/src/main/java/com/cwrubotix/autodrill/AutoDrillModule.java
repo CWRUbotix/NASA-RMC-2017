@@ -86,15 +86,20 @@ public class AutoDrillModule {
 		private void dealWithStallSituation() throws IOException{
 			//Stopping what was going on.
 			/* TODO waiting for branches to be merged.
-			 * 
-			 * Messages.StopAllCommand msg = Messages.StopAllCommand.newBuilder()
-			 * 		   .setTimeOut(123);
-			 *         .setStop(true); //TODO not sure whether this is right way to set it up.
+			 *
+			 * Messages.StopAllCommand msg1 = Messages.StopAllCommand.newBuilder()
+			 * 		   .setTimeOut(123)
+			 *         .setStop(true)
 			 *         .build();
-			 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg.toByteArray());
-			 * 
-			 * TODO send unestop command once it becomes real thing
-			 */
+			 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg1.toByteArray());
+			 *
+			 * Messages.StopAllCommand msg2 = Messages.StopAllCommand.newBuilder()
+			 *         .setTimeOut(123)
+			 *         .setStop(false)
+			 *         .build();
+			 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg2.toByteArray());
+			 *
+			 */	
 			
 			/*
 			 * TODO Come up with what to do when BC is in stall.
