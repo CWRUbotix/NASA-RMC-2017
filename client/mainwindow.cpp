@@ -1053,19 +1053,19 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
           //  handleTankPivotLK;
           //  break;
         case (Qt::Key_E):
-             MainWindow::actionTabRight();
+             actionTabRight();
              break;
         case (Qt::Key_Q):
-             MainWindow::actionTabLeft();
+             actionTabLeft();
              break;
         case (Qt::Key_Y):
-             MainWindow::digConfig();
+             digConfig();
              break;
         case (Qt::Key_U):
-             MainWindow::dumpConfig();
+             dumpConfig();
              break;
         case (Qt::Key_1):
-             //dig deep
+             digDeep(ui->drillParam->text().toInt());
              break;
         case (Qt::Key_2):
              //dig forward
@@ -1383,10 +1383,10 @@ void MainWindow::strafeConfig() {
 
 /* * ON ALL OF THESE MAKE SURE THE KEY RELEASE WORKS AS IT IS MEANT TO * */
 
-void MainWindow::digDeep() {
+void MainWindow::digDeep(int meters) {
     /* CHECK FOR isInDig */
     PositionContolCommand msg; //change to whatever this will be in protobuf
-    msg.set_position(value); //this will be, presumably, depth value
+    msg.set_position(meters); //this will be, presumably, depth value
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -1398,11 +1398,11 @@ void MainWindow::digDeep() {
 
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
-    ex->Publish((char*)msg_buff, msg_size, //digdeepcommand);
+    ex->Publish((char*)msg_buff, msg_size, "drill.deep"); //Maybe peckdrill.excavation.something
 
     free(msg_buff);
 
-    ui->lineEdit_ExcavationArm->setText(QString::number(value));
+    //ui->lineEdit_ExcavationArm->setText(QString::number(value));
 }
 
 void MainWindow::digFwd() {
@@ -1433,4 +1433,12 @@ void MainWindow::bcktWdraw() {
 
 //The Rest of these may require they're own function
 //if it cannot be set in reverse in the boolean check function
+
+void MainWindow::bcktFwd() {
+
+}
+
+void MainWindow::bcktRev() {
+
+}
 

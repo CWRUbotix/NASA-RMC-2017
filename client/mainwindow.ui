@@ -49,7 +49,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -532,6 +532,29 @@
          </property>
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="drillParam">
+         <property name="geometry">
+          <rect>
+           <x>350</x>
+           <y>220</y>
+           <width>141</width>
+           <height>31</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_11">
+         <property name="geometry">
+          <rect>
+           <x>260</x>
+           <y>220</y>
+           <width>81</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Drill Parameters</string>
          </property>
         </widget>
        </widget>

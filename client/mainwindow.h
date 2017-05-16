@@ -95,7 +95,7 @@ public slots:
     void turnConfig();
     void strafeConfig();
 
-    void digDeep();
+    void digDeep(int meters);
     void digFwd();
     void digRev();
     void digEnd();
