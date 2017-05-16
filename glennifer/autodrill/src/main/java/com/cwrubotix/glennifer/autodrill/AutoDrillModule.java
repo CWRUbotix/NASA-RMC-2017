@@ -67,27 +67,23 @@ public class AutoDrillModule {
 
 			//Going back to where it was before.
 			//TODO wait for enough time between commands to make sure they are getting done one at a time.
-			if(currentJob == "drill.deep"){
-				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-				//excavationTranslationControl(targetDepth);
-			} else if(currentJob == "drill.surface"){
-				locomotionStraight();
-				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-				//excavationTranslationControl(targetDepth);
-				//locomotionSpeedControl(targetRPM);
-			} else if(currentJob == "drill.end"){
-				locomotionSpeedControl(0.0F);
-				excavationTranslationControl(0.0F);
-				excavationConveyorRPM(0.0F);
-				excavationAngleControl(0.0F);
-			} else{
-				System.out.println("Didn't do anything but BC was in stall. Something is wrong,");
-				try {
-					AutoDrillModule.this.stop();
-				} catch (IOException | TimeoutException | InterruptedException e) {
-					// Auto-generated catch block
-					e.printStackTrace();
-				}
+			switch (currentJob) {
+				case DEEP:
+					//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
+					//excavationTranslationControl(targetDepth);
+					break;
+				case SURFACE:
+					locomotionStraight();
+					//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
+					//excavationTranslationControl(targetDepth);
+					//locomotionSpeedControl(targetRPM);
+					break;
+				case NONE:
+					locomotionSpeedControl(0.0F);
+					excavationTranslationControl(0.0F);
+					excavationConveyorRPM(0.0F);
+					excavationAngleControl(0.0F);
+					break;
 			}
 			isStalled = false;
 		}
@@ -100,7 +96,7 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			currentJob = "drill.deep";
+			currentJob = DrillJob.NONE;
 			if(!isStalled){
 				//Messages.DigDeepCommand cmd = Messages.DigDeepCommand.parseFrom(body);
 				//float targetDepth = cmd.getDepth();
@@ -123,7 +119,7 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			currentJob = "drill.surface";
+			currentJob = DrillJob.SURFACE;
 			if(!isStalled){
 				//Messages.DigSurfaceCommand cmd = Messages.DigSurfaceCommand.parseFrom(body);
 				//float targetDepth = cmd.getTargetDepth();
@@ -149,7 +145,7 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			currentJob = "drill.end";
+			currentJob = DrillJob.NONE;
 			if(!isStalled){
 				locomotionSpeedControl(0.0F);
 				excavationTranslationControl(0.0F);
@@ -160,6 +156,16 @@ public class AutoDrillModule {
 		}
 	}
 
+	private enum DrillJob {DEEP, SURFACE, NONE}
+
+	private String exchangeName;
+	private Connection connection;
+	private Channel channel;
+
+	private DrillJob currentJob = DrillJob.NONE;
+	private float depth = 0.0F;
+	private float dist = 0.0F;
+	private boolean isStalled = false;
 	
 	private void excavationTranslationControl(float targetValue) throws IOException{
 		Messages.PositionContolCommand pcc = Messages.PositionContolCommand.newBuilder()
@@ -203,12 +209,6 @@ public class AutoDrillModule {
 				.build();
 		AutoDrillModule.this.channel.basicPublish(exchangeName, "subsyscommand.locomotion.straight", null, msg.toByteArray());
 	}
-	
-	private String exchangeName;
-	private Connection connection;
-	private Channel channel;
-	private String currentJob;
-	private boolean isStalled = false;
 	
 	public AutoDrillModule(){
 		this("amq.topic");
