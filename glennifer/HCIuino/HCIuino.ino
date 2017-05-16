@@ -282,7 +282,7 @@ void setup() {
   motor_infos[9].scale = 1;
   motor_infos[9].feedbackSensorID = 22;
   motor_infos[9].deadband = 10;
-  motor_infos[9].kp = 3;
+  motor_infos[9].kp = 6;
   motor_infos[9].ki = 0.003;
   motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin);
   sensor_storedVals[motor_infos[9].feedbackSensorID] = motor_setpoints[9];
@@ -793,6 +793,20 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       motor_setpoints[7] = analogRead(sensor_infos[motor_infos[7].feedbackSensorID].whichPin); //BR wheel actuator
       motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin); //BC translation
       motor_setpoints[10] = analogRead(sensor_infos[motor_infos[10].feedbackSensorID].whichPin); //BC rotation
+      motor_lastUpdateTime[4] = millis();
+      motor_lastUpdateTime[5] = millis();
+      motor_lastUpdateTime[6] = millis();
+      motor_lastUpdateTime[7] = millis();
+      motor_lastUpdateTime[9] = millis();
+      motor_lastUpdateTime[10] = millis();
+      motor_integrals[4] = 0;
+      motor_integrals[5] = 0;
+      motor_integrals[6] = 0;
+      motor_integrals[7] = 0;
+      motor_integrals[9] = 0;
+      motor_integrals[10] = 0;
+      
+      
     }
   default:
     break;
@@ -802,7 +816,7 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
 
 void hciWait() {
   do {
-    Serial.println(stopped);
+    
     if(stopped){
       continue; 
     }
