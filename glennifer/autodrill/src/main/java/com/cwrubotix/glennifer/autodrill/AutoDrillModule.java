@@ -24,37 +24,27 @@ import java.util.concurrent.TimeoutException;
  */
 public class AutoDrillModule {
 
-	/*Runnable to monitor the current while the module is running.*/
-	class CurrentMonitorRunnable implements Runnable{
-		private String exchangeName;
-		private Channel channel;
-		
-		public CurrentMonitorRunnable(Channel channel){
-			this.exchangeName = "amq.topic";
-			this.channel = channel;
+	private class CurrentMonitorConsumer extends DefaultConsumer{
+
+		public CurrentMonitorConsumer(Channel channel) {
+			super(channel);
 		}
-		
-		private class CurrentMonitorConsumer extends DefaultConsumer{
-			
-			public CurrentMonitorConsumer(Channel channel) {
-				super(channel);
-			}
-			
-			@Override
-			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-				Messages.CurrentUpdate msg = Messages.CurrentUpdate.parseFrom(body);
-				float currentValue = msg.getCurrent();
-				if(currentValue > getStallCurrent())
-					dealWithStallSituation();
-			}
-			
-			private float getStallCurrent(){
-				return 0.0F; //TODO Needs to be changed
-			}
-			
-			private void dealWithStallSituation() throws IOException{
-				isStalled = true;
-				//Stopping what was going on.
+
+		@Override
+		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
+			Messages.CurrentUpdate msg = Messages.CurrentUpdate.parseFrom(body);
+			float currentValue = msg.getCurrent();
+			if(currentValue > getStallCurrent())
+				dealWithStallSituation();
+		}
+
+		private float getStallCurrent(){
+			return 0.0F; //TODO Needs to be changed
+		}
+
+		private void dealWithStallSituation() throws IOException{
+			isStalled = true;
+			//Stopping what was going on.
 				/* TODO waiting for branches to be merged.
 				 *
 				 * Messages.StopAllCommand msg1 = Messages.StopAllCommand.newBuilder()
@@ -69,51 +59,37 @@ public class AutoDrillModule {
 				 *         .build();
 				 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg2.toByteArray());
 				 *
-				 */	
-				
+				 */
+
 				/*
 				 * TODO Come up with what to do when BC is in stall.
 				 */
-							
-				//Going back to where it was before.
-				//TODO wait for enough time between commands to make sure they are getting done one at a time.
-				if(currentJob == "drill.deep"){
-					//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-					//excavationTranslationControl(targetDepth);
-				} else if(currentJob == "drill.surface"){
-					locomotionStraight();
-					//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-					//excavationTranslationControl(targetDepth);
-					//locomotionSpeedControl(targetRPM);
-				} else if(currentJob == "drill.end"){
-					locomotionSpeedControl(0.0F);
-					excavationTranslationControl(0.0F);
-					excavationConveyorRPM(0.0F);
-					excavationAngleControl(0.0F);
-				} else{
-					System.out.println("Didn't do anything but BC was in stall. Something is wrong,");
-					try {
-						AutoDrillModule.this.stop();
-					} catch (IOException | TimeoutException | InterruptedException e) {
-						// Auto-generated catch block
-						e.printStackTrace();
-					}
+
+			//Going back to where it was before.
+			//TODO wait for enough time between commands to make sure they are getting done one at a time.
+			if(currentJob == "drill.deep"){
+				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
+				//excavationTranslationControl(targetDepth);
+			} else if(currentJob == "drill.surface"){
+				locomotionStraight();
+				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
+				//excavationTranslationControl(targetDepth);
+				//locomotionSpeedControl(targetRPM);
+			} else if(currentJob == "drill.end"){
+				locomotionSpeedControl(0.0F);
+				excavationTranslationControl(0.0F);
+				excavationConveyorRPM(0.0F);
+				excavationAngleControl(0.0F);
+			} else{
+				System.out.println("Didn't do anything but BC was in stall. Something is wrong,");
+				try {
+					AutoDrillModule.this.stop();
+				} catch (IOException | TimeoutException | InterruptedException e) {
+					// Auto-generated catch block
+					e.printStackTrace();
 				}
-				isStalled = false;
 			}
-		}
-		
-		@Override
-		public void run(){
-			String queueName;
-			try {
-				queueName = channel.queueDeclare().getQueue();
-				channel.queueBind(queueName, exchangeName, "sensor.excavation.conveyor_current");
-				this.channel.basicConsume(queueName, true, new CurrentMonitorConsumer(channel));
-			}
-			catch(IOException e){
-				e.printStackTrace();
-			}
+			isStalled = false;
 		}
 	}
 	
@@ -265,12 +241,13 @@ public class AutoDrillModule {
 		this.connection = factory.newConnection();
 		this.channel = connection.createChannel();
 		
-		//Start Current Monitor Thread
-		currentMonitor = new Thread(new CurrentMonitorRunnable(channel));
-		currentMonitor.run();
+		// Start Current Monitor
+		String queueName = channel.queueDeclare().getQueue();
+		channel.queueBind(queueName, exchangeName, "sensor.excavation.conveyor_current");
+		this.channel.basicConsume(queueName, true, new CurrentMonitorConsumer(channel));
 		
 		//Listen for DrillDeep command
-		String queueName = channel.queueDeclare().getQueue();
+		queueName = channel.queueDeclare().getQueue();
 		channel.queueBind(queueName, exchangeName, "drill.deep");
 		this.channel.basicConsume(queueName, true, new DrillDeepConsumer(channel));
 		
