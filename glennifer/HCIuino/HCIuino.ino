@@ -29,6 +29,7 @@ enum SensorHardware {
   SH_NONE,
   SH_RC_POT,
   SH_RC_ENC,
+  SH_RC_CUR,
   SH_PIN_LIMIT,
   SH_PIN_POT
 };
@@ -562,6 +563,8 @@ void loop() {
       // cmd is valid
       execute(cmd);
     }
+    Serial.println("loopIterations");
+    loopIterations++;
   }
   
 }
@@ -640,6 +643,18 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     } else {
       val32 = roboclaw.ReadSpeedM1(sensor_info.addr, &status, &valid);
       //roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
+    }
+    if (!valid){
+      return FAULT_LOST_ROBOCLAW;
+    }
+    *val = (int16_t)(val32 / sensor_info.scale);
+    break;
+    //Not sure if this works yet!
+  case SH_RC_CUR:
+    if (sensor_info.whichMotor == 2){
+       val32 = roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
+    } else {
+       val32 = roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
     }
     if (!valid){
       return FAULT_LOST_ROBOCLAW;
