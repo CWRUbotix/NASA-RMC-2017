@@ -691,6 +691,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
   int val_scaled = val * motor_infos[ID].scale;
   switch (motor_info.hardware) {
   case MH_RC_PWM:
+    if(stopped){
+      break;
+    }
     if (motor_info.whichMotor == 2) {
       success = roboclaw.DutyM2(motor_info.addr, val_scaled);
     } else {
@@ -698,6 +701,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     }
     break;
   case MH_RC_VEL:
+    if(stopped){
+      break;
+    }
     if (motor_info.whichMotor == 2) {
       success = roboclaw.SpeedM2(motor_info.addr, val_scaled);
     } else {
@@ -708,6 +714,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     }
     break;
   case MH_RC_POS:
+    if(stopped){
+      break;
+    }
     if (motor_info.whichMotor == 2) {
       success = roboclaw.SpeedAccelDeccelPositionM2(
         motor_info.addr,
@@ -730,6 +739,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     }
     break;
   case MH_ST_PWM:
+    if(stopped){
+      break;
+    }
     //whenever we try to move the BC translation motor, we check if limits are pressed
     //jank solution with hardcoded values yay
     /*if(ID == 9) {
@@ -753,6 +765,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     motor_setpoints[ID] = val_scaled;
     break;
   case MH_ST_PWM_BOTH:
+    if(stopped){
+      break;
+    }
     sabretooth[motor_info.addr].motor(1, -val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
     break;
