@@ -307,8 +307,8 @@ public class ModuleMain {
                 configDEPOSBH.limitSwitch = true;
 
                 SensorConfig config123 = configDEPOSBH.copy();
-                configDEPOSBH.ID = 38;
-                configDEPOSBH.name = "Excavation bucket conveyor current";
+                config123.ID = 38;
+                config123.name = "Excavation bucket conveyor current";
                
 		// Add sensors
                 hci.addSensor(new Sensor(configFLRPM), configFLRPM.ID);
@@ -349,6 +349,7 @@ public class ModuleMain {
                 hci.addSensor(new Sensor(configDEPOSB), configDEPOSB.ID);
                 hci.addSensor(new Sensor(configDEPOSBL), configDEPOSBL.ID);
                 hci.addSensor(new Sensor(configDEPOSBH), configDEPOSBH.ID);
+                hci.addSensor(new Sensor(config123), config123.ID);
 
                 // Initialize actuators
                 
