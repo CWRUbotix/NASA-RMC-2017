@@ -216,6 +216,7 @@ public class HardwareControlInterface implements Runnable {
 			data[4*i+3] = (byte)(currentOutputShort);
 			//System.out.println("Setting output: " + currentOutputShort + " actuator ID: " + actuatorIdShort);
 		}
+		activeActuations.clear();
 		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
 		// Get the response
 		SerialPacket response = readMessage();
