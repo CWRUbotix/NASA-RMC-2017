@@ -1,4 +1,4 @@
-package com.cwrubotix.autodrill;
+package com.cwrubotix.glennifer.autodrill;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
