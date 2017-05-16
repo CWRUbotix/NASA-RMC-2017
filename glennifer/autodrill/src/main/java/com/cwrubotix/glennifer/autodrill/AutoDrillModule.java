@@ -34,8 +34,9 @@ public class AutoDrillModule {
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
 			Messages.CurrentUpdate msg = Messages.CurrentUpdate.parseFrom(body);
 			float currentValue = msg.getCurrent();
-			if(currentValue > getStallCurrent())
-				dealWithStallSituation();
+			System.out.println("current = " + currentValue);
+			//if(currentValue > getStallCurrent())
+			//	dealWithStallSituation();
 		}
 
 		private float getStallCurrent(){
