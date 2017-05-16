@@ -620,6 +620,7 @@ public class ModuleMain {
                         else if (sac.getStop() == false){
                             a.targetValue = 1;
                         }
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
                         System.out.println("Stop All command issued");
                         hci.queueActuation(a);
