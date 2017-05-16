@@ -849,7 +849,6 @@ void hciWait() {
           motor_integrals[id] = -motor_info.saturation;
         }
         motor_lastUpdateTime[id] = updateTime;
-        
         int val = motor_info.kp * err + motor_info.ki * motor_integrals[id];
         if (val > 127) {
           val = 127;
@@ -857,6 +856,7 @@ void hciWait() {
         else if (val < -127) {
           val = -127;
         }
+        
         bool success;
         if(motor_info.hardware == MH_ST_POS) {
           if(id == 9) {
