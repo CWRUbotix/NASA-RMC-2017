@@ -2785,7 +2785,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="emergencyStopButton">
+         <widget class="QPushButton" name="pushButton_EStop">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -3215,6 +3215,13 @@
           </property>
           <property name="text">
            <string>Emergency Stop</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_EUnstop">
+          <property name="text">
+           <string>Unstop</string>
           </property>
          </widget>
         </item>

@@ -204,6 +204,10 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleDepositionDumpStore);
     QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
                      this, &MainWindow::handleDepositionConveyor);
+    QObject::connect(ui->pushButton_EStop, &QPushButton::clicked,
+                     this, &MainWindow::handleEStop);
+    QObject::connect(ui->pushButton_EUnstop, &QPushButton::clicked,
+                     this, &MainWindow::handleEUnstop);
     /*
     QObject::connect(ui->lineEdit_FrontLeftWheel, &QLineEdit::textChanged,
                      ui->slider_BackLeftWheel, &QSlider::setValue)
@@ -920,6 +924,44 @@ void MainWindow::handleDepositionConveyor(bool checked) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.conveyor_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleEStop() {
+    StopAllCommand msg;
+    msg.set_stop(true);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.system.stop_all");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleEUnstop() {
+    StopAllCommand msg;
+    msg.set_stop(false);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.system.stop_all");
 
     free(msg_buff);
 }

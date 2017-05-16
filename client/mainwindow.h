@@ -77,6 +77,8 @@ public slots:
     void handleDepositionDumpStop();
     void handleDepositionDumpStore();
     void handleDepositionConveyor(bool checked);
+    void handleEStop();
+    void handleEUnstop();
 
     void handleTankPivotR();
     void handleTankPivotL();
