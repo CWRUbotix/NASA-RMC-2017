@@ -613,15 +613,15 @@ public class ModuleMain {
                         Actuation a = new Actuation();
                         a.override = true;
                         a.hold = true;
-                        int i = 50; //the "50th motor tells all motors to stop or start"
+                        int id = 50; //the "50th motor tells all motors to stop or start"
                         if(sac.getStop() == true){
                             a.targetValue = 0;
                         }
-                        else if (sac.getStop() = false){
+                        else if (sac.getStop() == false){
                             a.targetValue = 1;
                         }
                         a.actuatorID = id;
-                        System.out.println("Stop All command issued")
+                        System.out.println("Stop All command issued");
                         hci.queueActuation(a);
                     }
                 }    else {
