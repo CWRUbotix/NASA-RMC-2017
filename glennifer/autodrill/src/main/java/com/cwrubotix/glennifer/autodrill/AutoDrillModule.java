@@ -207,7 +207,6 @@ public class AutoDrillModule {
 	private String exchangeName;
 	private Connection connection;
 	private Channel channel;
-	private Thread currentMonitor;
 	private String currentJob;
 	private boolean isStalled = false;
 	
@@ -275,8 +274,6 @@ public class AutoDrillModule {
 	}
 	
 	public void stop() throws IOException, TimeoutException, InterruptedException{
-		currentMonitor.interrupt();
-		currentMonitor.join();
 		channel.close();
 		connection.close();
 	}
