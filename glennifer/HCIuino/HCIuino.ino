@@ -662,14 +662,14 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     //Not sure if this works yet!
   case SH_RC_CUR:
     if (sensor_info.whichMotor == 2){
-       val32 = roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
+       valid = roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
     } else {
-       val32 = roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
+       valid = roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
     }
     if (!valid){
       return FAULT_LOST_ROBOCLAW;
     }
-    *val = (int16_t)(val32 / sensor_info.scale);
+    *val = *val / sensor_info.scale;
     break;
   case SH_PIN_LIMIT:
     //if the pin limit switch is for BC translation:
