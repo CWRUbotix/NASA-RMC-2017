@@ -15,6 +15,7 @@ import com.cwrubotix.glennifer.Messages.RpmUpdate;
 import com.cwrubotix.glennifer.Messages.LimitUpdate;
 import com.cwrubotix.glennifer.Messages.PositionUpdate;
 import com.cwrubotix.glennifer.Messages.DisplacementUpdate;
+import com.cwrubotix.glennifer.Messages.CurrentUpdate;
 import com.cwrubotix.glennifer.Messages.Fault;
 import com.cwrubotix.glennifer.Messages.UnixTime;
 
