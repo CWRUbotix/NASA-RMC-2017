@@ -114,23 +114,23 @@ def handle_configure(channel, method, header, body):
     configuration = messages_pb2.LocomotionControlCommandConfigure()
     configuration.ParseFromString(body)
 
-    if (configuration.target is 1):
+    if (configuration.target == 1):
         publish_wheel_pod_angle(Wheel.front_left, 0, configuration.timeout)
         publish_wheel_pod_angle(Wheel.front_right, 0, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 0, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_right, 0, configuration.timeout)
-    elif (configuration.target is 3):
+    elif (configuration.target == 3):
         publish_wheel_pod_angle(Wheel.front_left, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.front_right, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 60, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_right, 60, configuration.timeout)
-    elif (configuration.target is 2):
+    elif (configuration.target == 2):
         publish_wheel_pod_angle(Wheel.front_left, 90, configuration.timeout)
         publish_wheel_pod_angle(Wheel.front_right, 90, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_left, 90, configuration.timeout)
         publish_wheel_pod_angle(Wheel.back_right, 90, configuration.timeout)
     else:
-        print('Bad config')
+        print('Bad config ' + str(configuration.target))
     
 def publish_wheel_rpm(wheel, rpm, timeout):
     msg = messages_pb2.SpeedContolCommand()

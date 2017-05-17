@@ -777,11 +777,11 @@ void MainWindow::handleExcavationArmDig() {
 }
 
 void MainWindow::handleExcavationArmJog() {
-    ui->slider_ExcavationArm->setValue(70);
+    ui->slider_ExcavationArm->setValue(80);
 }
 
 void MainWindow::handleExcavationArmDrive() {
-    ui->slider_ExcavationArm->setValue(20);
+    ui->slider_ExcavationArm->setValue(50);
 }
 
 void MainWindow::handleExcavationArmStore() {
