@@ -105,6 +105,9 @@ public class StateModule {
                 }
                 if (exc_detailed) {
                     Messages.ExcavationStateDetailed msg = Messages.ExcavationStateDetailed.newBuilder()
+                            .setRpm(excavationState.getConveyorRpm())
+                            .setArmPos(excavationState.getArmPos())
+                            .setDisplacement(excavationState.getTranslationDisplacement())
                             .setArmLeftExtended(excavationState.getArmExtended(ExcavationState.Side.LEFT))
                             .setArmRightExtended(excavationState.getArmExtended(ExcavationState.Side.RIGHT))
                             .setArmLeftRetracted(excavationState.getArmRetracted(ExcavationState.Side.LEFT))
@@ -113,6 +116,7 @@ public class StateModule {
                             .setTranslationRightExtended(excavationState.getTranslationExtended(ExcavationState.Side.RIGHT))
                             .setTranslationLeftRetracted(excavationState.getTranslationRetracted(ExcavationState.Side.LEFT))
                             .setTranslationRightRetracted(excavationState.getTranslationRetracted(ExcavationState.Side.RIGHT))
+                            .setConveyorMotorCurrent(excavationState.getConveyorMotorCurrent())
                             .build();
                     stateMsgBuilder.setExcDetailed(msg);
                 }
@@ -266,6 +270,8 @@ public class StateModule {
                     handleConveyorTranslationLimitRetractedUpdate(side, body);
                 } else if (sensorString.equals("arm_pos_a")) { // TODO: both sides
                     handleConveyorTranslationPosUpdate(body);
+                } else if (sensorString.equals("conveyor_current")){
+                    handleConveyorMotorCurrentUpdate(body);
                 } else {
                     System.out.println("Bad sensor string in routing key: " + sensorString);
                     return;
@@ -436,6 +442,17 @@ public class StateModule {
         Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
         try {
             excavationState.updateConveyorRpm(rpm, time);
+        } catch (RobotFaultException e) {
+            sendFault(e.getFaultCode(), time);
+        }
+    }
+
+    private void handleConveyorMotorCurrentUpdate(byte[] body) throws IOException {
+        CurrentUpdate message = CurrentUpdate.parseFrom(body);
+        float current = message.getCurrent();
+        Instant time = Instant.ofEpochSecond(message.getTimestamp().getTimeInt(), (long)(message.getTimestamp().getTimeFrac() * 1000000000L));
+        try {
+            excavationState.updateConveyorMotorCurrent(current, time);
         } catch (RobotFaultException e) {
             sendFault(e.getFaultCode(), time);
         }
