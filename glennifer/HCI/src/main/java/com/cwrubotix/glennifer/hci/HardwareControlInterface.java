@@ -148,9 +148,13 @@ public class HardwareControlInterface implements Runnable {
 					System.out.println("Trying again in 1 second...");
 					try {
 						Thread.sleep(1000);
+						try {
+							port.closePort();
+						} catch (SerialPortException e2) {
+							System.out.println("Closing port failed");
+						}
 						String newName = port.getPortName();
 						port = new SerialPort(newName);
-						port.closePort();
 						port.openPort();
 						Thread.sleep(1000);
 						port.setParams(baud, 8, 1, 0);
