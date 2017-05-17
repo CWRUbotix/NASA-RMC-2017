@@ -79,7 +79,7 @@ uint8_t sensor_lastLimitVals[256] = {}; // All initialized to 0
 int16_t sensor_storedVals[256] = {}; // All initialized to 0
 float motor_integrals[256] = {}; //All initialized to 0
 int16_t motor_lastUpdateTime[256] = {}; //All initialized to 0
-bool stopped = false;
+bool stopped = true;
 
 RoboClaw roboclaw(&Serial1,10000);
 Sabertooth sabretooth[4] = {
@@ -171,6 +171,7 @@ void setup() {
   sensor_infos[22].hardware = SH_PIN_POT;
   sensor_infos[22].whichPin = 6;
   sensor_infos[22].scale = 1;
+  sensor_infos[22].responsiveness = 1;
 
   //BC Limit Switch A Retracted
   sensor_infos[23].hardware = SH_PIN_LIMIT;
@@ -793,20 +794,8 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       motor_setpoints[7] = analogRead(sensor_infos[motor_infos[7].feedbackSensorID].whichPin); //BR wheel actuator
       motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin); //BC translation
       motor_setpoints[10] = analogRead(sensor_infos[motor_infos[10].feedbackSensorID].whichPin); //BC rotation
-      motor_lastUpdateTime[4] = millis();
-      motor_lastUpdateTime[5] = millis();
-      motor_lastUpdateTime[6] = millis();
-      motor_lastUpdateTime[7] = millis();
       motor_lastUpdateTime[9] = millis();
-      motor_lastUpdateTime[10] = millis();
-      motor_integrals[4] = 0;
-      motor_integrals[5] = 0;
-      motor_integrals[6] = 0;
-      motor_integrals[7] = 0;
       motor_integrals[9] = 0;
-      motor_integrals[10] = 0;
-      
-      
     }
   default:
     break;
@@ -849,7 +838,9 @@ void hciWait() {
           motor_integrals[id] = -motor_info.saturation;
         }
         motor_lastUpdateTime[id] = updateTime;
-        
+        if(err * motor_integrals[id] < 0){
+          motor_integrals[id] = 0;
+        }
         int val = motor_info.kp * err + motor_info.ki * motor_integrals[id];
         if (val > 127) {
           val = 127;
@@ -858,21 +849,30 @@ void hciWait() {
           val = -127;
         }
         bool success;
-        
         if(motor_info.hardware == MH_ST_POS) {
           if(id == 9) {
             Serial.print(id);
             Serial.print(" ");
             Serial.print(pos);
+            Serial.print(" ");
+            Serial.print(motor_setpoints[id]);
+            Serial.print(" ");
+            Serial.print(motor_info.kp * err);
+            Serial.print(" ");
+            Serial.print(motor_info.ki * motor_integrals[id]);
+            Serial.print(" ");
+            Serial.print(val);
             Serial.println(" ");
             if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
               //We hit a switch and are trying to move in the same direction, stop!
               sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+              Serial.println("Limits preventing positive movement");
               continue;
             }
             else if(val < 0 && (digitalRead(36) == LOW || digitalRead(38) == LOW)) {
               //We hit a switch and are trying to move in the same direction, stop!
               sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
+              Serial.println("Limits preventing negative movement");
               continue;
             }
           }
