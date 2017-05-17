@@ -112,8 +112,8 @@ public class HardwareControlInterface implements Runnable {
 	
 	@Override
 	public void run() {
-		try {
-			while(true) {
+		while(true) {
+			try {
 				// Read sensors
 				readSensors();
 				// Update actuator data
@@ -142,9 +142,15 @@ public class HardwareControlInterface implements Runnable {
 				} catch (InterruptedException e) {
 					return;
 				}
+			} catch(SerialPortException | SerialPortTimeoutException e) {
+				e.printStackTrace();
+				System.out.println("Trying again in 1 second...");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					return;
+				}
 			}
-		} catch(SerialPortException | SerialPortTimeoutException e) {
-			e.printStackTrace();
 		}
 	}
 	
