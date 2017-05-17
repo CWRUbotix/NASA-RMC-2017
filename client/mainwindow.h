@@ -102,6 +102,10 @@ public slots:
     void bcktWdraw();
     void bcktFwd();
     void bcktRev();
+    void dumpExtend();
+    void dumpRetract();
+    void dumpBegin();
+    void dumpEnd();
 
     void handleState(QString key, QByteArray data);
 

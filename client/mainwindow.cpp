@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_DepositionDump, &IntEdit::valueEdited, ui->slider_DepositionDump, &QSlider::setValue);
     connect(ui->lineEdit_ExcavationArm, &IntEdit::valueEdited, ui->slider_ExcavationArm, &QSlider::setValue);
     connect(ui->lineEdit_ExcavationTranslation, &IntEdit::valueEdited, ui->slider_ExcavationTranslation, &QSlider::setValue);
-
+    connect(ui->drillParam, &DoubleEdit::valueEdited);
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
 
@@ -1094,6 +1094,18 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         case (Qt::Key_0):
              //arm dig
              break;
+        case (Qt::Key_Z):
+             //DUMP ARM
+             break;
+        case (Qt::Key_X):
+             //DUMP RETR
+             break;
+        case (Qt::Key_C):
+             //DUMP START
+             break;
+        case (Qt::Key_V):
+             //DUMP END
+             break;
         default:
             QWidget::keyPressEvent(ev);
             break;
@@ -1173,6 +1185,18 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
              break;
         case (Qt::Key_0):
              //arm dig
+             break;
+        case (Qt::Key_Z):
+             //DUMP ARM
+             break;
+        case (Qt::Key_X):
+             //DUMP RETR
+             break;
+        case (Qt::Key_C):
+             //DUMP START
+             break;
+        case (Qt::Key_V):
+             //DUMP END
              break;
         default:
             QWidget::keyReleaseEvent(ev);
