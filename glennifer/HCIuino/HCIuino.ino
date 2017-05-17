@@ -39,7 +39,7 @@ typedef struct SensorInfo {
   uint8_t addr; // When hardware = SH_RC_*
   uint8_t whichMotor; // When hardware = SH_RC_*
   uint8_t whichPin; // When hardware = SH_PIN_*
-  float responsiveness = 0.1;
+  float responsiveness;
   uint16_t scale; // 1 unless needed
 } SensorInfo;
 
@@ -118,18 +118,22 @@ void setup() {
   sensor_infos[4].hardware = SH_PIN_POT;
   sensor_infos[4].whichPin = 3;
   sensor_infos[4].scale = 1;
+  sensor_infos[4].responsiveness = 0.1;
   // 2 is front right
   sensor_infos[5].hardware = SH_PIN_POT;
   sensor_infos[5].whichPin = 2;
   sensor_infos[5].scale = 1;
+  sensor_infos[5].responsiveness = 0.1;
   // Back left wheel pod potentiometer
   sensor_infos[6].hardware = SH_PIN_POT;
   sensor_infos[6].whichPin = 1;
   sensor_infos[6].scale = 1;
+  sensor_infos[6].responsiveness = 0.1;
   // 0 is back right
   sensor_infos[7].hardware = SH_PIN_POT;
   sensor_infos[7].whichPin = 0;
   sensor_infos[7].scale = 1;
+  sensor_infos[7].responsiveness = 0.1;
 
   // DUMMY SENSORS for setting pot mode
   sensor_infos[8].hardware = SH_RC_POT;
@@ -147,11 +151,13 @@ void setup() {
   sensor_infos[16].hardware = SH_PIN_POT;
   sensor_infos[16].whichPin = 4;
   sensor_infos[16].scale = 1;
+  sensor_infos[16].responsiveness = 0.1;
 
    //BC Arm position pin pot B
   sensor_infos[19].hardware = SH_PIN_POT;
   sensor_infos[19].whichPin = 5;
   sensor_infos[19].scale = 1;
+  sensor_infos[19].responsiveness = 0.1;
 
 /*
   // BC Arm Pot A
@@ -284,11 +290,11 @@ void setup() {
   motor_infos[9].feedbackSensorID = 22;
   motor_infos[9].deadband = 10;
   motor_infos[9].kp = 0.6;
-  motor_infos[9].ki = 0.003;
+  motor_infos[9].ki = 0.005;
   motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin);
   sensor_storedVals[motor_infos[9].feedbackSensorID] = motor_setpoints[9];
   motor_lastUpdateTime[9] = millis();
-  motor_infos[9].saturation = 127/ motor_infos[9].ki;
+  motor_infos[9].saturation = 64/ motor_infos[9].ki;
 
   // Bucket Conveyor Actuators
   motor_infos[10].hardware = MH_RC_POS_BOTH;
@@ -823,11 +829,11 @@ void hciWait() {
             err = 0;
           } else {
             // Below deadband
-            //err += motor_info.deadband;
+            err += motor_info.deadband;
           }
         } else {
           // Above deadband
-          //err -= motor_info.deadband;
+          err -= motor_info.deadband;
         }
         int16_t updateTime = millis();
         motor_integrals[id] += err * (updateTime - motor_lastUpdateTime[id]);
