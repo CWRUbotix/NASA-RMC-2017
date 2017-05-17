@@ -239,6 +239,9 @@ message ExcavationStateSummary {
 
 //details of excavation state
 message ExcavationStateDetailed {
+	required float rpm = 1;
+	required float displacement = 2;
+	required float arm_pos = 3;
 	required bool arm_left_extended = 4;
 	required bool arm_right_extended = 5;
 	required bool arm_left_retracted = 6;
@@ -247,6 +250,7 @@ message ExcavationStateDetailed {
 	required bool translation_right_extended = 9;
 	required bool translation_left_retracted = 10;
 	required bool translation_right_retracted = 11;
+	required float conveyor_motor_current = 12;
 }
 
 //summary of deposition state

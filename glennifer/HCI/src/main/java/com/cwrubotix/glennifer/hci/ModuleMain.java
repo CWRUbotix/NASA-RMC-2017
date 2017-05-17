@@ -675,7 +675,7 @@ public class ModuleMain {
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_rpm", null, msg.toByteArray());
 				}
                 //WHEEL POD POSITION
-                else if (sensorDataID == 4 || sensorDataID == 7 || sensorDataID == 10 || sensorDataID == 13){
+                else if (sensorDataID == 4 || sensorDataID == 5 || sensorDataID == 6 || sensorDataID == 7){
                     value = Mechanics.wheelPodValueToPos(value);
 					if (value > 1) value = 1;
 					if (value < -1) value = -1;
@@ -686,11 +686,11 @@ public class ModuleMain {
 							.build();
                     if (sensorDataID == 4)
                         channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_pod_pos", null, msg.toByteArray());
-                    else if (sensorDataID == 7)
+                    else if (sensorDataID == 5)
                         channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_pod_pos", null, msg.toByteArray());
-                    else if (sensorDataID == 10)
+                    else if (sensorDataID == 6)
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_pod_pos", null, msg.toByteArray());
-                    else if (sensorDataID == 13)
+                    else if (sensorDataID == 7)
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_pod_pos", null, msg.toByteArray());
                 }
                 //WHEEL POD LIMIT EXTENDED
