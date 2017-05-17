@@ -545,7 +545,7 @@ public class ModuleMain {
                         a.override = true;
                         a.hold = true;
                         int id = 9;
-                        a.targetValue = (pcc.getPosition() / 100.0F) * 900.0F;
+                        a.targetValue = ((pcc.getPosition() / 100.0F) * 756) + 50;
                         a.type = HardwareControlInterface.ActuationType.AngVel;
                         a.actuatorID = id;
 			System.out.println("conv_translation for val: " + a.targetValue);

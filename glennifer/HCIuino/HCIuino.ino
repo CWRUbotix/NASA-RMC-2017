@@ -79,7 +79,7 @@ uint8_t sensor_lastLimitVals[256] = {}; // All initialized to 0
 int16_t sensor_storedVals[256] = {}; // All initialized to 0
 float motor_integrals[256] = {}; //All initialized to 0
 int16_t motor_lastUpdateTime[256] = {}; //All initialized to 0
-bool stopped = true;
+bool stopped = false;
 
 RoboClaw roboclaw(&Serial1,10000);
 Sabertooth sabretooth[4] = {
@@ -282,7 +282,7 @@ void setup() {
   motor_infos[9].scale = 1;
   motor_infos[9].feedbackSensorID = 22;
   motor_infos[9].deadband = 10;
-  motor_infos[9].kp = 6;
+  motor_infos[9].kp = 0.6;
   motor_infos[9].ki = 0.003;
   motor_setpoints[9] = analogRead(sensor_infos[motor_infos[9].feedbackSensorID].whichPin);
   sensor_storedVals[motor_infos[9].feedbackSensorID] = motor_setpoints[9];
@@ -858,17 +858,22 @@ void hciWait() {
           val = -127;
         }
         bool success;
+        
         if(motor_info.hardware == MH_ST_POS) {
           if(id == 9) {
+            Serial.print(id);
+            Serial.print(" ");
+            Serial.print(pos);
+            Serial.println(" ");
             if(val > 0 && (digitalRead(37) == LOW || digitalRead(39) == LOW)) {
               //We hit a switch and are trying to move in the same direction, stop!
               sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
-              break;
+              continue;
             }
             else if(val < 0 && (digitalRead(36) == LOW || digitalRead(38) == LOW)) {
               //We hit a switch and are trying to move in the same direction, stop!
               sabretooth[motor_info.addr].motor(motor_info.whichMotor, 0);
-              break;
+              continue;
             }
           }
           sabretooth[motor_info.addr].motor(motor_info.whichMotor, val);
