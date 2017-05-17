@@ -16,6 +16,7 @@ import com.cwrubotix.glennifer.Messages.UnixTime;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.Duration;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -24,8 +25,10 @@ import java.util.concurrent.TimeoutException;
  */
 public class AutoDrillModule {
 
-	private class CurrentMonitorConsumer extends DefaultConsumer{
+	private float currentUpperLimit = 7.0F;
+	private float currentLowerLimit = 3.0F;
 
+	private class CurrentMonitorConsumer extends DefaultConsumer{
 		public CurrentMonitorConsumer(Channel channel) {
 			super(channel);
 		}
@@ -34,59 +37,16 @@ public class AutoDrillModule {
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
 			Messages.CurrentUpdate msg = Messages.CurrentUpdate.parseFrom(body);
 			float currentValue = msg.getCurrent();
-			System.out.println("current = " + currentValue);
-			//if(currentValue > getStallCurrent())
-			//	dealWithStallSituation();
-		}
-
-		private float getStallCurrent(){
-			return 0.0F; //TODO Needs to be changed
-		}
-
-		private void dealWithStallSituation() throws IOException{
-			isStalled = true;
-			//Stopping what was going on.
-				/* TODO waiting for branches to be merged.
-				 *
-				 * Messages.StopAllCommand msg1 = Messages.StopAllCommand.newBuilder()
-				 * 		   .setTimeOut(123)
-				 *         .setStop(true)
-				 *         .build();
-				 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg1.toByteArray());
-				 *
-				 * Messages.StopAllCommand msg2 = Messages.StopAllCommand.newBuilder()
-				 *         .setTimeOut(123)
-				 *         .setStop(false)
-				 *         .build();
-				 * AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.system.stop_all", null, msg2.toByteArray());
-				 *
-				 */
-
-				/*
-				 * TODO Come up with what to do when BC is in stall.
-				 */
-
-			//Going back to where it was before.
-			//TODO wait for enough time between commands to make sure they are getting done one at a time.
-			switch (currentJob) {
-				case DEEP:
-					//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-					//excavationTranslationControl(targetDepth);
-					break;
-				case SURFACE:
-					locomotionStraight();
-					//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-					//excavationTranslationControl(targetDepth);
-					//locomotionSpeedControl(targetRPM);
-					break;
-				case NONE:
-					locomotionSpeedControl(0.0F);
-					excavationTranslationControl(0.0F);
-					excavationConveyorRPM(0.0F);
-					excavationAngleControl(0.0F);
-					break;
+			if(!isStalled && currentValue > currentUpperLimit) {
+				// Transition to stalled
+				isStalled = true;
+			} else if (isStalled && currentValue <= currentLowerLimit) {
+				// Transition to unstalled
+				isStalled = false;
+				modeStartTime = Instant.now();
+				modeStartDepth = 10.0F;
 			}
-			isStalled = false;
+			updateMotors();
 		}
 	}
 	
@@ -97,19 +57,13 @@ public class AutoDrillModule {
 		
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			currentJob = DrillJob.NONE;
-			if(!isStalled){
-				//Messages.DigDeepCommand cmd = Messages.DigDeepCommand.parseFrom(body);
-				//float targetDepth = cmd.getDepth();
-				locomotionSpeedControl(0.0F);
-				excavationTranslationControl(0.0F);
-				excavationConveyorRPM(0.0F);
-				//excavationAngleControl(THE MAGIC DIGGING ANGLE);
-				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-				//excavationTranslationControl(targetDepth);
-				//TODO wait for enough time between commands to make sure they are getting done one at a time.
-				//TODO fill in magic numbers via testing and add DigDeepCommand Features in protobuff so we can get desired depth from message.
-			}
+			// Transition to dig deep
+			currentJob = DrillJob.DEEP;
+			Messages.ExcavationControlCommandDigDeep cmd = Messages.ExcavationControlCommandDigDeep.parseFrom(body);
+			targetDepth = cmd.getDepth();
+			digSpeed = cmd.getDigSpeed();
+			modeStartTime = Instant.now();
+			updateMotors();
 		}
 	}
 	
@@ -121,21 +75,13 @@ public class AutoDrillModule {
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
 			currentJob = DrillJob.SURFACE;
-			if(!isStalled){
-				//Messages.DigSurfaceCommand cmd = Messages.DigSurfaceCommand.parseFrom(body);
-				//float targetDepth = cmd.getTargetDepth();
-				//float targetRPM = cmd.getRPM();
-				locomotionSpeedControl(0.0F);
-				excavationTranslationControl(0.0F);
-				excavationConveyorRPM(0.0F);
-				//excavationAngleControl(THE MAGIC DIGGING ANGLE);
-				//excavationConveryorRPM(THE MAGIC DIGGING SPEED);
-				//excavationTranslationControl(targetDepth);
-				locomotionStraight();
-				//locomotionSpeedControl(targetRPM);
-				//TODO wait for enough time between commands to make sure they are getting done one at a time.
-				//TODO fill in magic numbers via testing and add DigSurfaceCommand Features in protobuff so we can get desired depth and RPM from message.
-			}
+			Messages.ExcavationControlCommandDigSurface cmd = Messages.ExcavationControlCommandDigSurface.parseFrom(body);
+			targetDepth = cmd.getDepth();
+			digSpeed = cmd.getDigSpeed();
+			targetDist = cmd.getDist();
+			driveSpeed = cmd.getDriveSpeed();
+			modeStartTime = Instant.now();
+			updateMotors();
 		}
 	}
 	
@@ -147,13 +93,7 @@ public class AutoDrillModule {
 		@Override
 		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
 			currentJob = DrillJob.NONE;
-			if(!isStalled){
-				locomotionSpeedControl(0.0F);
-				excavationTranslationControl(0.0F);
-				excavationConveyorRPM(0.0F);
-				excavationAngleControl(0.0F);
-			}
-			//TODO wait for enough time between commands to make sure they are getting done one at a time.
+			updateMotors();
 		}
 	}
 
@@ -164,9 +104,44 @@ public class AutoDrillModule {
 	private Channel channel;
 
 	private DrillJob currentJob = DrillJob.NONE;
-	private float depth = 0.0F;
-	private float dist = 0.0F;
+	private float targetDepth = 0.0F;
+	private float targetDist = 0.0F;
+	private float digSpeed = 0.0F;
+	private float driveSpeed = 0.0F;
+	private Instant modeStartTime;
+	private float modeStartDepth = 10.0F;
 	private boolean isStalled = false;
+
+	private void updateMotors() {
+		try {
+			switch (currentJob) {
+				case NONE:
+					excavationConveyorRPM(0);
+					excavationTranslationControl(0);
+					break;
+				case DEEP:
+					if (isStalled) {
+						excavationConveyorRPM(100);
+						excavationTranslationControl(0);
+					} else {
+						excavationConveyorRPM(100);
+						excavationTranslationControl(getCurrentDepthTarget());
+					}
+					break;
+				case SURFACE:
+					excavationConveyorRPM(0);
+					excavationTranslationControl(0);
+					break;
+			}
+		} catch (IOException e) {
+			System.out.println("AutoDrill failed to publish message with exception:");
+			e.printStackTrace();
+		}
+	}
+
+	private float getCurrentDepthTarget() {
+		return modeStartDepth + (Duration.between(modeStartTime, Instant.now()).toMillis() / 1000.0F) * digSpeed;
+	}
 	
 	private void excavationTranslationControl(float targetValue) throws IOException{
 		Messages.PositionContolCommand pcc = Messages.PositionContolCommand.newBuilder()
@@ -260,6 +235,16 @@ public class AutoDrillModule {
 		queueName = channel.queueDeclare().getQueue();
 		channel.queueBind(queueName, exchangeName, "drill.end");
 		this.channel.basicConsume(queueName, true, new DrillEndConsumer(channel));
+
+		// Enter main loop
+		try {
+			while (true) {
+				updateMotors();
+				Thread.sleep(100);
+			}
+		} catch (InterruptedException e) {
+			stop();
+		}
 	}
 	
 	public void start(){
@@ -274,9 +259,13 @@ public class AutoDrillModule {
 		}
 	}
 	
-	public void stop() throws IOException, TimeoutException, InterruptedException{
-		channel.close();
-		connection.close();
+	public void stop() {
+		try {
+			channel.close();
+			connection.close();
+		} catch (IOException | TimeoutException e) {
+			// Do nothing
+		}
 	}
 	
 	public static void main(String[] args){
