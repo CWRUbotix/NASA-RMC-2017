@@ -152,37 +152,22 @@ message LocomotionControlCommandConfigure {
 	required float timeout = 3;
 }
 
-// subsyscommand.excavation.position_arm
-message ExcavationControlCommandPositionArm {
-	optional float position = 1;
-	optional float power = 2;
-	required float timeout = 3;
+// subsyscommand.excavation.dig_deep
+message ExcavationControlCommandDigDeep {
+	required float depth = 1;
+	required float dig_speed = 2;
 }
 
-// subsyscommand.excavation.position_translation
-message ExcavationControlCommandPositionTranslation {
-	optional float position = 1;
-	optional float power = 2;
-	required float timeout = 3;
+// subsyscommand.excavation.dig_surface
+message ExcavationControlCommandDigSurface {
+	required float depth = 1;
+	required float dig_speed = 2;
+	required float dist = 3;
+	required float drive_speed = 4;
 }
 
-// subsyscommand.excavation.move_bucket_conveyor
-message ExcavationControlCommandMoveBucketConveyor {
-	optional float speed = 1;
-	required float timeout = 2;
-}
-
-// subsyscommand.deposition.position_dump
-message DepositionControlCommandPositionDump {
-	optional float position = 1;
-	optional float power = 2;
-	required float timeout = 3;
-}
-
-// subsyscommand.deposition.move_conveyor
-message DepositionControlCommandMoveConveyor {
-	optional float speed = 1;
-	required float timeout = 2;
+// subsyscommand.excavation.dig_end
+message ExcavationControlCommandDigEnd {
 }
 
 //state.subscribe
