@@ -739,6 +739,9 @@ public class ModuleMain {
 				} else {
 					// TODO: do others
 				}
+				if (!hciThread.isAlive()) {
+				    break;
+                }
 			}
 		} catch (InterruptedException e) { }
 	}
