@@ -147,7 +147,7 @@ public class HardwareControlInterface implements Runnable {
 				System.out.println("Trying again in 1 second...");
 				try {
 					Thread.sleep(1000);
-				} catch (InterruptedException e) {
+				} catch (InterruptedException e2) {
 					return;
 				}
 			}
