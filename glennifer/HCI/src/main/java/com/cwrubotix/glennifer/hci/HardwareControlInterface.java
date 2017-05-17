@@ -144,12 +144,22 @@ public class HardwareControlInterface implements Runnable {
 				}
 			} catch(SerialPortException | SerialPortTimeoutException e) {
 				e.printStackTrace();
-				System.out.println("Trying again in 1 second...");
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e2) {
-					return;
+				while (true) {
+					System.out.println("Trying again in 1 second...");
+					try {
+						port.closePort();
+						port.openPort();
+						Thread.sleep(1000);
+						port.setParams(baud, 8, 1, 0);
+						port.setDTR(false);
+						break;
+					} catch (InterruptedException e2) {
+						return;
+					} catch (SerialPortException e2) {
+						e.printStackTrace();
+					}
 				}
+
 			}
 		}
 	}
