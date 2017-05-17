@@ -1,4 +1,0 @@
-server-addr: localhost
-server-user: guest
-server-pass: guest
-exchange-name: amq.topic

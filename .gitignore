@@ -28,11 +28,15 @@ conan_imports_manifest.txt
 target/
 *.log
 
+# Config paste locations
+/glennifer/HCI/config/
+/glennifer/robot_state/config/
+/glennifer/motor_dispatch/src/python/config/
+
 # IntelliJ user settings
 workspace.xml
 tasks.xml
 *.iws
-=======
 *.project
 *.class
 *.classpath
