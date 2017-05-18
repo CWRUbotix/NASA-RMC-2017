@@ -104,10 +104,9 @@ public slots:
     void bcktWdraw();
     void bcktFwd();
     void bcktRev();
-    //void dumpExtend();
-    //void dumpRetract();
-   // void dumpBegin();
-    //void dumpEnd();
+    void dumpExtend();
+    void dumpRetract();
+    void dumpConveyor(bool checked);
     void drillParameters(double depth);
     void armDrive();
     void armDig();
@@ -147,6 +146,7 @@ private:
     QString drillDeep = "drill.deep";
     QString drillFwd = "drill.surface";
     QString drillEnd = "drill.end";
+    int m_dumpConfig = 0; //0 is store, 1 is dump/fully extended
 };
 
 #endif // MAINWINDOW_H
