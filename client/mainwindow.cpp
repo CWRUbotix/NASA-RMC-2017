@@ -13,6 +13,7 @@
 #include "consumerthread.h"
 #include <QCloseEvent>
 #include "doubleedit.h"
+#include "drillslider.h"
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -56,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEdit_ExcavationTranslation->setValidator(new QDoubleValidator(-100, 100, 0));
     */
 
+    //ui->drill_Slider->setRange(0,);
+
     connect(ui->lineEdit_FrontLeftWheel, &IntEdit::valueEdited, ui->slider_FrontLeftWheel, &QSlider::setValue);
     connect(ui->lineEdit_FrontRightWheel, &IntEdit::valueEdited, ui->slider_FrontRightWheel, &QSlider::setValue);
     connect(ui->lineEdit_BackLeftWheel, &IntEdit::valueEdited, ui->slider_BackLeftWheel, &QSlider::setValue);
@@ -67,6 +70,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_DepositionDump, &IntEdit::valueEdited, ui->slider_DepositionDump, &QSlider::setValue);
     connect(ui->lineEdit_ExcavationArm, &IntEdit::valueEdited, ui->slider_ExcavationArm, &QSlider::setValue);
     connect(ui->lineEdit_ExcavationTranslation, &IntEdit::valueEdited, ui->slider_ExcavationTranslation, &QSlider::setValue);
+
+    //New Sliders for Drilling
+    connect(ui->drillParam, &DoubleEdit::valueEdited, ui->drill_Slider, &DrillSlider::changedValue);//these are implemented in the drillslider class
+    connect(ui->drill_Slider, &DrillSlider::valueChanged, this, &MainWindow::drillParameters);
 
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
@@ -474,6 +481,7 @@ void MainWindow::handleLocomotionStraight() {
 }
 
 void MainWindow::handleLocomotionTurn() {
+    //check the arm is in drive and hopper maybe if ()
     m_configSpeeds[m_desiredConfig] = ui->slider_LocomotionSpeed->value();
     m_desiredConfig = 1;
     ui->slider_LocomotionSpeed->setValue(m_configSpeeds[m_desiredConfig]);
@@ -497,6 +505,7 @@ void MainWindow::handleLocomotionTurn() {
 }
 
 void MainWindow::handleLocomotionStrafe() {
+    //check the arm is in drive and hopper maybe if ()
     m_configSpeeds[m_desiredConfig] = ui->slider_LocomotionSpeed->value();
     m_desiredConfig = 2;
     ui->slider_LocomotionSpeed->setValue(m_configSpeeds[m_desiredConfig]);
@@ -1069,6 +1078,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         switch (ev->key()) {
         case (Qt::Key_Space):
             handleLocomotionStop();
+            //stop all other motors and automatic procesess
             break;
         case (Qt::Key_W):
             handleLocomotionUp();
@@ -1086,10 +1096,10 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
             handleLocomotionStraight();
             break;
         case (Qt::Key_O):
-            handleLocomotionTurn();
+            turnConfig();
             break;
         case (Qt::Key_P):
-            handleLocomotionStrafe();
+            strafeConfig();
             break;
         case (Qt::Key_J):
             ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() - 10);
@@ -1097,12 +1107,69 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
         case (Qt::Key_K):
             ui->slider_LocomotionSpeed->setValue(ui->slider_LocomotionSpeed->value() + 10);
             break;
-        case (Qt::Key_R):
-            handleTankPivotRK();
-            break;
-        case (Qt::Key_L):
-            handleTankPivotLK();
-            break;
+        //case (Qt::Key_R):
+          //  handleTankPivotRK();
+          //  break;
+        //case (Qt::Key_L):
+          //  handleTankPivotLK;
+          //  break;
+        case (Qt::Key_E):
+             actionTabRight();
+             break;
+        case (Qt::Key_Q):
+             actionTabLeft();
+             break;
+        case (Qt::Key_Y):
+             digConfig();
+             break;
+        case (Qt::Key_U):
+             dumpConfig();
+             break;
+        case (Qt::Key_1):
+             handleDrill(0, drillValue);
+             break;
+        case (Qt::Key_2):
+             handleDrill(1, drillValue);
+             break;
+        case (Qt::Key_3):
+             handleDrill(2, drillValue);
+             break;
+        case (Qt::Key_4):
+             //dig end
+             break;
+        case (Qt::Key_5):
+             handleExcavationTranslationStop();
+             break;
+        case (Qt::Key_6):
+             regularExcavationConveyer(true);
+             break;
+        case (Qt::Key_7):
+             inverseExcavationConveyer(true);
+             break;
+        case (Qt::Key_8):
+             armDrive();
+             break;
+        case (Qt::Key_9):
+             //arm prep/store for car  travel
+             break;
+        case (Qt::Key_0):
+             armDig();
+             break;
+        case (Qt::Key_Minus):
+             armGTFO();
+             break;
+        case (Qt::Key_Z):
+             dumpExtend();
+             break;
+        case (Qt::Key_X):
+             dumpRetract();
+             break;
+        case (Qt::Key_C):
+             dumpConveyor(true);
+             break;
+        case (Qt::Key_V):
+             //Extra
+             break;
         default:
             QWidget::keyPressEvent(ev);
             break;
@@ -1145,6 +1212,59 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
         case (Qt::Key_L):
             handleLocomotionStop();
             break;
+        case (Qt::Key_E):
+            break;
+        case (Qt::Key_Q):
+            break;
+        case (Qt::Key_Y):
+             break;
+        case (Qt::Key_U):
+             break;
+        case (Qt::Key_1):
+             //dig deep
+             break;
+        case (Qt::Key_2):
+             //dig forward
+             break;
+        case (Qt::Key_3):
+             //dig rev
+             break;
+        case (Qt::Key_4):
+             //dig end
+             break;
+        case (Qt::Key_5):
+             //arm bucket retract
+             break;
+        case (Qt::Key_6):
+             handleExcavationConveyor(false);
+             break;
+        case (Qt::Key_7):
+             handleExcavationConveyor(false);
+             break;
+        case (Qt::Key_8):
+             //arm drive
+             break;
+        case (Qt::Key_9):
+             //arm prep
+             break;
+        case (Qt::Key_0):
+             //arm dig
+             break;
+        case (Qt::Key_Minus):
+             //arm GTFO
+             break;
+        case (Qt::Key_Z):
+             //DUMP extend
+             break;
+        case (Qt::Key_X):
+             //DUMP retract
+             break;
+        case (Qt::Key_C):
+             handleDepositionConveyor(false);
+             break;
+        case (Qt::Key_V):
+             //extra
+             break;
         default:
             QWidget::keyReleaseEvent(ev);
             break;
@@ -1266,4 +1386,302 @@ void MainWindow::handleTankPivotLK() {
     } else {
         ui->consoleOutputTextBrowser->append("Wrong config");
     }
+}
+
+//Tab Right
+void MainWindow::actionTabRight() {
+    if(ui->tabWidget->currentIndex() >= -1) {
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->currentIndex()+1);
+    }
+    if(ui->tabWidget->currentIndex() >4) {
+        ui->tabWidget->setCurrentIndex(1);
+    }
+}
+
+//Tab Left
+void MainWindow::actionTabLeft() {
+    if(ui->tabWidget->currentIndex() <= 5) {
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->currentIndex()-1);
+    }
+    if(ui->tabWidget->currentIndex() < 1) {
+        ui->tabWidget->setCurrentIndex(5);
+    }
+}
+
+//Configurations
+void MainWindow::forwardConfig() {
+    if (0 == m_desiredConfig) {
+    ui->consoleOutputTextBrowser->append("Already in forward Configuration");
+    isInDig = false;
+    isInDump = false;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Switching to forward Configuration");
+        handleLocomotionStraight();
+        isInDig = false;
+        isInDump = false;
+}
+
+void MainWindow::digConfig() {
+    if (0 == m_desiredConfig) {
+    ui->consoleOutputTextBrowser->append("Already in Dig Configuration");
+    isInDig = true;
+    isInDump = false;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Switching to Dig Configuration");
+        handleLocomotionStraight();
+        isInDig = true;
+        isInDump = false;
+}
+
+void MainWindow::dumpConfig() {
+    if (0 == m_desiredConfig) {
+    ui->consoleOutputTextBrowser->append("Already in Dump Configuration");
+    isInDig = false;
+    isInDump = true;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Switching to Dump Configutation");
+        handleLocomotionStraight();
+        isInDig = false;
+        isInDump = true;
+}
+
+void MainWindow::turnConfig() {
+    if (ui->slider_ExcavationArm->value() > 20) {
+        ui->consoleOutputTextBrowser->append("Excavation arm is preventing turn configuration,\n please retract the Excavation arm");
+        isInDig = false;
+        isInDump = false;
+    }
+    else
+        handleLocomotionTurn();
+        isInDig = false;
+        isInDump = false;
+}
+
+void MainWindow::strafeConfig() {
+    if (ui->slider_ExcavationArm->value() > 20) {
+        ui->consoleOutputTextBrowser->append("Excavation arm is preventing strafe configuration,\n please retract the Excavation arm");
+        isInDig = false;
+        isInDump = false;
+    }
+    else
+        handleLocomotionStrafe();
+        isInDig = false;
+        isInDump = false;
+}
+
+/* * ON ALL OF THESE MAKE SURE THE KEY RELEASE WORKS AS IT IS MEANT TO * */
+void MainWindow::drill(float value, QString key) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "drill.deep");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDrill(int type, float value) {
+    if(m_digConfig == 1) {
+        switch(type) {
+        case 0:
+            digDeep(value);
+            break;
+        case 1:
+            digFwd(value); //dig surface
+            break;
+        case 2:
+            digRev(value);
+            break;
+        }
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration, thenn arm dig");
+}
+
+void MainWindow::digDeep(float meters) {
+    if(meters == 0) {
+        if(meters <= 0.5) {
+            drill(meters, drillDeep);
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
+    }
+}
+
+void MainWindow::digFwd(float meters) {
+    if(meters == 0) {
+        if(meters <= 3.0) {
+            drill(meters, drillFwd);
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
+    }
+    /* CHECK FOR isInDig AND Modify the dig and dump flags in fwd config*/
+    //send command to hci or handle here, not sure
+    /* can make separate control structure for digfwd rev and such if it is meant
+     * to be ui controled as opposed to automated, other wise,
+     * engage sequence here with simpler structure to check for desiredConfig == 0
+     * since that is default for both dig and dump and allows for drive to occur
+     * if it is a separate call using handleLocomotion as opposed to the configs
+     * We may want to do Something else though not sure
+     */
+}
+
+void MainWindow::digRev(float meters) {
+    if(meters == 0) {
+        if(meters <= 3.0) {
+            drill((-1.0F*meters), drillFwd); //the reverse of fwd
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
+    }
+}
+
+void MainWindow::digEnd() {
+    //Either send stop command from hci or do something with stopAll
+    //stopAll may not affect itonly the motors but still motors
+    drill(0.0F, drillEnd);
+}
+
+void MainWindow::bcktWdraw() { //bucket retract
+    handleExcavationTranslationStop();
+}
+
+//The Rest of these may require they're own function
+//if it cannot be set in reverse in the boolean check function
+
+void MainWindow::bcktFwd() {
+
+}
+
+void MainWindow::bcktRev() {
+
+}
+
+// Helper for Drilling
+void MainWindow::drillParameters(double depth) {
+    ui->drill_Depth->display(depth);
+    drillValue = (float)(depth);
+}
+
+void MainWindow::armDrive() {
+    if (m_desiredConfig == 0 && isInDig == true && isInDump == false) {
+        handleExcavationArmDrive();
+        m_digConfig = 0;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
+}
+
+void MainWindow::armDig() {
+    if (m_desiredConfig == 0 && isInDig == true && isInDump == false) {
+        handleExcavationArmJog();
+        m_digConfig = 1;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
+}
+
+void MainWindow::armGTFO() {
+    if (m_desiredConfig == 0 && isInDig == true && isInDump == false) {
+        handleExcavationArmDig();
+        m_digConfig = 2;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
+}
+
+void MainWindow::dumpExtend() {
+    if(isInDump == true && isInDig == false) {
+        if(m_digConfig == 2) {
+            if(m_dumpConfig != 1) {
+                handleDepositionDumpDump();
+                m_dumpConfig = 1;
+            }
+            else
+                ui->consoleOutputTextBrowser->append("Currently already fully extended or something went wrong");
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Please tell the excavation arm to GTFO");
+    }
+    //else if(ui->slider_DepositionDump->value() == 100)  {
+    //    m_dumpConfig = 1;
+   // }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dump mode\n please press enter dump configuration");
+}
+
+void MainWindow::dumpRetract() {
+    if(isInDump == true && isInDig == false) {
+        if(m_digConfig == 2) {
+            if(m_dumpConfig != 0) {
+                handleDepositionDumpStore();
+                m_dumpConfig = 0;
+            }
+            else
+                ui->consoleOutputTextBrowser->append("Currently already fully stored or something went wrong");
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Please tell the excavation arm to GTFO");
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dump mode\n please press enter dump configuration");
+   // else if(ui->slider_DepositionDump->value() == -100)  {
+   //     m_dumpConfig = 0;
+   // }
+}
+
+void MainWindow::dumpConveyor(bool checked) {
+    if(m_dumpConfig == 1) { //absolutely has to be on fully extended
+        handleDepositionConveyor(checked);
+    }
+    else
+        ui->consoleOutputTextBrowser->append("It is imperative you extend deposition before running the conveyor");
+}
+
+/* Anti Bucket Conveyor Sends negative Speed */
+void MainWindow::inverseExcavationConveyer(bool checked) {
+    if(m_digConfig == 1) {
+        SpeedContolCommand msg;
+        int speed = (-1)*(ui->slider_ExcavationConveyor->value());
+        msg.set_rpm(checked ? speed : 0);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.bucket_conveyor_rpm");
+
+        free(msg_buff);
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Not in dig configuration. \n Please go through dig configuration Process");
+
+}
+
+void MainWindow::regularExcavationConveyer(bool checked) {
+    if(m_digConfig == 1) {
+        handleExcavationConveyor(checked);
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Not in dig configuration. \n Please go through dig configuration Process");
+
 }
