@@ -81,14 +81,17 @@ public class AutoDrillModule {
 	private Connection connection;
 	private Channel channel;
 
-	private DrillJob currentJob = DrillJob.DEEP;
-	private float targetDepth = 100.0F;
+	private DrillJob currentJob = DrillJob.SURFACE;
+	private float targetDepth = 50.0F;
 	private float targetDist = 0.0F;
 	private float digSpeed = 2.0F;
-	private float driveSpeed = 0.0F;
+	private float driveSpeed = 0.5F;
 	private Instant modeStartTime;
 	private float modeStartDepth = 10.0F;
 	private boolean isStalled = false;
+
+	private float bc_trans = 0.0F;
+	private float bc_angle = 0.0F;
 
 	private void updateMotors() {
 		
@@ -97,6 +100,7 @@ public class AutoDrillModule {
 				case NONE:
 					excavationConveyorRPM(0);
 					excavationTranslationControl(0);
+					locomotionSpeedControl(0.0F);
 					break;
 				case DEEP:
 					if (isStalled) {
@@ -107,9 +111,19 @@ public class AutoDrillModule {
 						excavationTranslationControl(getCurrentDepthTarget());
 					}
 					break;
-				case SURFACE: //TODO DO THIS
-					excavationConveyorRPM(0);
-					excavationTranslationControl(0);
+				case SURFACE:
+					if (isStalled) {
+						excavationConveyorRPM(100);
+						excavationTranslationControl(0);
+					} else {
+						excavationConveyorRPM(100);
+						excavationTranslationControl(getCurrentDepthTarget());
+						if (bc_trans < (targetDepth - 10)) {
+							locomotionSpeedControl(0.0F);
+						} else {
+							locomotionSpeedControl(driveSpeed);
+						}
+					}
 					break;
 			}
 		} catch (IOException e) {
@@ -119,7 +133,6 @@ public class AutoDrillModule {
 	}
 
 	private float getCurrentDepthTarget() {
-		
 		float calculatedDepth = modeStartDepth + (Duration.between(modeStartTime, Instant.now()).toMillis() / 1000.0F) * digSpeed;
 		return calculatedDepth < targetDepth ? calculatedDepth : targetDepth;
 	}
@@ -232,9 +245,9 @@ public class AutoDrillModule {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
 				Messages.State msg = Messages.State.parseFrom(body);
-			    float bc_trans = msg.getExcDetailed().getDisplacement();
+			    bc_trans = msg.getExcDetailed().getDisplacement();
 			    float bc_current = msg.getExcDetailed().getConveyorMotorCurrent();
-			    float bc_angle = msg.getExcDetailed().getArmPos();
+			    bc_angle = msg.getExcDetailed().getArmPos();
 			    
 			    if(!isStalled && bc_current > currentUpperLimit) {
 					// Transition to stalled
