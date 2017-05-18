@@ -24,6 +24,7 @@ public class ExcavationState {
 	private float conveyorRpm;
 	private float translationDisplacement;
 	private float armPos;
+    private float conveyorMotorCurrent;
     private EnumMap <Side, Boolean> armSideRetracted;
     private EnumMap <Side, Boolean> armSideExtended;
     private EnumMap <Side, Boolean> translationSideRetracted;
@@ -47,6 +48,7 @@ public class ExcavationState {
         conveyorRpm = 0;
         translationDisplacement = 0;
 		armPos = 0;
+        conveyorMotorCurrent = 0;
 
         armSideRetracted = new EnumMap<>(Side.class);
         armSideRetracted.put(Side.LEFT, false);
@@ -87,6 +89,10 @@ public class ExcavationState {
         // TODO: detect impossibly sudden changes
         // TODO: consider updating stored configuration
         translationDisplacement = displacement;
+    }
+
+    public void updateConveyorMotorCurrent(float current, Instant time) throws RobotFaultException{
+        conveyorMotorCurrent = current;
     }
     
     public void updateArmLimitExtended (Side side, boolean pressed, Instant time) throws RobotFaultException {
@@ -132,6 +138,10 @@ public class ExcavationState {
     
     public float getArmPos() {
         return armPos;
+    }
+
+    public float getConveyorMotorCurrent(){
+        return conveyorMotorCurrent;
     }
 
     public boolean getArmRetracted(Side side) { return armSideRetracted.get(side); }

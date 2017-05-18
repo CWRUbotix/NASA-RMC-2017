@@ -198,6 +198,11 @@ void setup() {
   sensor_infos[26].hardware = SH_PIN_LIMIT;
   sensor_infos[26].whichPin = 39;
   sensor_infos[26].scale = 1;
+
+  sensor_infos[38].hardware = SH_RC_CUR;
+  sensor_infos[38].addr = ADDRESS_RC_3;
+  sensor_infos[38].whichMotor = 1;
+  sensor_infos[38].scale = 1;
   
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
@@ -657,14 +662,14 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     //Not sure if this works yet!
   case SH_RC_CUR:
     if (sensor_info.whichMotor == 2){
-       val32 = roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
+       valid = roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
     } else {
-       val32 = roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
+       valid = roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
     }
     if (!valid){
       return FAULT_LOST_ROBOCLAW;
     }
-    *val = (int16_t)(val32 / sensor_info.scale);
+    *val = *val / sensor_info.scale;
     break;
   case SH_PIN_LIMIT:
     //if the pin limit switch is for BC translation:
@@ -854,6 +859,7 @@ void hciWait() {
         else if (val < -127) {
           val = -127;
         }
+        
         bool success;
         if(motor_info.hardware == MH_ST_POS) {
           if(id == 9) {
