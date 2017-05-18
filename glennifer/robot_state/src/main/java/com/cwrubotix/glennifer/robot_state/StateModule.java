@@ -633,7 +633,7 @@ public class StateModule {
     		Thread[] copy = threads.clone();
     		threads = new Thread[copy.length*2];
     		for(int index = 0; index < copy.length; index++){
-    			if(copy[index] != null || !copy[index].getName().equals("removed"))
+    			if(copy[index] != null && !copy[index].getName().equals("removed"))
     				add(copy[index], hashCode(copy[index].getName())); 
     		}
     	}

@@ -113,6 +113,7 @@ public class AutoDrillModule {
 	private boolean isStalled = false;
 
 	private void updateMotors() {
+		
 		try {
 			switch (currentJob) {
 				case NONE:
@@ -128,7 +129,7 @@ public class AutoDrillModule {
 						excavationTranslationControl(getCurrentDepthTarget());
 					}
 					break;
-				case SURFACE:
+				case SURFACE: //TODO DO THIS
 					excavationConveyorRPM(0);
 					excavationTranslationControl(0);
 					break;
@@ -236,16 +237,43 @@ public class AutoDrillModule {
 		channel.queueBind(queueName, exchangeName, "drill.end");
 		this.channel.basicConsume(queueName, true, new DrillEndConsumer(channel));
 
+		Messages.StateSubscribe msg = Messages.StateSubscribe.newBuilder()
+				  .setReplyKey("autoDrillModule")
+				  .setInterval(0.2F)
+				  .setDepositionDetailed(false)
+				  .setDepositionSummary(true)
+				  .setExcavationDetailed(true)
+				  .setExcavationSummary(false)
+				  .setLocomotionDetailed(true)
+				  .setLocomotionSummary(false)
+				  .build();
+		this.channel.basicPublish(exchangeName, "state.subscribe", null, msg.toByteArray());
+		
 		// Enter main loop
 		modeStartTime = Instant.now();
-		try {
-			while (true) {
+		queueName = channel.queueDeclare().getQueue();
+		channel.queueBind(queueName, exchangeName, "autoDrillModule");
+		this.channel.basicConsume(queueName, true, new DefaultConsumer(channel){
+			@Override
+			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
+				Messages.State msg = Messages.State.parseFrom(body);
+			    float bc_trans = msg.getExcDetailed().getDisplacement();
+			    float bc_current = msg.getExcDetailed().getConveyorMotorCurrent();
+			    float bc_angle = msg.getExcDetailed().getArmPos();
+			    
+			    if(!isStalled && bc_current > currentUpperLimit) {
+					// Transition to stalled
+					isStalled = true;
+				} else if (isStalled && bc_current <= currentLowerLimit) {
+					// Transition to unstalled
+					isStalled = false;
+					modeStartTime = Instant.now();
+					modeStartDepth = bc_trans;
+				}
 				updateMotors();
-				Thread.sleep(100);
 			}
-		} catch (InterruptedException e) {
-			stop();
-		}
+		});
+		
 	}
 	
 	public void start(){
@@ -264,6 +292,17 @@ public class AutoDrillModule {
 		try {
 			channel.close();
 			connection.close();
+			Messages.StateSubscribe msg = Messages.StateSubscribe.newBuilder()
+												  .setReplyKey("autoDrillModule")
+												  .setInterval(0.2F)
+												  .setDepositionDetailed(false)
+												  .setDepositionSummary(true)
+												  .setExcavationDetailed(true)
+												  .setExcavationSummary(false)
+												  .setLocomotionDetailed(true)
+												  .setLocomotionSummary(false)
+												  .build();
+			this.channel.basicPublish(exchangeName, "state.unsubscribe", null, msg.toByteArray());
 		} catch (IOException | TimeoutException e) {
 			// Do nothing
 		}
