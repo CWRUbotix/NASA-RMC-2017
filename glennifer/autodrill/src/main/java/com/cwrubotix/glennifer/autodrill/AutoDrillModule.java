@@ -81,8 +81,8 @@ public class AutoDrillModule {
 	private Connection connection;
 	private Channel channel;
 
-	private DrillJob currentJob = DrillJob.SURFACE;
-	private float targetDepth = 50.0F;
+	private DrillJob currentJob = DrillJob.DEEP;
+	private float targetDepth = 100.0F;
 	private float targetDist = 0.0F;
 	private float digSpeed = 2.0F;
 	private float driveSpeed = 0.5F;
