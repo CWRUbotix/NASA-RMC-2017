@@ -1138,19 +1138,19 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
              //dig end
              break;
         case (Qt::Key_5):
-             //arm bucket retract
+             handleExcavationTranslationStop();
              break;
         case (Qt::Key_6):
-             //bucket forward
+             regularExcavationConveyer(true);
              break;
         case (Qt::Key_7):
-             //bucket rev
+             inverseExcavationConveyer(true);
              break;
         case (Qt::Key_8):
              armDrive();
              break;
         case (Qt::Key_9):
-             //arm prep?
+             //arm prep/store for car  travel
              break;
         case (Qt::Key_0):
              armDig();
@@ -1168,7 +1168,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
              dumpConveyor(true);
              break;
         case (Qt::Key_V):
-             dumpConveyor(false);
+             //Extra
              break;
         default:
             QWidget::keyPressEvent(ev);
@@ -1236,10 +1236,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
              //arm bucket retract
              break;
         case (Qt::Key_6):
-             //bucket fwd
+             handleExcavationConveyor(false);
              break;
         case (Qt::Key_7):
-             //bucket rev
+             handleExcavationConveyor(false);
              break;
         case (Qt::Key_8):
              //arm drive
@@ -1260,10 +1260,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
              //DUMP retract
              break;
         case (Qt::Key_C):
-             //DUMP START
+             handleDepositionConveyor(false);
              break;
         case (Qt::Key_V):
-             //DUMP END
+             //extra
              break;
         default:
             QWidget::keyReleaseEvent(ev);
@@ -1540,8 +1540,13 @@ void MainWindow::digFwd(float meters) {
 }
 
 void MainWindow::digRev(float meters) {
-    /* CHECK FOR isInDig AND Modify the dig and dump flags in fwd config*/
-    //send command to hci or handle here, not sure
+    if(meters == 0) {
+        if(meters <= 3.0) {
+            drill((-1.0F*meters), drillFwd); //the reverse of fwd
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
+    }
 }
 
 void MainWindow::digEnd() {
@@ -1550,8 +1555,8 @@ void MainWindow::digEnd() {
     drill(0.0F, drillEnd);
 }
 
-void MainWindow::bcktWdraw() {
-    //Check isInDig AND retract Arm?
+void MainWindow::bcktWdraw() { //bucket retract
+    handleExcavationTranslationStop();
 }
 
 //The Rest of these may require they're own function
@@ -1599,10 +1604,11 @@ void MainWindow::armGTFO() {
 }
 
 void MainWindow::dumpExtend() {
-    if(isInDump = true && isInDig = false) {
+    if(isInDump == true && isInDig == false) {
         if(m_digConfig == 2) {
             if(m_dumpConfig != 1) {
                 handleDepositionDumpDump();
+                m_dumpConfig = 1;
             }
             else
                 ui->consoleOutputTextBrowser->append("Currently already fully extended or something went wrong");
@@ -1610,18 +1616,19 @@ void MainWindow::dumpExtend() {
         else
             ui->consoleOutputTextBrowser->append("Please tell the excavation arm to GTFO");
     }
+    //else if(ui->slider_DepositionDump->value() == 100)  {
+    //    m_dumpConfig = 1;
+   // }
     else
         ui->consoleOutputTextBrowser->append("Currently not in dump mode\n please press enter dump configuration");
-    else if(ui->slider_DepositionDump->value() == 100)  {
-        m_dumpConfig = 1;
-    }
 }
 
 void MainWindow::dumpRetract() {
-    if(isInDump = true && isInDig = false) {
+    if(isInDump == true && isInDig == false) {
         if(m_digConfig == 2) {
             if(m_dumpConfig != 0) {
                 handleDepositionDumpStore();
+                m_dumpConfig = 0;
             }
             else
                 ui->consoleOutputTextBrowser->append("Currently already fully stored or something went wrong");
@@ -1631,16 +1638,50 @@ void MainWindow::dumpRetract() {
     }
     else
         ui->consoleOutputTextBrowser->append("Currently not in dump mode\n please press enter dump configuration");
-    else if(ui->slider_DepositionDump->value() == -100)  {
-        m_dumpConfig = 0;
-    }
+   // else if(ui->slider_DepositionDump->value() == -100)  {
+   //     m_dumpConfig = 0;
+   // }
 }
 
-//****Right now there are two keys, one for on one for off*****
 void MainWindow::dumpConveyor(bool checked) {
     if(m_dumpConfig == 1) { //absolutely has to be on fully extended
         handleDepositionConveyor(checked);
     }
     else
         ui->consoleOutputTextBrowser->append("It is imperative you extend deposition before running the conveyor");
+}
+
+/* Anti Bucket Conveyor Sends negative Speed */
+void MainWindow::inverseExcavationConveyer(bool checked) {
+    if(m_digConfig == 1) {
+        SpeedContolCommand msg;
+        int speed = (-1)*(ui->slider_ExcavationConveyor->value());
+        msg.set_rpm(checked ? speed : 0);
+        msg.set_timeout(456);
+        int msg_size = msg.ByteSize();
+        void *msg_buff = malloc(msg_size);
+        if (!msg_buff) {
+            ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+            return;
+        }
+        msg.SerializeToArray(msg_buff, msg_size);
+
+        AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+        ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+        ex->Publish((char*)msg_buff, msg_size, "motorcontrol.excavation.bucket_conveyor_rpm");
+
+        free(msg_buff);
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Not in dig configuration. \n Please go through dig configuration Process");
+
+}
+
+void MainWindow::regularExcavationConveyer(bool checked) {
+    if(m_digConfig == 1) {
+        handleExcavationConveyor(checked);
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Not in dig configuration. \n Please go through dig configuration Process");
+
 }
