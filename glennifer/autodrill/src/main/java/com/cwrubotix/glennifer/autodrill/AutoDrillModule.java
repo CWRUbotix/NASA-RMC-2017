@@ -27,28 +27,6 @@ public class AutoDrillModule {
 
 	private float currentUpperLimit = 7.0F;
 	private float currentLowerLimit = 3.0F;
-
-	private class CurrentMonitorConsumer extends DefaultConsumer{
-		public CurrentMonitorConsumer(Channel channel) {
-			super(channel);
-		}
-
-		@Override
-		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
-			Messages.CurrentUpdate msg = Messages.CurrentUpdate.parseFrom(body);
-			float currentValue = msg.getCurrent();
-			if(!isStalled && currentValue > currentUpperLimit) {
-				// Transition to stalled
-				isStalled = true;
-			} else if (isStalled && currentValue <= currentLowerLimit) {
-				// Transition to unstalled
-				isStalled = false;
-				modeStartTime = Instant.now();
-				modeStartDepth = 10.0F;
-			}
-			updateMotors();
-		}
-	}
 	
 	private class DrillDeepConsumer extends DefaultConsumer{
 		public DrillDeepConsumer(Channel channel){
@@ -217,13 +195,8 @@ public class AutoDrillModule {
 		this.connection = factory.newConnection();
 		this.channel = connection.createChannel();
 		
-		// Start Current Monitor
-		String queueName = channel.queueDeclare().getQueue();
-		channel.queueBind(queueName, exchangeName, "sensor.excavation.conveyor_current");
-		this.channel.basicConsume(queueName, true, new CurrentMonitorConsumer(channel));
-		
 		//Listen for DrillDeep command
-		queueName = channel.queueDeclare().getQueue();
+		String queueName = channel.queueDeclare().getQueue();
 		channel.queueBind(queueName, exchangeName, "drill.deep");
 		this.channel.basicConsume(queueName, true, new DrillDeepConsumer(channel));
 		
@@ -239,7 +212,7 @@ public class AutoDrillModule {
 
 		Messages.StateSubscribe msg = Messages.StateSubscribe.newBuilder()
 				  .setReplyKey("autoDrillModule")
-				  .setInterval(0.2F)
+				  .setInterval(0.1F)
 				  .setDepositionDetailed(false)
 				  .setDepositionSummary(true)
 				  .setExcavationDetailed(true)
