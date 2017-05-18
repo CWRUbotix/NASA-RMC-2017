@@ -56,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEdit_ExcavationTranslation->setValidator(new QDoubleValidator(-100, 100, 0));
     */
 
+    //ui->drill_Slider->setRange(0,);
+
     connect(ui->lineEdit_FrontLeftWheel, &IntEdit::valueEdited, ui->slider_FrontLeftWheel, &QSlider::setValue);
     connect(ui->lineEdit_FrontRightWheel, &IntEdit::valueEdited, ui->slider_FrontRightWheel, &QSlider::setValue);
     connect(ui->lineEdit_BackLeftWheel, &IntEdit::valueEdited, ui->slider_BackLeftWheel, &QSlider::setValue);
@@ -67,7 +69,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_DepositionDump, &IntEdit::valueEdited, ui->slider_DepositionDump, &QSlider::setValue);
     connect(ui->lineEdit_ExcavationArm, &IntEdit::valueEdited, ui->slider_ExcavationArm, &QSlider::setValue);
     connect(ui->lineEdit_ExcavationTranslation, &IntEdit::valueEdited, ui->slider_ExcavationTranslation, &QSlider::setValue);
-    connect(ui->drillParam, &DoubleEdit::valueEdited);
+
+    //New Sliders for Drilling
+    connect(ui->drillParam, &DoubleEdit::valueEdited, ui->drill_Slider, &DrillSlider::changedValue);//these are implemented in the drillslider class
+    connect(ui->drill_Slider, &DrillSlider::valueChanged, this, MainWindow::drillParameters);
+
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
 
@@ -1065,13 +1071,13 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
              dumpConfig();
              break;
         case (Qt::Key_1):
-             digDeep(ui->drillParam->text().toInt());
+             handleDrill(0, drillValue);
              break;
         case (Qt::Key_2):
-             //dig forward
+             handleDrill(1, drillValue);
              break;
         case (Qt::Key_3):
-             //dig rev
+             handleDrill(2, drillValue);
              break;
         case (Qt::Key_4):
              //dig end
@@ -1086,13 +1092,16 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
              //bucket rev
              break;
         case (Qt::Key_8):
-             //arm drive
+             armDrive();
              break;
         case (Qt::Key_9):
-             //arm prep
+             //arm prep?
              break;
         case (Qt::Key_0):
-             //arm dig
+             armDig();
+             break;
+        case (Qt::Key_Minus):
+             armGTFO();
              break;
         case (Qt::Key_Z):
              //DUMP ARM
@@ -1185,6 +1194,9 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
              break;
         case (Qt::Key_0):
              //arm dig
+             break;
+        case (Qt::Key_Minus):
+             //arm GTFO
              break;
         case (Qt::Key_Z):
              //DUMP ARM
@@ -1406,11 +1418,9 @@ void MainWindow::strafeConfig() {
 }
 
 /* * ON ALL OF THESE MAKE SURE THE KEY RELEASE WORKS AS IT IS MEANT TO * */
-
-void MainWindow::digDeep(int meters) {
-    /* CHECK FOR isInDig */
-    PositionContolCommand msg; //change to whatever this will be in protobuf
-    msg.set_position(meters); //this will be, presumably, depth value
+void MainWindow::drill(float value) {
+    PositionContolCommand msg;
+    msg.set_position(meters);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -1422,14 +1432,47 @@ void MainWindow::digDeep(int meters) {
 
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
-    ex->Publish((char*)msg_buff, msg_size, "drill.deep"); //Maybe peckdrill.excavation.something
+    ex->Publish((char*)msg_buff, msg_size, "drill.deep");
 
     free(msg_buff);
-
-    //ui->lineEdit_ExcavationArm->setText(QString::number(value));
 }
 
-void MainWindow::digFwd() {
+void MainWindow::handleDrill(int type, float value) {
+    if(m_digConfig == 1) {
+        switch(type) {
+        case(type == 0):
+            digDeep(value);
+            break;
+        case(type == 1):
+            digFwd(value); //dig surface
+            break;
+        case(type == 2):
+            digRev(value);
+            break;
+        }
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration, thenn arm dig");
+}
+
+void MainWindow::digDeep(float meters) {
+    if(drillType == 0) {
+        if(drillType <= 0.5) {
+            drill(meters);
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
+    }
+}
+
+void MainWindow::digFwd(float meters) {
+    if(drillType == 0) {
+        if(drillType <= 3.0) {
+            drill(meters);
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
+    }
     /* CHECK FOR isInDig AND Modify the dig and dump flags in fwd config*/
     //send command to hci or handle here, not sure
     /* can make separate control structure for digfwd rev and such if it is meant
@@ -1441,7 +1484,7 @@ void MainWindow::digFwd() {
      */
 }
 
-void MainWindow::digRev() {
+void MainWindow::digRev(float meters) {
     /* CHECK FOR isInDig AND Modify the dig and dump flags in fwd config*/
     //send command to hci or handle here, not sure
 }
@@ -1464,5 +1507,38 @@ void MainWindow::bcktFwd() {
 
 void MainWindow::bcktRev() {
 
+}
+
+// Helper for Drilling
+void MainWindow::drillParameters(double depth) {
+    ui->drill_Depth->display(depth);
+    drillValue = (float)(depth);
+}
+
+void MainWindow::armDrive() {
+    if (m_desiredConfig == 0 && isInDig == true && isInDump == false) {
+        handleExcavationArmDrive();
+        m_digConfig = 0;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
+}
+
+void MainWindow::armDig() {
+    if (m_desiredConfig == 0 && isInDig == true && isInDump == false) {
+        handleExcavationArmJog();
+        m_digConfig = 1;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
+}
+
+void MainWindow::armGTFO() {
+    if (m_desiredConfig == 0 && isInDig == true && isInDump == false) {
+        handleExcavationArmDig();
+        m_digConfig = 2;
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
 }
 

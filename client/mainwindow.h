@@ -95,9 +95,11 @@ public slots:
     void turnConfig();
     void strafeConfig();
 
-    void digDeep(int meters);
-    void digFwd();
-    void digRev();
+    void drill(float value);
+    void handleDrill(int type, float value);
+    void digDeep(float meters);
+    void digFwd(float meters);
+    void digRev(float meters);
     void digEnd();
     void bcktWdraw();
     void bcktFwd();
@@ -106,6 +108,10 @@ public slots:
     void dumpRetract();
     void dumpBegin();
     void dumpEnd();
+    void drillParameters(double depth);
+    void armDrive();
+    void armDig();
+    void armGTFO();
 
     void handleState(QString key, QByteArray data);
 
@@ -135,6 +141,9 @@ private:
     int m_digConfig = 0; //0 is drive, 1 is dig, 2 is GTFO
     bool isInDig = false;
     bool isInDump = false;
+    //int drillType = 0; //0 is deep, 1 is surface, 2 is reverse
+    //new value for drilling to restrict slider and box values in for example drill deep and drill surface like michael told me
+    float drillValue = 0.0F;
 };
 
 #endif // MAINWINDOW_H
