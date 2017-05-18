@@ -1441,13 +1441,13 @@ void MainWindow::drill(float value) {
 void MainWindow::handleDrill(int type, float value) {
     if(m_digConfig == 1) {
         switch(type) {
-        case(type == 0):
+        case 0:
             digDeep(value);
             break;
-        case(type == 1):
+        case 1:
             digFwd(value); //dig surface
             break;
-        case(type == 2):
+        case 2:
             digRev(value);
             break;
         }
