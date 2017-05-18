@@ -1419,9 +1419,9 @@ void MainWindow::strafeConfig() {
 }
 
 /* * ON ALL OF THESE MAKE SURE THE KEY RELEASE WORKS AS IT IS MEANT TO * */
-void MainWindow::drill(float value) {
+void MainWindow::drill(float value, QString key) {
     PositionContolCommand msg;
-    msg.set_position(meters);
+    msg.set_position(value);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -1457,9 +1457,9 @@ void MainWindow::handleDrill(int type, float value) {
 }
 
 void MainWindow::digDeep(float meters) {
-    if(drillType == 0) {
-        if(drillType <= 0.5) {
-            drill(meters);
+    if(meters == 0) {
+        if(meters <= 0.5) {
+            drill(meters, drillDeep);
         }
         else
             ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
@@ -1467,9 +1467,9 @@ void MainWindow::digDeep(float meters) {
 }
 
 void MainWindow::digFwd(float meters) {
-    if(drillType == 0) {
-        if(drillType <= 3.0) {
-            drill(meters);
+    if(meters == 0) {
+        if(meters <= 3.0) {
+            drill(meters, drillFwd);
         }
         else
             ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
@@ -1493,6 +1493,7 @@ void MainWindow::digRev(float meters) {
 void MainWindow::digEnd() {
     //Either send stop command from hci or do something with stopAll
     //stopAll may not affect itonly the motors but still motors
+    drill(0.0F, drillEnd);
 }
 
 void MainWindow::bcktWdraw() {
