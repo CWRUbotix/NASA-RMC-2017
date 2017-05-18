@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     cameraone.cpp \
     doubleedit.cpp \
     intedit.cpp \
-    drillslider.cpp
+    drillslider.cpp \
+    ledindicator.cpp
 
 HEADERS  += mainwindow.h \
     connectiondialog.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     cameraone.h \
     doubleedit.h \
     intedit.h \
-    drillslider.h
+    drillslider.h \
+    ledindicator.h
 
 FORMS    += mainwindow.ui \
     connectiondialog.ui \

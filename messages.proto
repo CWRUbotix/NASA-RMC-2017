@@ -110,6 +110,12 @@ message PositionContolCommand {
 	required float timeout = 2;
 }
 
+// motorcontrol.system.stop_all
+message StopAllCommand {
+	required bool stop = 1;
+	required float timeout = 2;
+}
+
 // subsyscommand.locomotion.straight
 message LocomotionControlCommandStraight {
 	required float speed = 1;

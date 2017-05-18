@@ -45,7 +45,7 @@ public class HardwareControlInterface implements Runnable {
 	private ArrayList<Actuation> activeActuations = new ArrayList<Actuation>();
 	// List of active coordinated actuation jobs
 	private ArrayList<CoordinatedActuation> activeCoordinatedActuations = new ArrayList<CoordinatedActuation>();
-	private final SerialPort port;
+	private SerialPort port;
 	/**
 	 * Queue's an actuation to be checked in
 	 * @param actuation The actuation job that is to be checked in
@@ -112,8 +112,8 @@ public class HardwareControlInterface implements Runnable {
 	
 	@Override
 	public void run() {
-		try {
-			while(true) {
+		while(true) {
+			try {
 				// Read sensors
 				readSensors();
 				// Update actuator data
@@ -142,9 +142,32 @@ public class HardwareControlInterface implements Runnable {
 				} catch (InterruptedException e) {
 					return;
 				}
+			} catch(SerialPortException | SerialPortTimeoutException e) {
+				e.printStackTrace();
+				while (true) {
+					System.out.println("Trying again in 1 second...");
+					try {
+						Thread.sleep(1000);
+						try {
+							port.closePort();
+						} catch (SerialPortException e2) {
+							System.out.println("Closing port failed");
+						}
+						String newName = port.getPortName();
+						port = new SerialPort(newName);
+						port.openPort();
+						Thread.sleep(1000);
+						port.setParams(baud, 8, 1, 0);
+						port.setDTR(false);
+						break;
+					} catch (InterruptedException e2) {
+						return;
+					} catch (SerialPortException e2) {
+						e.printStackTrace();
+					}
+				}
+
 			}
-		} catch(SerialPortException | SerialPortTimeoutException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -216,6 +239,7 @@ public class HardwareControlInterface implements Runnable {
 			data[4*i+3] = (byte)(currentOutputShort);
 			//System.out.println("Setting output: " + currentOutputShort + " actuator ID: " + actuatorIdShort);
 		}
+		activeActuations.clear();
 		sendMessage(new SerialPacket(COMMAND_SET_OUTPUTS,data));
 		// Get the response
 		SerialPacket response = readMessage();
