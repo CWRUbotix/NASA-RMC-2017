@@ -119,7 +119,12 @@ public class AutoDrillModule {
 	}
 
 	private float getCurrentDepthTarget() {
-		return modeStartDepth + (Duration.between(modeStartTime, Instant.now()).toMillis() / 1000.0F) * digSpeed;
+		
+		float calculatedDepth = modeStartDepth + (Duration.between(modeStartTime, Instant.now()).toMillis() / 1000.0F) * digSpeed;
+		if(calculatedDepth < targetDepth)
+			return calculatedDepth;
+		else
+			return targetDepth;
 	}
 	
 	private void excavationTranslationControl(float targetValue) throws IOException{
