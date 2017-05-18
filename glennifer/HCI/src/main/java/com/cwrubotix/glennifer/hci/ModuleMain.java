@@ -736,8 +736,8 @@ public class ModuleMain {
 							.build();
 					channel.basicPublish("amq.topic", "sensor.excavation.arm_pos_b", null, msg.toByteArray());
 				} else if(sensorDataID == 22){
-					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
-							.setRpm((float)value)
+					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
+							.setPosition((((float)value - 45.0F) / 785.0F) * 100.0F)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic","sensor.excavation.translation_pos", null,msg.toByteArray());
