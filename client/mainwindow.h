@@ -111,6 +111,8 @@ public slots:
     void armDrive();
     void armDig();
     void armGTFO();
+    void inverseExcavationConveyer(bool checked);
+    void regularExcavationConveyer(bool checked);
 
     void handleState(QString key, QByteArray data);
 
