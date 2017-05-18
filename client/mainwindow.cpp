@@ -1159,16 +1159,16 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
              armGTFO();
              break;
         case (Qt::Key_Z):
-             //DUMP ARM
+             dumpExtend();
              break;
         case (Qt::Key_X):
-             //DUMP RETR
+             dumpRetract();
              break;
         case (Qt::Key_C):
-             //DUMP START
+             dumpConveyor(true);
              break;
         case (Qt::Key_V):
-             //DUMP END
+             dumpConveyor(false);
              break;
         default:
             QWidget::keyPressEvent(ev);
@@ -1254,10 +1254,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
              //arm GTFO
              break;
         case (Qt::Key_Z):
-             //DUMP ARM
+             //DUMP extend
              break;
         case (Qt::Key_X):
-             //DUMP RETR
+             //DUMP retract
              break;
         case (Qt::Key_C):
              //DUMP START
@@ -1473,9 +1473,9 @@ void MainWindow::strafeConfig() {
 }
 
 /* * ON ALL OF THESE MAKE SURE THE KEY RELEASE WORKS AS IT IS MEANT TO * */
-void MainWindow::drill(float value) {
+void MainWindow::drill(float value, QString key) {
     PositionContolCommand msg;
-    msg.set_position(meters);
+    msg.set_position(value);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -1511,9 +1511,9 @@ void MainWindow::handleDrill(int type, float value) {
 }
 
 void MainWindow::digDeep(float meters) {
-    if(drillType == 0) {
-        if(drillType <= 0.5) {
-            drill(meters);
+    if(meters == 0) {
+        if(meters <= 0.5) {
+            drill(meters, drillDeep);
         }
         else
             ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
@@ -1521,9 +1521,9 @@ void MainWindow::digDeep(float meters) {
 }
 
 void MainWindow::digFwd(float meters) {
-    if(drillType == 0) {
-        if(drillType <= 3.0) {
-            drill(meters);
+    if(meters == 0) {
+        if(meters <= 3.0) {
+            drill(meters, drillFwd);
         }
         else
             ui->consoleOutputTextBrowser->append("Input Value Exceeds Drill Deep Parameters\n please enter a value between 0.0 and 0.5 meters");
@@ -1547,6 +1547,7 @@ void MainWindow::digRev(float meters) {
 void MainWindow::digEnd() {
     //Either send stop command from hci or do something with stopAll
     //stopAll may not affect itonly the motors but still motors
+    drill(0.0F, drillEnd);
 }
 
 void MainWindow::bcktWdraw() {
@@ -1597,3 +1598,49 @@ void MainWindow::armGTFO() {
         ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
 }
 
+void MainWindow::dumpExtend() {
+    if(isInDump = true && isInDig = false) {
+        if(m_digConfig == 2) {
+            if(m_dumpConfig != 1) {
+                handleDepositionDumpDump();
+            }
+            else
+                ui->consoleOutputTextBrowser->append("Currently already fully extended or something went wrong");
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Please tell the excavation arm to GTFO");
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dump mode\n please press enter dump configuration");
+    else if(ui->slider_DepositionDump->value() == 100)  {
+        m_dumpConfig = 1;
+    }
+}
+
+void MainWindow::dumpRetract() {
+    if(isInDump = true && isInDig = false) {
+        if(m_digConfig == 2) {
+            if(m_dumpConfig != 0) {
+                handleDepositionDumpStore();
+            }
+            else
+                ui->consoleOutputTextBrowser->append("Currently already fully stored or something went wrong");
+        }
+        else
+            ui->consoleOutputTextBrowser->append("Please tell the excavation arm to GTFO");
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dump mode\n please press enter dump configuration");
+    else if(ui->slider_DepositionDump->value() == -100)  {
+        m_dumpConfig = 0;
+    }
+}
+
+//****Right now there are two keys, one for on one for off*****
+void MainWindow::dumpConveyor(bool checked) {
+    if(m_dumpConfig == 1) { //absolutely has to be on fully extended
+        handleDepositionConveyor(checked);
+    }
+    else
+        ui->consoleOutputTextBrowser->append("It is imperative you extend deposition before running the conveyor");
+}
