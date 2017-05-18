@@ -25,8 +25,8 @@ import java.util.concurrent.TimeoutException;
  */
 public class AutoDrillModule {
 
-	private float currentUpperLimit = 7.0F;
-	private float currentLowerLimit = 3.0F;
+	private float currentUpperLimit = 10.0F;
+	private float currentLowerLimit = 6.0F;
 	
 	private class DrillDeepConsumer extends DefaultConsumer{
 		public DrillDeepConsumer(Channel channel){
@@ -84,7 +84,7 @@ public class AutoDrillModule {
 	private DrillJob currentJob = DrillJob.DEEP;
 	private float targetDepth = 100.0F;
 	private float targetDist = 0.0F;
-	private float digSpeed = 2.0F;
+	private float digSpeed = 1.0F;
 	private float driveSpeed = 0.5F;
 	private Instant modeStartTime;
 	private float modeStartDepth = 10.0F;
