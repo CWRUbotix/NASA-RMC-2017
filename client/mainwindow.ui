@@ -2192,7 +2192,7 @@
                  <number>0</number>
                 </property>
                 <property name="maximum">
-                 <number>900</number>
+                 <number>100</number>
                 </property>
                 <property name="pageStep">
                  <number>1</number>
