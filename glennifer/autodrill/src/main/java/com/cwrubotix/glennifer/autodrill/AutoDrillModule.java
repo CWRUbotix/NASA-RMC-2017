@@ -104,19 +104,19 @@ public class AutoDrillModule {
 					break;
 				case DEEP:
 					if (isStalled) {
-						excavationConveyorRPM(100);
+						excavationConveyorRPM(-100);
 						excavationTranslationControl(0);
 					} else {
-						excavationConveyorRPM(100);
+						excavationConveyorRPM(-100);
 						excavationTranslationControl(getCurrentDepthTarget());
 					}
 					break;
 				case SURFACE:
 					if (isStalled) {
-						excavationConveyorRPM(100);
+						excavationConveyorRPM(-100);
 						excavationTranslationControl(0);
 					} else {
-						excavationConveyorRPM(100);
+						excavationConveyorRPM(-100);
 						excavationTranslationControl(getCurrentDepthTarget());
 						if (bc_trans < (targetDepth - 10)) {
 							locomotionSpeedControl(0.0F);
