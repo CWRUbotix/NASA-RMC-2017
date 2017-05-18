@@ -26,7 +26,7 @@ import java.util.concurrent.TimeoutException;
 public class AutoDrillModule {
 
 	private float currentUpperLimit = 10.0F;
-	private float currentLowerLimit = 6.0F;
+	private float currentLowerLimit = 8.0F;
 	
 	private class DrillDeepConsumer extends DefaultConsumer{
 		public DrillDeepConsumer(Channel channel){
@@ -104,7 +104,7 @@ public class AutoDrillModule {
 					break;
 				case DEEP:
 					if (isStalled) {
-						excavationConveyorRPM(-100);
+						excavationConveyorRPM(-50);
 						excavationTranslationControl(0);
 					} else {
 						excavationConveyorRPM(-100);
