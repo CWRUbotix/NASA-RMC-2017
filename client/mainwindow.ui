@@ -534,7 +534,7 @@
           <enum>Qt::NoFocus</enum>
          </property>
         </widget>
-        <widget class="doubleedit" name="drillParam">
+        <widget class="DoubleEdit" name="drillParam">
          <property name="geometry">
           <rect>
            <x>460</x>
@@ -3283,14 +3283,14 @@
    <header>intedit.h</header>
   </customwidget>
   <customwidget>
-   <class>doubleedit</class>
-   <extends>QLineEdit</extends>
-   <header>doubleedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>DrillSlider</class>
    <extends>QSlider</extends>
    <header location="global">drillslider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>doubleedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
