@@ -13,6 +13,7 @@
 #include "consumerthread.h"
 #include <QCloseEvent>
 #include "doubleedit.h"
+#include "drillslider.h"
 
 /*
  * In this file, the state of the robot is queried by RPC.
@@ -72,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //New Sliders for Drilling
     connect(ui->drillParam, &DoubleEdit::valueEdited, ui->drill_Slider, &DrillSlider::changedValue);//these are implemented in the drillslider class
-    connect(ui->drill_Slider, &DrillSlider::valueChanged, this, MainWindow::drillParameters);
+    connect(ui->drill_Slider, &DrillSlider::valueChanged, this, &MainWindow::drillParameters);
 
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
