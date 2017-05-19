@@ -209,7 +209,7 @@ void setup() {
   sensor_infos[28].hardware = SH_LD_CUR;
   sensor_infos[28].whichPin = 26;
   sensor_infos[28].clk = 27;
-  sensor_infos[28].whichCell = 2;
+  sensor_infos[28].whichCell = 0;
   sensor_loadcells[sensor_infos[28].whichCell] = HX711(sensor_infos[28].whichPin, sensor_infos[28].clk);
   sensor_loadcells[sensor_infos[28].whichCell].tare();
   sensor_loadcells[sensor_infos[28].whichCell].set_scale();
@@ -227,7 +227,7 @@ void setup() {
   sensor_infos[30].hardware = SH_LD_CUR;
   sensor_infos[30].whichPin = 30;
   sensor_infos[30].clk = 31;
-  sensor_infos[30].whichCell = 0;
+  sensor_infos[30].whichCell = 2;
   sensor_loadcells[sensor_infos[30].whichCell] = HX711(sensor_infos[30].whichPin, sensor_infos[30].clk);
   sensor_loadcells[sensor_infos[30].whichCell].tare();
   sensor_loadcells[sensor_infos[30].whichCell].set_scale();
@@ -737,6 +737,9 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     sensor_storedVals[ID] = (sensor_storedVals[ID] * (1 - sensor_info.responsiveness)) + readVal * sensor_info.responsiveness;
     *val = sensor_storedVals[ID];
     break;
+  case SH_LD_CUR:
+    *val = sensor_loadcells[sensor_infos[ID].whichCell].get_units(10);
+    
   default:
     break;
   }
@@ -865,13 +868,6 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
 
 void hciWait() {
   do {
-    /*Serial.print(sensor_loadcells[sensor_infos[30].whichCell].get_units());
-    Serial.print(" ");
-    Serial.print(sensor_loadcells[sensor_infos[29].whichCell].get_units());
-    Serial.print(" ");
-    Serial.print(sensor_loadcells[sensor_infos[28].whichCell].get_units());
-    Serial.print(" ");
-    Serial.println(sensor_loadcells[sensor_infos[31].whichCell].get_units());*/
     if(stopped){
       continue; 
     }
