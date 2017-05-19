@@ -81,7 +81,7 @@ public class AutoDrillModule {
 	private Connection connection;
 	private Channel channel;
 
-	private DrillJob currentJob = DrillJob.DEEP;
+	private DrillJob currentJob = DrillJob.NONE;
 	private float targetDepth = 100.0F;
 	private float targetDist = 0.0F;
 	private float digSpeed = 1.0F;
@@ -104,7 +104,7 @@ public class AutoDrillModule {
 					break;
 				case DEEP:
 					if (isStalled) {
-						excavationConveyorRPM(-50);
+						excavationConveyorRPM(100);
 						excavationTranslationControl(0);
 					} else {
 						excavationConveyorRPM(-100);
@@ -212,17 +212,17 @@ public class AutoDrillModule {
 		
 		//Listen for DrillDeep command
 		String queueName = channel.queueDeclare().getQueue();
-		channel.queueBind(queueName, exchangeName, "drill.deep");
+		channel.queueBind(queueName, exchangeName, "subsyscommand.excavation.dig_deep");
 		this.channel.basicConsume(queueName, true, new DrillDeepConsumer(channel));
 		
 		//Listen for DrillSurface command
 		queueName = channel.queueDeclare().getQueue();
-		channel.queueBind(queueName, exchangeName, "drill.surface");
+		channel.queueBind(queueName, exchangeName, "subsyscommand.excavation.dig_surface");
 		this.channel.basicConsume(queueName, true, new DrillSurfaceConsumer(channel));
 		
 		//Listen for DrillEnd command
 		queueName = channel.queueDeclare().getQueue();
-		channel.queueBind(queueName, exchangeName, "drill.end");
+		channel.queueBind(queueName, exchangeName, "subsyscommand.excavation.dig_end");
 		this.channel.basicConsume(queueName, true, new DrillEndConsumer(channel));
 
 		Messages.StateSubscribe msg = Messages.StateSubscribe.newBuilder()
