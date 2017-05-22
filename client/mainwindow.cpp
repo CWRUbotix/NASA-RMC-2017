@@ -1524,7 +1524,7 @@ void MainWindow::turnConfig() {
 }
 
 void MainWindow::strafeConfig() {
-    if (ui->slider_ExcavationArm->value() > 20) {
+    if (ui->slider_ExcavationArm->value() > 50) {
         ui->consoleOutputTextBrowser->append("Excavation arm is preventing strafe configuration,\n please retract the Excavation arm");
         isInDig = false;
         isInDump = false;
