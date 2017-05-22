@@ -1001,6 +1001,7 @@ void MainWindow::handleDigSurface() {
     msg.set_depth((float)ui->slider_ExcavationTargetDepth->value());
     msg.set_dig_speed((float)ui->slider_ExcavationDigSpeed->value() / 10);
     msg.set_drive_speed((float)ui->slider_ExcavationMoveSpeed->value() / 100);
+    msg.set_dist(123);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
     if (!msg_buff) {

@@ -434,7 +434,9 @@ FAULT_T configure_sensors() {
         success = roboclaw.SetM1EncoderMode(sensor_info.addr, 0x81);
       }
       if (!success) {
-        return FAULT_LOST_ROBOCLAW;
+        // Commented out to debug
+        //return FAULT_LOST_ROBOCLAW;
+        Serial.println("Lost roboclaw");
       }
       break;
     case SH_RC_ENC:
@@ -444,7 +446,9 @@ FAULT_T configure_sensors() {
         success = roboclaw.SetM1EncoderMode(sensor_info.addr, 0x80);
       }
       if (!success) {
-        return FAULT_LOST_ROBOCLAW;
+        // Commented out to debug
+        //return FAULT_LOST_ROBOCLAW;
+        Serial.println("Lost roboclaw");
       }
       break;
     case SH_PIN_LIMIT:

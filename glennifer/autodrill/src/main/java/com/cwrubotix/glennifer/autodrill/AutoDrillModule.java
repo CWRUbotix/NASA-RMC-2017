@@ -100,7 +100,6 @@ public class AutoDrillModule {
 				case NONE:
 					excavationConveyorRPM(0);
 					excavationTranslationControl(0);
-					locomotionSpeedControl(0.0F);
 					break;
 				case DEEP:
 					if (isStalled) {
@@ -119,9 +118,9 @@ public class AutoDrillModule {
 						excavationConveyorRPM(-100);
 						excavationTranslationControl(getCurrentDepthTarget());
 						if (bc_trans < (targetDepth - 10)) {
-							locomotionSpeedControl(0.0F);
+							locomotionStraight(0.0F);
 						} else {
-							locomotionSpeedControl(driveSpeed);
+							locomotionStraight(driveSpeed);
 						}
 					}
 					break;
@@ -172,10 +171,10 @@ public class AutoDrillModule {
 		AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.locomotion.back_left.wheel.RPM", null, msg.toByteArray());
 	}
 
-	private void locomotionStraight() throws IOException{
+	private void locomotionStraight(float speed) throws IOException{
 		Messages.LocomotionControlCommandStraight msg = LocomotionControlCommandStraight.newBuilder()
 				.setTimeout(123)
-				.setSpeed(0.5F)
+				.setSpeed(speed)
 				.build();
 		AutoDrillModule.this.channel.basicPublish(exchangeName, "subsyscommand.locomotion.straight", null, msg.toByteArray());
 	}
