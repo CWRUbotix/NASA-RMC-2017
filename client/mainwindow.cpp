@@ -1083,7 +1083,7 @@ void MainWindow::initSubscription() {
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
 
-    on_commandLinkButton_clicked();
+    //on_commandLinkButton_clicked();
 }
 
 void MainWindow::handleState(QString key, QByteArray data) {
@@ -1312,7 +1312,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
              //dig rev
              break;
         case (Qt::Key_4):
-             //dig end
+             //dig stop
              break;
         case (Qt::Key_5):
              //arm bucket retract
@@ -1631,7 +1631,7 @@ void MainWindow::digRev(float meters) {
     }
 }
 
-void MainWindow::digEnd() {
+void MainWindow::digEnd() { //Obsolete
     //Either send stop command from hci or do something with stopAll
     //stopAll may not affect itonly the motors but still motors
     drill(0.0F, drillEnd);

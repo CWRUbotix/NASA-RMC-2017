@@ -113,6 +113,7 @@ public slots:
     void armDrive();
     void armDig();
     void armGTFO();
+    void armPrep();
     void inverseExcavationConveyer(bool checked);
     void regularExcavationConveyer(bool checked);
 
