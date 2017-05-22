@@ -82,6 +82,7 @@ public class AutoDrillModule {
 	private Channel channel;
 
 	private DrillJob currentJob = DrillJob.NONE;
+	private DrillJob lastJob = DrillJob.NONE;
 	private float targetDepth = 100.0F;
 	private float targetDist = 0.0F;
 	private float digSpeed = 1.0F;
@@ -98,12 +99,15 @@ public class AutoDrillModule {
 		try {
 			switch (currentJob) {
 				case NONE:
-					excavationConveyorRPM(0);
-					excavationTranslationControl(0);
+					if (currentJob != lastJob) {
+						excavationConveyorRPM(0);
+						excavationTranslationControl(0);
+						locomotionStraight(0.0F);
+					}
 					break;
 				case DEEP:
 					if (isStalled) {
-						excavationConveyorRPM(100);
+						excavationConveyorRPM(-100);
 						excavationTranslationControl(0);
 					} else {
 						excavationConveyorRPM(-100);
@@ -125,6 +129,7 @@ public class AutoDrillModule {
 					}
 					break;
 			}
+			lastJob = currentJob;
 		} catch (IOException e) {
 			System.out.println("AutoDrill failed to publish message with exception:");
 			e.printStackTrace();
