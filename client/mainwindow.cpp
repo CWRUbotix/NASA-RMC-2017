@@ -1016,6 +1016,26 @@ void MainWindow::handleDigSurface() {
     free(msg_buff);
 }
 
+void MainWindow::handleDigReverse() { //same as surface but in opposite direction(negative Speed)
+    ExcavationControlCommandDigSurface msg;
+    msg.set_depth((float)ui->slider_ExcavationTargetDepth->value());
+    msg.set_dig_speed((float)ui->slider_ExcavationDigSpeed->value() / 10);
+    msg.set_drive_speed((float)((-1)*(ui->slider_ExcavationMoveSpeed->value() / 100)));
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.excavation.dig_surface");
+
+    free(msg_buff);
+}
+
 void MainWindow::handleDigStop() {
     ExcavationControlCommandDigEnd msg;
     int msg_size = msg.ByteSize();
@@ -1146,13 +1166,13 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
             handleLocomotionUp();
             break;
         case (Qt::Key_A):
-            handleLocomotionLeft();
+            handleA_KeyPress();
             break;
         case (Qt::Key_S):
             handleLocomotionDown();
             break;
         case (Qt::Key_D):
-            handleLocomotionRight();
+            handleD_KeyPress();
             break;
         case (Qt::Key_I):
             handleLocomotionStraight();
@@ -1188,16 +1208,16 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
              dumpConfig();
              break;
         case (Qt::Key_1):
-             handleDrill(0, drillValue);
+             handleDigDeep();
              break;
         case (Qt::Key_2):
-             handleDrill(1, drillValue);
+             handleDigSurface();
              break;
         case (Qt::Key_3):
-             handleDrill(2, drillValue);
+             handleDigReverse();
              break;
         case (Qt::Key_4):
-             //dig end
+             handleDigStop();
              break;
         case (Qt::Key_5):
              handleExcavationTranslationStop();
@@ -1209,10 +1229,10 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
              inverseExcavationConveyer(true);
              break;
         case (Qt::Key_8):
-             armDrive();
+             armPrep();
              break;
         case (Qt::Key_9):
-             //arm prep/store for car  travel
+             armDrive();
              break;
         case (Qt::Key_0):
              armDig();
@@ -1269,10 +1289,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
         case (Qt::Key_K):
             break;
         case (Qt::Key_R):
-            handleLocomotionStop();
+            //handleLocomotionStop();
             break;
         case (Qt::Key_L):
-            handleLocomotionStop();
+            //handleLocomotionStop();
             break;
         case (Qt::Key_E):
             break;
@@ -1304,10 +1324,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *ev) {
              handleExcavationConveyor(false);
              break;
         case (Qt::Key_8):
-             //arm drive
+             //arm dig
              break;
         case (Qt::Key_9):
-             //arm prep
+             //arm drive
              break;
         case (Qt::Key_0):
              //arm dig
@@ -1404,7 +1424,7 @@ void MainWindow::handleTankPivotR() {
         handleBackLeftWheelSet(leftSide);
 
     } else {
-        ui->consoleOutputTextBrowser->append("Wrong config");
+        ui->consoleOutputTextBrowser->append("Wrong config, tank pivot only works in straight");
     }
 }
 
@@ -1418,7 +1438,7 @@ void MainWindow::handleTankPivotL() {
         handleBackLeftWheelSet(leftSide);
 
     } else {
-        ui->consoleOutputTextBrowser->append("Wrong config");
+        ui->consoleOutputTextBrowser->append("Wrong config, tank pivot only works on straight");
     }
 }
 
@@ -1432,7 +1452,7 @@ void MainWindow::handleTankPivotRK() {
         handleBackLeftWheelSet(leftSide);
 
     } else {
-        ui->consoleOutputTextBrowser->append("Wrong config");
+        ui->consoleOutputTextBrowser->append("Wrong config, tank pivot only works on straight");
     }
 }
 
@@ -1446,7 +1466,7 @@ void MainWindow::handleTankPivotLK() {
         handleBackLeftWheelSet(leftSide);
 
     } else {
-        ui->consoleOutputTextBrowser->append("Wrong config");
+        ui->consoleOutputTextBrowser->append("Wrong config, tank pivot only works on straight");
     }
 }
 
@@ -1523,7 +1543,7 @@ void MainWindow::turnConfig() {
 }
 
 void MainWindow::strafeConfig() {
-    if (ui->slider_ExcavationArm->value() > 20) {
+    if (ui->slider_ExcavationArm->value() > 50) {
         ui->consoleOutputTextBrowser->append("Excavation arm is preventing strafe configuration,\n please retract the Excavation arm");
         isInDig = false;
         isInDump = false;
@@ -1665,6 +1685,15 @@ void MainWindow::armGTFO() {
         ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
 }
 
+void MainWindow::armPrep() {
+    if(m_desiredConfig == 0 && isInDig == true && isInDump == false) {
+        handleExcavationArmStore();
+        m_digConfig = 0; //Store but should still be able to drive
+    }
+    else
+        ui->consoleOutputTextBrowser->append("Currently not in dig mode\n please press enter dig configuration");
+}
+
 void MainWindow::dumpExtend() {
     if(isInDump == true && isInDig == false) {
         if(m_digConfig == 2) {
@@ -1746,4 +1775,20 @@ void MainWindow::regularExcavationConveyer(bool checked) {
     else
         ui->consoleOutputTextBrowser->append("Not in dig configuration. \n Please go through dig configuration Process");
 
+}
+
+void MainWindow::handleA_KeyPress() {
+    if(m_desiredConfig == 0) { //straight
+        handleTankPivotLK();
+    }
+    else                       //turn or strafe
+        handleLocomotionLeft();
+}
+
+void MainWindow::handleD_KeyPress() {
+    if(m_desiredConfig == 0) { //straight
+        handleTankPivotRK();
+    }
+    else                       //turn or strafe
+        handleLocomotionRight();
 }
