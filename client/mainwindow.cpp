@@ -72,14 +72,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_ExcavationTranslation, &IntEdit::valueEdited, ui->slider_ExcavationTranslation, &QSlider::setValue);
 
     //New Sliders for Drilling
-    connect(ui->drillParam, &DoubleEdit::valueEdited, ui->drill_Slider, &DrillSlider::changedValue);//these are implemented in the drillslider class
-    connect(ui->drill_Slider, &DrillSlider::valueChanged, this, &MainWindow::drillParameters);
+    connect(ui->pushButton_DigDeep, &QPushButton::clicked, this, &MainWindow::handleDigDeep);
+    connect(ui->pushButton_DigSurface, &QPushButton::clicked, this, &MainWindow::handleDigSurface);
+    connect(ui->pushButton_DigStop, &QPushButton::clicked, this, &MainWindow::handleDigStop);
+    connect(ui->checkBox_BucketConveyorOn, &QCheckBox::stateChanged, this, &MainWindow::handleExcavationConveyor);
 
     locomotionScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(locomotionScene);
 
-    excavationScene = new QGraphicsScene(this);
-    ui->graphicsView_2->setScene(excavationScene);
+    //excavationScene = new QGraphicsScene(this);
+    //ui->graphicsView_2->setScene(excavationScene);
 
     depositionScene = new QGraphicsScene(this);
     ui->graphicsView_3->setScene(depositionScene);
@@ -100,8 +102,8 @@ MainWindow::MainWindow(QWidget *parent) :
     rectangle4 = locomotionScene->addRect(50, 80, 10, 20, outlinePen, greenBrush);
     rectangle4->setTransformOriginPoint(55, 90);
 
-    excavationScene->addRect(-80, -20, 160, 40, outlinePen, grayBrush);
-    excavationScene->addRect(-100, -10, 160, 20, outlinePen, blueBrush);
+    //excavationScene->addRect(-80, -20, 160, 40, outlinePen, grayBrush);
+    //excavationScene->addRect(-100, -10, 160, 20, outlinePen, blueBrush);
 
     QPolygonF poly(4);
     poly[0] = QPointF(-120, -60);
@@ -786,7 +788,7 @@ void MainWindow::handleExcavationArmDig() {
 }
 
 void MainWindow::handleExcavationArmJog() {
-    ui->slider_ExcavationArm->setValue(80);
+    ui->slider_ExcavationArm->setValue(70);
 }
 
 void MainWindow::handleExcavationArmDrive() {
@@ -975,6 +977,63 @@ void MainWindow::handleEUnstop() {
     free(msg_buff);
 }
 
+void MainWindow::handleDigDeep() {
+    ExcavationControlCommandDigDeep msg;
+    msg.set_depth((float)ui->slider_ExcavationTargetDepth->value());
+    msg.set_dig_speed((float)ui->slider_ExcavationDigSpeed->value() / 10);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.excavation.dig_deep");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDigSurface() {
+    ExcavationControlCommandDigSurface msg;
+    msg.set_depth((float)ui->slider_ExcavationTargetDepth->value());
+    msg.set_dig_speed((float)ui->slider_ExcavationDigSpeed->value() / 10);
+    msg.set_drive_speed((float)ui->slider_ExcavationMoveSpeed->value() / 100);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.excavation.dig_surface");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDigStop() {
+    ExcavationControlCommandDigEnd msg;
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.excavation.dig_end");
+
+    free(msg_buff);
+}
+
+
 void MainWindow::initSubscription() {
     ConsumerThread *thread = new ConsumerThread(m_loginStr, "abcde");
     connect(thread, &ConsumerThread::receivedMessage, this, &MainWindow::handleState);
@@ -1021,6 +1080,7 @@ void MainWindow::handleState(QString key, QByteArray data) {
     float speed = s.locsummary().speed();
     float arm_pos = s.excsummary().arm_pos();
     float translation_pos = s.excsummary().displacement();
+    float bc_current = s.excdetailed().conveyor_motor_current();
     bool exc_ext_left = s.excdetailed().translation_left_extended();
     bool exc_ext_right = s.excdetailed().translation_right_extended();
     bool exc_ret_left = s.excdetailed().translation_left_retracted();
@@ -1069,6 +1129,8 @@ void MainWindow::handleState(QString key, QByteArray data) {
     ui->ledIndicator_ExcavationTranslationExtendRight->setState(exc_ext_right);
     ui->ledIndicator_ExcavationTranslationRetractLeft->setState(exc_ret_left);
     ui->ledIndicator_ExcavationTranslationRetractRight->setState(exc_ret_right);
+    ui->speedometer_Excavation->setSpeed(translation_pos);
+    ui->speedometer_Excavation->setPower(bc_current * (100.0F/20.0F));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev) {
@@ -1077,7 +1139,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ev) {
     } else {
         switch (ev->key()) {
         case (Qt::Key_Space):
-            handleLocomotionStop();
+            handleEStop();
             //stop all other motors and automatic procesess
             break;
         case (Qt::Key_W):
@@ -1449,7 +1511,7 @@ void MainWindow::dumpConfig() {
 }
 
 void MainWindow::turnConfig() {
-    if (ui->slider_ExcavationArm->value() > 20) {
+    if (ui->slider_ExcavationArm->value() > 50) {
         ui->consoleOutputTextBrowser->append("Excavation arm is preventing turn configuration,\n please retract the Excavation arm");
         isInDig = false;
         isInDump = false;

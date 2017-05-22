@@ -116,6 +116,10 @@ public slots:
     void inverseExcavationConveyer(bool checked);
     void regularExcavationConveyer(bool checked);
 
+    void handleDigDeep();
+    void handleDigSurface();
+    void handleDigStop();
+
     void handleState(QString key, QByteArray data);
 
     void keyPressEvent(QKeyEvent *ev);

@@ -326,48 +326,6 @@
         <attribute name="title">
          <string>Excavation Control</string>
         </attribute>
-        <widget class="QCheckBox" name="checkBox">
-         <property name="geometry">
-          <rect>
-           <x>510</x>
-           <y>270</y>
-           <width>230</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string>Bucket Conveyor on</string>
-         </property>
-        </widget>
-        <widget class="QSplitter" name="splitter_3">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>270</y>
-           <width>495</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <widget class="QSlider" name="horizontalSlider">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Arm Angle</string>
-          </property>
-         </widget>
-        </widget>
         <widget class="QSplitter" name="splitter_4">
          <property name="geometry">
           <rect>
@@ -380,220 +338,128 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QRadioButton" name="radioButton">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="text">
-           <string>Manual translate</string>
-          </property>
-         </widget>
-         <widget class="QSlider" name="horizontalSlider_2">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
         </widget>
-        <widget class="QSplitter" name="splitter_2">
+        <widget class="Speedometer" name="speedometer_Excavation" native="true">
          <property name="geometry">
           <rect>
-           <x>40</x>
-           <y>380</y>
-           <width>495</width>
-           <height>29</height>
-          </rect>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <widget class="QRadioButton" name="radioButton_2">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="text">
-           <string>Translation rate</string>
-          </property>
-         </widget>
-         <widget class="QSlider" name="horizontalSlider_3">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QSlider" name="horizontalSlider_4">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pushButton">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="text">
-           <string>Start</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="text">
-           <string>Stop</string>
-          </property>
-         </widget>
-        </widget>
-        <widget class="QLabel" name="label_2">
-         <property name="geometry">
-          <rect>
-           <x>250</x>
-           <y>340</y>
-           <width>101</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Translation position</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_3">
-         <property name="geometry">
-          <rect>
-           <x>270</x>
-           <y>410</y>
-           <width>101</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Duration</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_6">
-         <property name="geometry">
-          <rect>
-           <x>160</x>
-           <y>410</y>
-           <width>101</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Speed</string>
-         </property>
-        </widget>
-        <widget class="QProgressBar" name="locomotion_ProgressBar_2">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>460</y>
-           <width>551</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>24</number>
-         </property>
-        </widget>
-        <widget class="QProgressBar" name="locomotion_ProgressBar_3">
-         <property name="geometry">
-          <rect>
-           <x>380</x>
-           <y>340</y>
-           <width>181</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>24</number>
-         </property>
-        </widget>
-        <widget class="QGraphicsView" name="graphicsView_2">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>30</y>
-           <width>491</width>
-           <height>181</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-        </widget>
-        <widget class="DoubleEdit" name="drillParam">
-         <property name="geometry">
-          <rect>
-           <x>460</x>
-           <y>220</y>
-           <width>141</width>
-           <height>31</height>
+           <x>210</x>
+           <y>20</y>
+           <width>311</width>
+           <height>251</height>
           </rect>
          </property>
         </widget>
-        <widget class="QLabel" name="label_11">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
-           <x>380</x>
-           <y>220</y>
-           <width>81</width>
-           <height>21</height>
+           <x>90</x>
+           <y>280</y>
+           <width>581</width>
+           <height>211</height>
           </rect>
          </property>
-         <property name="text">
-          <string>Drill Parameters</string>
-         </property>
-        </widget>
-        <widget class="DrillSlider" name="drill_Slider">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>220</y>
-           <width>201</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-        <widget class="QLCDNumber" name="drill_Depth">
-         <property name="geometry">
-          <rect>
-           <x>250</x>
-           <y>220</y>
-           <width>61</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="smallDecimalPoint">
-          <bool>false</bool>
-         </property>
-         <property name="segmentStyle">
-          <enum>QLCDNumber::Flat</enum>
-         </property>
-         <property name="value" stdset="0">
-          <double>0.000000000000000</double>
-         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="1" column="0">
+           <widget class="QSplitter" name="splitter_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <widget class="QSlider" name="slider_ExcavationDigSpeed">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="DrillSlider" name="slider_ExcavationTargetDepth">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLCDNumber" name="drill_Depth">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="smallDecimalPoint">
+             <bool>false</bool>
+            </property>
+            <property name="segmentStyle">
+             <enum>QLCDNumber::Flat</enum>
+            </property>
+            <property name="value" stdset="0">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QSlider" name="slider_ExcavationMoveSpeed">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QPushButton" name="pushButton_DigDeep">
+            <property name="text">
+             <string>Dig Deep</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Target movement speed</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Target Depth</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QCheckBox" name="checkBox_BucketConveyorOn">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="text">
+             <string>Bucket Conveyor on</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QPushButton" name="pushButton_DigSurface">
+            <property name="text">
+             <string>Dig Surface</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Dig Speed</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="4">
+           <widget class="QPushButton" name="pushButton_DigStop">
+            <property name="text">
+             <string>Stop Digging</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_DepositionControl">
@@ -2110,7 +1976,7 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="minimum">
-                 <number>0</number>
+                 <number>-20</number>
                 </property>
                 <property name="maximum">
                  <number>130</number>
@@ -3339,11 +3205,6 @@
    <class>DrillSlider</class>
    <extends>QSlider</extends>
    <header location="global">drillslider.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DoubleEdit</class>
-   <extends>QLineEdit</extends>
-   <header>doubleedit.h</header>
   </customwidget>
   <customwidget>
    <class>LedIndicator</class>
