@@ -410,6 +410,7 @@ void setup() {
   configure_sensors();
   configure_motors();
   save_roboclaw();
+  tare_loadcells();
 }
 
 void setup_comms() {
@@ -606,7 +607,7 @@ FAULT_T configure_motors() {
 void tare_loadcells(){
   for(int i = 0; i < 4; i++){
     sensor_loadcells[i].tare();
-    sensor_loadcells[i].set_scale();
+    sensor_loadcells[i].set_scale(5033);
   }
 }
 
@@ -868,6 +869,14 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
 
 void hciWait() {
   do {
+    Serial.print(sensor_loadcells[sensor_infos[28].whichCell].get_units(10));
+    Serial.print(" ");
+    Serial.print(sensor_loadcells[sensor_infos[29].whichCell].get_units(10));
+    Serial.print(" ");
+    Serial.print(sensor_loadcells[sensor_infos[30].whichCell].get_units(10));
+    Serial.print(" ");
+    Serial.print(sensor_loadcells[sensor_infos[31].whichCell].get_units(10));
+    Serial.println(" ");
     if(stopped){
       continue; 
     }
