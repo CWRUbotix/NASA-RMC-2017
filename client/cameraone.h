@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/imgproc.hpp>
-#include "consumerthread.h"
 
 namespace Ui {
 class CameraOne;
@@ -30,32 +29,22 @@ public slots:
     void handleFrameOne(QString key, QByteArray data);
     void camOneStream();
     void camOneSubscription();
-    void camOneEnd();
-    void handleCamOne_Box(bool checked);
 
     void handleFrameTwo(QString key, QByteArray data);
     void camTwoStream();
     void camTwoSubscription();
-    void camTwoEnd();
-    void handleCamTwo_Box(bool checked);
 
     void handleFrameThree(QString key, QByteArray data);
     void camThreeStream();
     void camThreeSubscription();
-    void camThreeEnd();
-    void handleCamThree_Box(bool checked);
 
     void handleFrameFour(QString key, QByteArray data);
     void camFourStream();
     void camFourSubscription();
-    void camFourEnd();
-    void handleCamFour_Box(bool checked);
 
     void handleFrameFive(QString key, QByteArray data);
     void camFiveStream();
     void camFiveSubscription();
-    void camFiveEnd();
-    void handleCamFive_Box(bool checked);
 
 private slots:
 
@@ -63,11 +52,11 @@ private slots:
 private:
     Ui::CameraOne *ui;
     QString str_login;
-    ConsumerThread *thread1;
-    ConsumerThread *thread2;
-    ConsumerThread *thread3;
-    ConsumerThread *thread4;
-    ConsumerThread *thread5;
+    AMQP *m_amqp1;
+    AMQP *m_amqp2;
+    AMQP *m_amqp3;
+    AMQP *m_amqp4;
+    AMQP *m_amqp5;
 };
 
 #endif // CAMERAONE_H
