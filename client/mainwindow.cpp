@@ -1069,7 +1069,7 @@ void MainWindow::handleExcavationDigSpeedSet(int value) {
 }
 
 void MainWindow::handleExcavationMoveSpeedSet(int value) {
-    ui->lcdNumber_ExcavationTargetDepth->display(value / (100.0F));
+    ui->lcdNumber_ExcavationMoveSpeed->display(value / (100.0F));
 }
 
 void MainWindow::initSubscription() {
