@@ -19,6 +19,11 @@ CameraOne::CameraOne(QWidget *parent, QString login) :
 {
     ui->setupUi(this);
     str_login = login;
+    connect(ui->camOne_Box, &QCheckBox::stateChanged, this, &CameraOne::handleCamOne_Box);
+    connect(ui->camTwo_Box, &QCheckBox::stateChanged, this, &CameraOne::handleCamTwo_Box);
+    connect(ui->camThree_Box, &QCheckBox::stateChanged, this, &CameraOne::handleCamThree_Box);
+    connect(ui->camFour_Box, &QCheckBox::stateChanged, this, &CameraOne::handleCamFour_Box);
+    connect(ui->camFive_Box, &QCheckBox::stateChanged, this, &CameraOne::handleCamFive_Box);
 }
 
 CameraOne::~CameraOne()
@@ -27,7 +32,6 @@ CameraOne::~CameraOne()
 }
 
 //Camera One
-
 void CameraOne::handleFrameOne(QString key, QByteArray data) {
     QPixmap pix;
     pix.loadFromData((uchar*)data.data(), data.length(), "JPEG");
@@ -140,4 +144,44 @@ void CameraOne::camFiveStream() {
 
 void CameraOne::camFiveEnd() {
     delete thread5;
+}
+
+void CameraOne::handleCamOne_Box(bool checked) {
+    if(checked) {
+        camOneStream();
+    }
+    else
+        camOneEnd();
+}
+
+void CameraOne::handleCamTwo_Box(bool checked) {
+    if(checked) {
+        camTwoStream();
+    }
+    else
+        camTwoEnd();
+}
+
+void CameraOne::handleCamThree_Box(bool checked) {
+    if(checked) {
+        camThreeStream();
+    }
+    else
+        camThreeEnd();
+}
+
+void CameraOne::handleCamFour_Box(bool checked) {
+    if(checked) {
+        camFourStream();
+    }
+    else
+        camFourEnd();
+}
+
+void CameraOne::handleCamFive_Box(bool checked) {
+    if(checked) {
+        camFiveStream();
+    }
+    else
+        camFiveEnd();
 }

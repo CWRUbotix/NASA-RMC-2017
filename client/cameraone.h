@@ -31,26 +31,31 @@ public slots:
     void camOneStream();
     void camOneSubscription();
     void camOneEnd();
+    void handleCamOne_Box(bool checked);
 
     void handleFrameTwo(QString key, QByteArray data);
     void camTwoStream();
     void camTwoSubscription();
     void camTwoEnd();
+    void handleCamTwo_Box(bool checked);
 
     void handleFrameThree(QString key, QByteArray data);
     void camThreeStream();
     void camThreeSubscription();
     void camThreeEnd();
+    void handleCamThree_Box(bool checked);
 
     void handleFrameFour(QString key, QByteArray data);
     void camFourStream();
     void camFourSubscription();
     void camFourEnd();
+    void handleCamFour_Box(bool checked);
 
     void handleFrameFive(QString key, QByteArray data);
     void camFiveStream();
     void camFiveSubscription();
     void camFiveEnd();
+    void handleCamFive_Box(bool checked);
 
 private slots:
 
