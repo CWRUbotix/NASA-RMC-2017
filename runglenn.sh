@@ -14,6 +14,10 @@ cd robot_state
 nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.robot_state.StateModule" &> "/home/ubuntu/logs/$datestring/StateModuleOutput.log" &
 cd ..
 
+cd autodrill
+nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.autodrill.AutoDrillModule" &> "/home/cwrubotix/logs/$datestring/AutoDrillModuleOutput.log" &
+cd ..
+
 cd motor_dispatch/src/python
 nohup python3 locomotion.py &> "/home/ubuntu/logs/$datestring/LocomotionPyOutput.log" &
 cd ../../../..
