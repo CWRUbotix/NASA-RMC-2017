@@ -59,7 +59,7 @@ def getCam1():
         ret,  frame1 = cam1.read()
         #imr1 = cv2.cvtColor(frame1,  cv2.COLOR_BGR2RGB)
         #img1 = str(bytearray(cv2.imencode('.png',  frame1)[1].flatten().tolist()))
-	img1 = cv2.imencode('.jpeg',  frame1, [int(cv2.IMWRITE_JPEG_QUALITY), 50])[1].tostring()
+	img1 = cv2.imencode('.jpeg',  frame1, [int(cv2.IMWRITE_JPEG_QUALITY), 10])[1].tostring()
         #print(len(img1))
         send1(img1)
     else:
@@ -70,7 +70,7 @@ def getCam2():
         ret,  frame2 = cam2.read()
         #imr2 = cv2.cvtColor(frame2,  cv2.COLOR_BGR2RGB)
         #img2 = str(bytearray(cv2.imencode('.png',  frame2)[1].flatten().tolist()))
-        img2 = cv2.imencode('.jpeg',  frame2, [int(cv2.IMWRITE_JPEG_QUALITY), 50])[1].tostring()
+        img2 = cv2.imencode('.jpeg',  frame2, [int(cv2.IMWRITE_JPEG_QUALITY), 10])[1].tostring()
         send2(img2)
     else:
         c= 1
@@ -79,7 +79,7 @@ def getCam3():
     if (cam3.isOpened() is True):
         ret,  frame3 = cam3.read()
         #imr3 = cv2.cvtColor(frame3,  cv2.COLOR_BGR2RGB)
-        img3 = cv2.imencode('.jpeg',  frame3, [int(cv2.IMWRITE_JPEG_QUALITY), 50])[1].tostring()
+        img3 = cv2.imencode('.jpeg',  frame3, [int(cv2.IMWRITE_JPEG_QUALITY), 10])[1].tostring()
         #img3 = str(bytearray(cv2.imencode('.png',  frame3)[1].flatten().tolist()))
         send3(img3)
     else:
@@ -89,7 +89,7 @@ def getCam4():
     if (cam4.isOpened() is True):
         ret,  frame4 = cam4.read()
         #imr4 = cv2.cvtColor(frame4,  cv2.COLOR_BGR2RGB)
-        img4 = cv2.imencode('.jpeg',  frame4, [int(cv2.IMWRITE_JPEG_QUALITY), 50])[1].tostring()
+        img4 = cv2.imencode('.jpeg',  frame4, [int(cv2.IMWRITE_JPEG_QUALITY), 10])[1].tostring()
         #img4 = str(bytearray(cv2.imencode('.png',  frame4)[1].flatten().tolist()))
         send4(img4)
     else:
@@ -99,7 +99,7 @@ def getCam5():
     if (cam5.isOpened() is True):
         ret,  frame5 = cam5.read()
         #imr5 = cv2.cvtColor(frame5,  cv2.COLOR_BGR2RGB)
-        img5 = cv2.imencode('.jpeg',  frame5, [int(cv2.IMWRITE_JPEG_QUALITY), 50])[1].tostring()
+        img5 = cv2.imencode('.jpeg',  frame5, [int(cv2.IMWRITE_JPEG_QUALITY), 10])[1].tostring()
         #print(img5)
         #print(len(img5))
         #img5 = str(bytearray(cv2.imencode('.jpeg',  frame5)[1].flatten().tolist()))
@@ -121,4 +121,4 @@ while(True):
     getCam4()
     #Camera Five Update
     getCam5()
-    time.sleep(0.2)
+    time.sleep(1)

@@ -1101,7 +1101,7 @@ void MainWindow::initSubscription() {
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "state.subscribe");
 
-    on_commandLinkButton_clicked();
+    //on_commandLinkButton_clicked();
 }
 
 void MainWindow::handleState(QString key, QByteArray data) {
