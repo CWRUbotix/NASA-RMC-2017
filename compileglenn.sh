@@ -18,3 +18,7 @@ cd ..
 cd robot_state
 mvn package
 cd ..
+
+cd autodrill
+mvn package
+cd ..
