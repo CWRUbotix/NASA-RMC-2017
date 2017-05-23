@@ -6,16 +6,17 @@ mkdir -p "logs/$datestring"
 cd /home/ubuntu/workspace/NASA-RMC-2017/
 
 # start the things
-cd glennifer/HCI
-nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.hci.ModuleMain" &> "/home/ubuntu/logs/$datestring/ModuleMainOutput.log" &
-cd ..
+#cd glennifer/HCI
+#nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.hci.ModuleMain" &> "/home/ubuntu/logs/$datestring/ModuleMainOutput.log" &
+#cd ..
 
+cd glennifer
 cd robot_state
 nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.robot_state.StateModule" &> "/home/ubuntu/logs/$datestring/StateModuleOutput.log" &
 cd ..
 
 cd autodrill
-nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.autodrill.AutoDrillModule" &> "/home/cwrubotix/logs/$datestring/AutoDrillModuleOutput.log" &
+nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.autodrill.AutoDrillModule" &> "/home/ubuntu/logs/$datestring/AutoDrillModuleOutput.log" &
 cd ..
 
 cd motor_dispatch/src/python
