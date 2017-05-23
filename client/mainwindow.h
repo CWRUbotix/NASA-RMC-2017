@@ -119,6 +119,9 @@ public slots:
     void handleDigDeep();
     void handleDigSurface();
     void handleDigStop();
+    void handleExcavationTargetDepthSet(int value);
+    void handleExcavationDigSpeedSet(int value);
+    void handleExcavationMoveSpeedSet(int value);
 
     void handleState(QString key, QByteArray data);
 

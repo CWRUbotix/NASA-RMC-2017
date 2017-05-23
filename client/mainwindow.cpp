@@ -213,6 +213,12 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleDepositionDumpStore);
     QObject::connect(ui->checkBox_DepositionConveyor, &QCheckBox::stateChanged,
                      this, &MainWindow::handleDepositionConveyor);
+    QObject::connect(ui->slider_ExcavationTargetDepth, &QSlider::valueChanged,
+                     this, &MainWindow::handleExcavationTargetDepthSet);
+    QObject::connect(ui->slider_ExcavationDigSpeed, &QSlider::valueChanged,
+                     this, &MainWindow::handleExcavationDigSpeedSet);
+    QObject::connect(ui->slider_ExcavationMoveSpeed, &QSlider::valueChanged,
+                     this, &MainWindow::handleExcavationMoveSpeedSet);
     QObject::connect(ui->pushButton_EStop, &QPushButton::clicked,
                      this, &MainWindow::handleEStop);
     QObject::connect(ui->pushButton_EUnstop, &QPushButton::clicked,
@@ -1034,6 +1040,17 @@ void MainWindow::handleDigStop() {
     free(msg_buff);
 }
 
+void MainWindow::handleExcavationTargetDepthSet(int value) {
+    ui->lcdNumber_ExcavationTargetDepth->display(value);
+}
+
+void MainWindow::handleExcavationDigSpeedSet(int value) {
+    ui->lcdNumber_ExcavationDigSpeed->display(value / (10.0F));
+}
+
+void MainWindow::handleExcavationMoveSpeedSet(int value) {
+    ui->lcdNumber_ExcavationTargetDepth->display(value / (100.0F));
+}
 
 void MainWindow::initSubscription() {
     ConsumerThread *thread = new ConsumerThread(m_loginStr, "abcde");
@@ -1635,7 +1652,7 @@ void MainWindow::bcktRev() {
 
 // Helper for Drilling
 void MainWindow::drillParameters(double depth) {
-    ui->drill_Depth->display(depth);
+    //ui->drill_Depth->display(depth);
     drillValue = (float)(depth);
 }
 
