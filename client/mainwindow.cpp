@@ -841,7 +841,9 @@ void MainWindow::handleExcavationTranslationRetract() {
 void MainWindow::handleExcavationConveyor(bool checked) {
     SpeedContolCommand msg;
     int speed = ui->slider_ExcavationConveyor->value();
-    msg.set_rpm(checked ? speed : 0);
+    speed = ui->checkBox_ExcavationConveyorReverse->isChecked() ? speed : -speed;
+    speed = checked ? speed : 0;
+    msg.set_rpm(speed);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -928,7 +930,9 @@ void MainWindow::handleDepositionDumpStore() {
 void MainWindow::handleDepositionConveyor(bool checked) {
     SpeedContolCommand msg;
     int speed = ui->slider_DepositionConveyor->value();
-    msg.set_rpm(checked ? speed : 0);
+    speed = ui->checkBox_DepositionConveyorReverse->isChecked() ? speed : -speed;
+    speed = checked ? speed : 0;
+    msg.set_rpm(speed);
     msg.set_timeout(456);
     int msg_size = msg.ByteSize();
     void *msg_buff = malloc(msg_size);
@@ -1069,7 +1073,7 @@ void MainWindow::handleExcavationDigSpeedSet(int value) {
 }
 
 void MainWindow::handleExcavationMoveSpeedSet(int value) {
-    ui->lcdNumber_ExcavationTargetDepth->display(value / (100.0F));
+    ui->lcdNumber_ExcavationMoveSpeed->display(value / (100.0F));
 }
 
 void MainWindow::initSubscription() {
