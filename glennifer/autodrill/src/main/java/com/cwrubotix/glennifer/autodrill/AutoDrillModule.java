@@ -137,8 +137,12 @@ public class AutoDrillModule {
 	}
 
 	private float getCurrentDepthTarget() {
-		float calculatedDepth = modeStartDepth + (Duration.between(modeStartTime, Instant.now()).toMillis() / 1000.0F) * digSpeed;
-		return calculatedDepth < targetDepth ? calculatedDepth : targetDepth;
+		Instant now = Instant.now();
+		float calculatedDepth = modeStartDepth + (Duration.between(modeStartTime, now).toMillis() / 1000.0F) * digSpeed;
+		calculatedDepth = calculatedDepth < targetDepth ? calculatedDepth : targetDepth;
+		modeStartDepth = calculatedDepth;
+		modeStartTime = now;
+		return calculatedDepth;
 	}
 	
 	private void excavationTranslationControl(float targetValue) throws IOException{
@@ -163,17 +167,6 @@ public class AutoDrillModule {
 				.setTimeout(123)
 				.build();
 		AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.excavation.bucket_conveyor_rpm", null, msg.toByteArray());
-	}
-	
-	private void locomotionSpeedControl(float targetValue) throws IOException{
-		Messages.SpeedContolCommand msg = SpeedContolCommand.newBuilder()
-				.setRpm(targetValue)
-				.setTimeout(123)
-				.build();
-		AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.locomotion.front_left.wheel.RPM", null, msg.toByteArray());
-		AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.locomotion.front_right.wheel.RPM", null, msg.toByteArray());
-		AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.locomotion.back_right.wheel.RPM", null, msg.toByteArray());
-		AutoDrillModule.this.channel.basicPublish(exchangeName, "motorcontrol.locomotion.back_left.wheel.RPM", null, msg.toByteArray());
 	}
 
 	private void locomotionStraight(float speed) throws IOException{
