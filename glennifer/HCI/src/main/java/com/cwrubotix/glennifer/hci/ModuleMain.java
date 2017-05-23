@@ -608,6 +608,17 @@ public class ModuleMain {
                         a.actuatorID = id;
 			System.out.println("Deposition conveyor rpm for val: " + a.targetValue);
                         hci.queueActuation(a);
+                    } else if (keys[2].equals("vibration_rpm")) {
+                        Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        int id = 13;
+                        a.targetValue = (scc.getRpm() / 100.0F) * 255;
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        System.out.println("Deposition vibration rpm for val: " + a.targetValue);
+                        hci.queueActuation(a);
                     } else {
                         System.out.println("Deposition motor control routing key has unrecognized motor");
                         return;

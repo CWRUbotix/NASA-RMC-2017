@@ -52,6 +52,7 @@ enum MotorHardware {
   MH_ST_PWM,
   MH_ST_POS,
   MH_ST_PWM_BOTH,
+  MH_PIN_PWM,
   MH_ALL
 };
 
@@ -70,6 +71,7 @@ typedef struct MotorInfo {
   uint32_t accel;
   uint16_t feedbackSensorID;
   float saturation;
+  
 } MotorInfo;
 
 SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
@@ -326,6 +328,12 @@ void setup() {
   motor_infos[12].hardware = MH_ST_PWM_BOTH;
   motor_infos[12].addr = 2;
   motor_infos[12].scale = 1;
+
+  motor_infos[13].hardware = MH_PIN_PWM;
+  motor_infos[13].addr = 12;
+  pinMode(motor_infos[13].addr, OUTPUT);
+  digitalWrite(motor_infos[13].addr, LOW);
+  motor_infos[13].scale = 1;
 
   // Send a command to all motors
   motor_infos[50].hardware = MH_ALL;
@@ -771,6 +779,8 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       }
     }*/
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
+      
+    Serial.println((val_scaled != 0) * 80);   
     break;
   case MH_ST_POS:
     motor_setpoints[ID] = val_scaled;
@@ -785,6 +795,12 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     sabretooth[motor_info.addr].motor(1, -val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
     break;
+  case MH_PIN_PWM:
+    if(stopped){
+      break;
+    }
+    analogWrite(motor_info.addr, val_scaled); 
+    break;  
   case MH_ALL:
     if(val_scaled == 0){ // we want to stop all of the motors
       for(int i = 0; i < 13; i++){
