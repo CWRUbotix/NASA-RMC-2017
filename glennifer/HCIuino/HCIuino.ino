@@ -52,6 +52,7 @@ enum MotorHardware {
   MH_ST_PWM,
   MH_ST_POS,
   MH_ST_PWM_BOTH,
+  MH_PIN_PWM,
   MH_ALL
 };
 
@@ -70,6 +71,7 @@ typedef struct MotorInfo {
   uint32_t accel;
   uint16_t feedbackSensorID;
   float saturation;
+  
 } MotorInfo;
 
 SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
@@ -211,7 +213,7 @@ void setup() {
   motor_infos[1].kp = 16;
   motor_infos[1].ki = 0;
   motor_infos[1].kd = 0;
-  motor_infos[1].qpps = 865000;
+  motor_infos[1].qpps = 32768;
   motor_infos[1].scale = 100;
   
   // Front right wheel motor
@@ -221,7 +223,7 @@ void setup() {
   motor_infos[0].kp = 16;
   motor_infos[0].ki = 0;
   motor_infos[0].kd = 0;
-  motor_infos[0].qpps = 865000;
+  motor_infos[0].qpps = 32768;
   motor_infos[0].scale = 100;
   
   // Back left wheel motor
@@ -231,7 +233,7 @@ void setup() {
   motor_infos[3].kp = 16;
   motor_infos[3].ki = 0;
   motor_infos[3].kd = 0;
-  motor_infos[3].qpps = 865000;
+  motor_infos[3].qpps = 32768;
   motor_infos[3].scale = 100;
   
   // Back right wheel motor
@@ -241,7 +243,7 @@ void setup() {
   motor_infos[2].kp = 16;
   motor_infos[2].ki = 0;
   motor_infos[2].kd = 0;
-  motor_infos[2].qpps = 865000;
+  motor_infos[2].qpps = 32678;
   motor_infos[2].scale = 100;
 
   // Actuator FL 
@@ -326,6 +328,12 @@ void setup() {
   motor_infos[12].hardware = MH_ST_PWM_BOTH;
   motor_infos[12].addr = 2;
   motor_infos[12].scale = 1;
+
+  motor_infos[13].hardware = MH_PIN_PWM;
+  motor_infos[13].addr = 12;
+  pinMode(motor_infos[13].addr, OUTPUT);
+  digitalWrite(motor_infos[13].addr, LOW);
+  motor_infos[13].scale = 1;
 
   // Send a command to all motors
   motor_infos[50].hardware = MH_ALL;
@@ -719,9 +727,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       break;
     }
     if (motor_info.whichMotor == 2) {
-      success = roboclaw.SpeedM2(motor_info.addr, val_scaled);
+      success = roboclaw.DutyAccelM2(motor_info.addr, val_scaled, motor_info.qpps);
     } else {
-      success = roboclaw.SpeedM1(motor_info.addr, val_scaled);
+      success = roboclaw.DutyAccelM1(motor_info.addr, val_scaled, motor_info.qpps);
     }
     if (!success) {
       return FAULT_LOST_ROBOCLAW;
@@ -771,6 +779,8 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       }
     }*/
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
+      
+    Serial.println((val_scaled != 0) * 80);   
     break;
   case MH_ST_POS:
     motor_setpoints[ID] = val_scaled;
@@ -785,6 +795,12 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     sabretooth[motor_info.addr].motor(1, -val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
     break;
+  case MH_PIN_PWM:
+    if(stopped){
+      break;
+    }
+    analogWrite(motor_info.addr, val_scaled); 
+    break;  
   case MH_ALL:
     if(val_scaled == 0){ // we want to stop all of the motors
       for(int i = 0; i < 13; i++){
