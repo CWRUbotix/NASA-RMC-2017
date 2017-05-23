@@ -234,6 +234,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //Drive Configuration
     QObject::connect(ui->pushButton_ExcavationArmDrive, &QPushButton::clicked,
                      this, &MainWindow::handleExcavationArmDrive);
+    QObject::connect(ui->checkBox_Vibrate, &QCheckBox::stateChanged,
+                     this, &MainWindow::handleVibrate);
 }
 
 MainWindow::MainWindow(QString loginStr, QWidget *parent) :
@@ -935,6 +937,27 @@ void MainWindow::handleDepositionConveyor(bool checked) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.conveyor_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleVibrate(bool checked) {
+    SpeedContolCommand msg;
+    int speed = ui->spinBox_Vibrate->value();
+    speed = checked ? speed : 0;
+    msg.set_rpm(speed);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.vibration_rpm");
 
     free(msg_buff);
 }
