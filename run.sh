@@ -6,10 +6,11 @@ mkdir -p "logs/$datestring"
 cd /home/cwrubotix/workspace/NASA-RMC-2017/
 
 # start the things
-cd glennifer/HCI
-nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.hci.ModuleMain" &> "/home/cwrubotix/logs/$datestring/ModuleMainOutput.log" &
-cd ..
+#cd glennifer/HCI
+#nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.hci.ModuleMain" &> "/home/cwrubotix/logs/$datestring/ModuleMainOutput.log" &
+#cd ..
 
+cd glennifer
 cd robot_state
 nohup mvn exec:java -Dexec.mainClass="com.cwrubotix.glennifer.robot_state.StateModule" &> "/home/cwrubotix/logs/$datestring/StateModuleOutput.log" &
 cd ..
