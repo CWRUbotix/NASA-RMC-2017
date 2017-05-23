@@ -60,7 +60,7 @@ void CameraOne::handleFrameFive(QString key, QByteArray data) {
 
 void CameraOne::camOneSubscription() {
     QString login = str_login;
-    ConsumerThread *thread1 = new ConsumerThread(str_login, "camera.two");
+    thread1 = new ConsumerThread(str_login, "camera.two");
     connect(thread1, &ConsumerThread::receivedMessage, this, &CameraOne::handleFrameOne);
     connect(thread1, SIGNAL(finished()), thread1, SLOT(deleteLater()));
     thread1->start();
@@ -77,7 +77,7 @@ void CameraOne::camOneEnd() {
 //Camera Two
 void CameraOne::camTwoSubscription() {
     QString login = str_login;
-    ConsumerThread *thread2 = new ConsumerThread(str_login, "camera.three");
+    thread2 = new ConsumerThread(str_login, "camera.three");
     connect(thread2, &ConsumerThread::receivedMessage, this, &CameraOne::handleFrameTwo);
     connect(thread2, SIGNAL(finished()), thread2, SLOT(deleteLater()));
     thread2->start();
@@ -94,7 +94,7 @@ void CameraOne::camTwoEnd() {
 //Camera Three
 void CameraOne::camThreeSubscription() {
     QString login = str_login;
-    ConsumerThread *thread3 = new ConsumerThread(str_login, "camera.four");
+    thread3 = new ConsumerThread(str_login, "camera.four");
     connect(thread3, &ConsumerThread::receivedMessage, this, &CameraOne::handleFrameThree);
     connect(thread3, SIGNAL(finished()), thread3, SLOT(deleteLater()));
     thread3->start();
@@ -111,7 +111,7 @@ void CameraOne::camThreeEnd() {
 //Camera Four
 void CameraOne::camFourSubscription() {
     QString login = str_login;
-    ConsumerThread *thread4 = new ConsumerThread(str_login, "camera.five");
+    thread4 = new ConsumerThread(str_login, "camera.five");
     connect(thread4, &ConsumerThread::receivedMessage, this, &CameraOne::handleFrameFour);
     connect(thread4, SIGNAL(finished()), thread4, SLOT(deleteLater()));
     thread4->start();
@@ -128,7 +128,7 @@ void CameraOne::camFourEnd() {
 //Camera Five
 void CameraOne::camFiveSubscription() {
     QString login = str_login;
-    ConsumerThread *thread5 = new ConsumerThread(str_login, "camera.one");
+    thread5 = new ConsumerThread(str_login, "camera.one");
     connect(thread5, &ConsumerThread::receivedMessage, this, &CameraOne::handleFrameFive);
     connect(thread5, SIGNAL(finished()), thread5, SLOT(deleteLater()));
     thread5->start();

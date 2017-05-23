@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/imgproc.hpp>
+#include "consumerthread.h"
 
 namespace Ui {
 class CameraOne;
@@ -29,22 +30,27 @@ public slots:
     void handleFrameOne(QString key, QByteArray data);
     void camOneStream();
     void camOneSubscription();
+    void camOneEnd();
 
     void handleFrameTwo(QString key, QByteArray data);
     void camTwoStream();
     void camTwoSubscription();
+    void camTwoEnd();
 
     void handleFrameThree(QString key, QByteArray data);
     void camThreeStream();
     void camThreeSubscription();
+    void camThreeEnd();
 
     void handleFrameFour(QString key, QByteArray data);
     void camFourStream();
     void camFourSubscription();
+    void camFourEnd();
 
     void handleFrameFive(QString key, QByteArray data);
     void camFiveStream();
     void camFiveSubscription();
+    void camFiveEnd();
 
 private slots:
 
@@ -52,11 +58,11 @@ private slots:
 private:
     Ui::CameraOne *ui;
     QString str_login;
-    AMQP *m_amqp1;
-    AMQP *m_amqp2;
-    AMQP *m_amqp3;
-    AMQP *m_amqp4;
-    AMQP *m_amqp5;
+    ConsumerThread *thread1;
+    ConsumerThread *thread2;
+    ConsumerThread *thread3;
+    ConsumerThread *thread4;
+    ConsumerThread *thread5;
 };
 
 #endif // CAMERAONE_H
