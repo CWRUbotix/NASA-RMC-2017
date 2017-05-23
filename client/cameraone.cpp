@@ -70,6 +70,9 @@ void CameraOne::camOneStream() {
     CameraOne::camOneSubscription();
 }
 
+void CameraOne::camOneEnd() {
+    delete thread1;
+}
 
 //Camera Two
 void CameraOne::camTwoSubscription() {
@@ -82,6 +85,10 @@ void CameraOne::camTwoSubscription() {
 
 void CameraOne::camTwoStream() {
     CameraOne::camTwoSubscription();
+}
+
+void CameraOne::camTwoEnd() {
+    delete thread2;
 }
 
 //Camera Three
@@ -97,6 +104,10 @@ void CameraOne::camThreeStream() {
     CameraOne::camThreeSubscription();
 }
 
+void CameraOne::camThreeEnd() {
+    delete thread3;
+}
+
 //Camera Four
 void CameraOne::camFourSubscription() {
     QString login = str_login;
@@ -110,6 +121,10 @@ void CameraOne::camFourStream() {
     CameraOne::camFourSubscription();
 }
 
+void CameraOne::camFourEnd() {
+    delete thread4;
+}
+
 //Camera Five
 void CameraOne::camFiveSubscription() {
     QString login = str_login;
@@ -121,4 +136,8 @@ void CameraOne::camFiveSubscription() {
 
 void CameraOne::camFiveStream() {
     CameraOne::camFiveSubscription();
+}
+
+void CameraOne::camFiveEnd() {
+    delete thread5;
 }
