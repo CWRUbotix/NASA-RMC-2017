@@ -214,7 +214,7 @@ void setup() {
   motor_infos[1].ki = 0;
   motor_infos[1].kd = 0;
   motor_infos[1].qpps = 32768;
-  motor_infos[1].scale = 100;
+  motor_infos[1].scale = 3;
   
   // Front right wheel motor
   motor_infos[0].hardware = MH_RC_VEL;
@@ -224,7 +224,7 @@ void setup() {
   motor_infos[0].ki = 0;
   motor_infos[0].kd = 0;
   motor_infos[0].qpps = 32768;
-  motor_infos[0].scale = 100;
+  motor_infos[0].scale = 3;
   
   // Back left wheel motor
   motor_infos[3].hardware = MH_RC_VEL;
@@ -234,7 +234,7 @@ void setup() {
   motor_infos[3].ki = 0;
   motor_infos[3].kd = 0;
   motor_infos[3].qpps = 32768;
-  motor_infos[3].scale = 100;
+  motor_infos[3].scale = 3;
   
   // Back right wheel motor
   motor_infos[2].hardware = MH_RC_VEL;
@@ -243,8 +243,8 @@ void setup() {
   motor_infos[2].kp = 16;
   motor_infos[2].ki = 0;
   motor_infos[2].kd = 0;
-  motor_infos[2].qpps = 32678;
-  motor_infos[2].scale = 100;
+  motor_infos[2].qpps = 32768;
+  motor_infos[2].scale = 3;
 
   // Actuator FL 
   motor_infos[4].hardware = MH_ST_POS;
@@ -727,9 +727,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       break;
     }
     if (motor_info.whichMotor == 2) {
-      success = roboclaw.DutyAccelM2(motor_info.addr, val_scaled, motor_info.qpps);
+      success = roboclaw.SpeedAccelM2(motor_info.addr, motor_info.qpps, val_scaled);
     } else {
-      success = roboclaw.DutyAccelM1(motor_info.addr, val_scaled, motor_info.qpps);
+      success = roboclaw.SpeedAccelM1(motor_info.addr, motor_info.qpps, val_scaled);
     }
     if (!success) {
       return FAULT_LOST_ROBOCLAW;
