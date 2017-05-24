@@ -113,14 +113,23 @@ public slots:
     void armDrive();
     void armDig();
     void armGTFO();
+    void armPrep();
     void inverseExcavationConveyer(bool checked);
     void regularExcavationConveyer(bool checked);
 
     void handleDigDeep();
     void handleDigSurface();
+    void handleDigReverse();
     void handleDigStop();
+    void handleExcavationTargetDepthSet(int value);
+    void handleExcavationDigSpeedSet(int value);
+    void handleExcavationMoveSpeedSet(int value);
 
     void handleState(QString key, QByteArray data);
+
+    void handleA_KeyPress();
+    void handleD_KeyPress();
+
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);

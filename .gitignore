@@ -43,3 +43,6 @@ tasks.xml
 nbproject/
 *.iml
 *.pyproj
+
+# Maven generated files
+dependency-reduced-pom.xml
