@@ -2724,8 +2724,38 @@
             </item>
             <item>
              <widget class="QCheckBox" name="checkBox_2">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="text">
                <string>Rev</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBox_Vibrate">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>Vibe</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spinBox_Vibrate">
+              <property name="maximum">
+               <number>40</number>
+              </property>
+              <property name="value">
+               <number>33</number>
               </property>
              </widget>
             </item>
