@@ -219,6 +219,12 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleExcavationDigSpeedSet);
     QObject::connect(ui->slider_ExcavationMoveSpeed, &QSlider::valueChanged,
                      this, &MainWindow::handleExcavationMoveSpeedSet);
+    QObject::connect(ui->spinBox_lowerCurrent, &QSpinBox::valueChanged,
+                     this, &MainWindow::handleLowerCurrent);
+    QObject::connect(ui->spinBox_upperCurrent, &QSpinBox::valueChanged,
+                     this, &MainWindow::handleUpperCurrent);
+    QObject::connect(ui->slider_ExcavationDigSpeed, &QSpinBox::valueChanged,
+                     this, &MainWindow::handleDigSpeed);
     QObject::connect(ui->pushButton_EStop, &QPushButton::clicked,
                      this, &MainWindow::handleEStop);
     QObject::connect(ui->pushButton_EUnstop, &QPushButton::clicked,
@@ -945,6 +951,63 @@ void MainWindow::handleDepositionConveyor(bool checked) {
     AMQPExchange * ex = m_amqp->createExchange("amq.topic");
     ex->Declare("amq.topic", "topic", AMQP_DURABLE);
     ex->Publish((char*)msg_buff, msg_size, "motorcontrol.deposition.conveyor_rpm");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleLowerCurrent(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.excavation.lower_current");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleUpperCurrent(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.excavation.upper_current");
+
+    free(msg_buff);
+}
+
+void MainWindow::handleDigSpeed(int value) {
+    PositionContolCommand msg;
+    msg.set_position(value / 10.0F);
+    msg.set_timeout(456);
+    int msg_size = msg.ByteSize();
+    void *msg_buff = malloc(msg_size);
+    if (!msg_buff) {
+        ui->consoleOutputTextBrowser->append("Failed to allocate message buffer.\nDetails: malloc(msg_size) returned: NULL\n");
+        return;
+    }
+    msg.SerializeToArray(msg_buff, msg_size);
+
+    AMQPExchange * ex = m_amqp->createExchange("amq.topic");
+    ex->Declare("amq.topic", "topic", AMQP_DURABLE);
+    ex->Publish((char*)msg_buff, msg_size, "subsyscommand.excavation.dig_speed");
 
     free(msg_buff);
 }

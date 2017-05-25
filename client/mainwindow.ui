@@ -49,7 +49,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_Map">
         <attribute name="title">
@@ -359,25 +359,20 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="1" column="0">
-           <widget class="QSplitter" name="splitter_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+          <item row="0" column="1">
+           <widget class="QLCDNumber" name="lcdNumber_ExcavationTargetDepth">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
-            <widget class="QSlider" name="slider_ExcavationDigSpeed">
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="maximum">
-              <number>100</number>
-             </property>
-             <property name="value">
-              <number>25</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
+            <property name="smallDecimalPoint">
+             <bool>false</bool>
+            </property>
+            <property name="segmentStyle">
+             <enum>QLCDNumber::Flat</enum>
+            </property>
+            <property name="value" stdset="0">
+             <double>100.000000000000000</double>
+            </property>
            </widget>
           </item>
           <item row="0" column="0">
@@ -396,19 +391,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLCDNumber" name="lcdNumber_ExcavationTargetDepth">
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="smallDecimalPoint">
-             <bool>false</bool>
-            </property>
-            <property name="segmentStyle">
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-            <property name="value" stdset="0">
-             <double>100.000000000000000</double>
+          <item row="3" column="2">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Target movement speed</string>
             </property>
            </widget>
           </item>
@@ -419,20 +405,6 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Target movement speed</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Target Depth</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="3">
            <widget class="QCheckBox" name="checkBox_BucketConveyorOn">
             <property name="focusPolicy">
@@ -440,13 +412,6 @@
             </property>
             <property name="text">
              <string>Bucket Conveyor on</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton_DigSurface">
-            <property name="text">
-             <string>Dig Surface</string>
             </property>
            </widget>
           </item>
@@ -464,6 +429,13 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Target Depth</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QLCDNumber" name="lcdNumber_ExcavationDigSpeed">
             <property name="segmentStyle">
@@ -471,6 +443,13 @@
             </property>
             <property name="value" stdset="0">
              <double>2.500000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QPushButton" name="pushButton_DigSurface">
+            <property name="text">
+             <string>Dig Surface</string>
             </property>
            </widget>
           </item>
@@ -494,6 +473,54 @@
             </property>
             <property name="value" stdset="0">
              <double>0.150000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QSplitter" name="splitter_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <widget class="QSlider" name="slider_ExcavationDigSpeed">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>25</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QSpinBox" name="spinBox_upperCurrent">
+            <property name="maximum">
+             <number>20</number>
+            </property>
+            <property name="value">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QSpinBox" name="spinBox_lowerCurrent">
+            <property name="maximum">
+             <number>20</number>
+            </property>
+            <property name="value">
+             <number>8</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Currents:</string>
             </property>
            </widget>
           </item>

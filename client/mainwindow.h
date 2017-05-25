@@ -77,6 +77,9 @@ public slots:
     void handleDepositionDumpStop();
     void handleDepositionDumpStore();
     void handleDepositionConveyor(bool checked);
+    void handleLowerCurrent(int value);
+    void handleUpperCurrent(int value);
+    void handleDigSpeed(int value);
     void handleEStop();
     void handleEUnstop();
 
