@@ -80,6 +80,7 @@ public slots:
     void handleLowerCurrent(int value);
     void handleUpperCurrent(int value);
     void handleDigSpeed(int value);
+    void handleVibrate(bool checked);
     void handleEStop();
     void handleEUnstop();
 

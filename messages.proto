@@ -99,6 +99,7 @@ message Adjustment {
 // motorcontrol.locomotion.back_right.wheel_rpm
 // motorcontrol.excavation.bucket_conveyor_rpm
 // motorcontrol.deposition.conveyor_rpm
+// motorcontrol.deposition.vibration_rpm
 message SpeedContolCommand {
 	required float rpm = 1;
 	required float timeout = 2;
