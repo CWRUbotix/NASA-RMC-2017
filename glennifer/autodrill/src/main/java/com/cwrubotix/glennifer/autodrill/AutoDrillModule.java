@@ -75,6 +75,47 @@ public class AutoDrillModule {
 		}
 	}
 
+	private class LowerCurrentConsumer extends DefaultConsumer{
+		public LowerCurrentConsumer(Channel channel) {
+			super(channel);
+		}
+
+		@Override
+		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
+			Messages.PositionContolCommand cmd = Messages.PositionContolCommand.parseFrom(body);
+			currentLowerLimit = cmd.getPosition();
+			detectStall();
+			updateMotors();
+		}
+	}
+
+	private class UpperCurrentConsumer extends DefaultConsumer{
+		public UpperCurrentConsumer(Channel channel) {
+			super(channel);
+		}
+
+		@Override
+		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
+			Messages.PositionContolCommand cmd = Messages.PositionContolCommand.parseFrom(body);
+			currentUpperLimit = cmd.getPosition();
+			detectStall();
+			updateMotors();
+		}
+	}
+
+	private class DigSpeedConsumer extends DefaultConsumer{
+		public DigSpeedConsumer(Channel channel) {
+			super(channel);
+		}
+
+		@Override
+		public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
+			Messages.PositionContolCommand cmd = Messages.PositionContolCommand.parseFrom(body);
+			digSpeed = cmd.getPosition();
+			updateMotors();
+		}
+	}
+
 	private enum DrillJob {DEEP, SURFACE, NONE}
 
 	private String exchangeName;
@@ -93,6 +134,7 @@ public class AutoDrillModule {
 
 	private float bc_trans = 0.0F;
 	private float bc_angle = 0.0F;
+	private float bc_current = 0.0F;
 
 	private void updateMotors() {
 		
@@ -133,6 +175,18 @@ public class AutoDrillModule {
 		} catch (IOException e) {
 			System.out.println("AutoDrill failed to publish message with exception:");
 			e.printStackTrace();
+		}
+	}
+
+	private void detectStall() {
+		if(!isStalled && bc_current > currentUpperLimit) {
+			// Transition to stalled
+			isStalled = true;
+		} else if (isStalled && bc_current <= currentLowerLimit) {
+			// Transition to unstalled
+			isStalled = false;
+			modeStartTime = Instant.now();
+			modeStartDepth = bc_trans;
 		}
 	}
 
@@ -222,6 +276,21 @@ public class AutoDrillModule {
 		channel.queueBind(queueName, exchangeName, "subsyscommand.excavation.dig_end");
 		this.channel.basicConsume(queueName, true, new DrillEndConsumer(channel));
 
+		//Listen for lower current
+		queueName = channel.queueDeclare().getQueue();
+		channel.queueBind(queueName, exchangeName, "subsyscommand.excavation.lower_current");
+		this.channel.basicConsume(queueName, true, new LowerCurrentConsumer(channel));
+
+		//Listen for upper current
+		queueName = channel.queueDeclare().getQueue();
+		channel.queueBind(queueName, exchangeName, "subsyscommand.excavation.upper_current");
+		this.channel.basicConsume(queueName, true, new UpperCurrentConsumer(channel));
+
+		//Listen for dig speed
+		queueName = channel.queueDeclare().getQueue();
+		channel.queueBind(queueName, exchangeName, "subsyscommand.excavation.dig_speed");
+		this.channel.basicConsume(queueName, true, new DigSpeedConsumer(channel));
+
 		Messages.StateSubscribe msg = Messages.StateSubscribe.newBuilder()
 				  .setReplyKey("autoDrillModule")
 				  .setInterval(0.1F)
@@ -243,18 +312,10 @@ public class AutoDrillModule {
 			public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException{
 				Messages.State msg = Messages.State.parseFrom(body);
 			    bc_trans = msg.getExcDetailed().getDisplacement();
-			    float bc_current = msg.getExcDetailed().getConveyorMotorCurrent();
+			    bc_current = msg.getExcDetailed().getConveyorMotorCurrent();
 			    bc_angle = msg.getExcDetailed().getArmPos();
-			    
-			    if(!isStalled && bc_current > currentUpperLimit) {
-					// Transition to stalled
-					isStalled = true;
-				} else if (isStalled && bc_current <= currentLowerLimit) {
-					// Transition to unstalled
-					isStalled = false;
-					modeStartTime = Instant.now();
-					modeStartDepth = bc_trans;
-				}
+
+			    detectStall();
 				updateMotors();
 			}
 		});
