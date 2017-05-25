@@ -8,6 +8,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <io.h>
 #include <iostream>
+#include <QPainter>
 
 /* Deleted All other Camera Windows */
 
@@ -19,6 +20,8 @@ CameraOne::CameraOne(QWidget *parent, QString login) :
 {
     ui->setupUi(this);
     str_login = login;
+    //connect(ui->leftView_Box, &QCheckBox::stateChanged, ui->left_DriveLine, &QFrame::setVisible);
+    //connect(ui->rightView_Box, &QCheckBox::stateChanged, ui->right_DriveLine, &QFrame::setVisible);
 }
 
 CameraOne::~CameraOne()
@@ -31,6 +34,11 @@ CameraOne::~CameraOne()
 void CameraOne::handleFrameOne(QString key, QByteArray data) {
     QPixmap pix;
     pix.loadFromData((uchar*)data.data(), data.length(), "JPEG");
+    QPainter painter(&pix);
+    painter.setPen(QColor(255, 0, 0, 127));
+    if(ui->leftView_Box->isChecked()) {
+            painter.drawLine(110,0,110,200);
+    }
     ui->cam1lbl->setPixmap(pix);
 }
 
@@ -55,6 +63,12 @@ void CameraOne::handleFrameFour(QString key, QByteArray data) {
 void CameraOne::handleFrameFive(QString key, QByteArray data) {
     QPixmap pix;
     pix.loadFromData((uchar*)data.data(), data.length(), "JPEG");
+    QPainter painter(&pix);
+    painter.setPen(QColor(255, 0, 0, 127));
+    if(ui->rightView_Box->isChecked()) {
+            painter.drawLine(63,0,63,200);
+            painter.drawLine(90,0,90,200);
+    }
     ui->cam5lbl->setPixmap(pix);
 }
 
