@@ -36,8 +36,9 @@ void CameraOne::handleFrameOne(QString key, QByteArray data) {
     pix.loadFromData((uchar*)data.data(), data.length(), "JPEG");
     QPainter painter(&pix);
     painter.setPen(QColor(255, 0, 0, 127));
-    if(ui->leftView_Box->isChecked()) {
-            painter.drawLine(110,0,110,200);
+    if(ui->rightView_Box->isChecked()) {
+            painter.drawLine(63,0,63,200);
+            painter.drawLine(90,0,90,200);
     }
     ui->cam1lbl->setPixmap(pix);
 }
@@ -45,6 +46,12 @@ void CameraOne::handleFrameOne(QString key, QByteArray data) {
 void CameraOne::handleFrameTwo(QString key, QByteArray data) {
     QPixmap pix;
     pix.loadFromData((uchar*)data.data(), data.length(), "JPEG");
+    QPainter painter(&pix);
+    painter.setPen(QColor(255, 0, 0, 127));
+    if(ui->leftView_Box->isChecked()) {
+            painter.drawLine(110,0,110,200);
+            painter.drawLine(83,0,83,200);
+    }
     ui->cam2lbl->setPixmap(pix);
 }
 
@@ -63,12 +70,6 @@ void CameraOne::handleFrameFour(QString key, QByteArray data) {
 void CameraOne::handleFrameFive(QString key, QByteArray data) {
     QPixmap pix;
     pix.loadFromData((uchar*)data.data(), data.length(), "JPEG");
-    QPainter painter(&pix);
-    painter.setPen(QColor(255, 0, 0, 127));
-    if(ui->rightView_Box->isChecked()) {
-            painter.drawLine(63,0,63,200);
-            painter.drawLine(90,0,90,200);
-    }
     ui->cam5lbl->setPixmap(pix);
 }
 
