@@ -219,11 +219,11 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, &MainWindow::handleExcavationDigSpeedSet);
     QObject::connect(ui->slider_ExcavationMoveSpeed, &QSlider::valueChanged,
                      this, &MainWindow::handleExcavationMoveSpeedSet);
-    QObject::connect(ui->spinBox_lowerCurrent, &QSpinBox::valueChanged,
+    QObject::connect(ui->spinBox_lowerCurrent, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), // This is ugly because: http://doc.qt.io/qt-5/qspinbox.html#valueChanged
                      this, &MainWindow::handleLowerCurrent);
-    QObject::connect(ui->spinBox_upperCurrent, &QSpinBox::valueChanged,
+    QObject::connect(ui->spinBox_upperCurrent, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), // This is ugly because: http://doc.qt.io/qt-5/qspinbox.html#valueChanged
                      this, &MainWindow::handleUpperCurrent);
-    QObject::connect(ui->slider_ExcavationDigSpeed, &QSpinBox::valueChanged,
+    QObject::connect(ui->slider_ExcavationDigSpeed, &QSlider::valueChanged,
                      this, &MainWindow::handleDigSpeed);
     QObject::connect(ui->pushButton_EStop, &QPushButton::clicked,
                      this, &MainWindow::handleEStop);
