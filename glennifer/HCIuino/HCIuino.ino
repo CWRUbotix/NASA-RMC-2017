@@ -52,6 +52,7 @@ enum MotorHardware {
   MH_ST_PWM,
   MH_ST_POS,
   MH_ST_PWM_BOTH,
+  MH_PIN_PWM,
   MH_ALL
 };
 
@@ -70,6 +71,7 @@ typedef struct MotorInfo {
   uint32_t accel;
   uint16_t feedbackSensorID;
   float saturation;
+  
 } MotorInfo;
 
 SensorInfo sensor_infos[256] = {}; // All initialized to SH_NONE
@@ -198,6 +200,11 @@ void setup() {
   sensor_infos[26].hardware = SH_PIN_LIMIT;
   sensor_infos[26].whichPin = 39;
   sensor_infos[26].scale = 1;
+
+  sensor_infos[38].hardware = SH_RC_CUR;
+  sensor_infos[38].addr = ADDRESS_RC_3;
+  sensor_infos[38].whichMotor = 1;
+  sensor_infos[38].scale = 1;
   
   // Front left wheel motor
   motor_infos[1].hardware = MH_RC_VEL;
@@ -206,8 +213,8 @@ void setup() {
   motor_infos[1].kp = 16;
   motor_infos[1].ki = 0;
   motor_infos[1].kd = 0;
-  motor_infos[1].qpps = 865000;
-  motor_infos[1].scale = 100;
+  motor_infos[1].qpps = 32768;
+  motor_infos[1].scale = 3;
   
   // Front right wheel motor
   motor_infos[0].hardware = MH_RC_VEL;
@@ -216,8 +223,8 @@ void setup() {
   motor_infos[0].kp = 16;
   motor_infos[0].ki = 0;
   motor_infos[0].kd = 0;
-  motor_infos[0].qpps = 865000;
-  motor_infos[0].scale = 100;
+  motor_infos[0].qpps = 32768;
+  motor_infos[0].scale = 3;
   
   // Back left wheel motor
   motor_infos[3].hardware = MH_RC_VEL;
@@ -226,8 +233,8 @@ void setup() {
   motor_infos[3].kp = 16;
   motor_infos[3].ki = 0;
   motor_infos[3].kd = 0;
-  motor_infos[3].qpps = 865000;
-  motor_infos[3].scale = 100;
+  motor_infos[3].qpps = 32768;
+  motor_infos[3].scale = 3;
   
   // Back right wheel motor
   motor_infos[2].hardware = MH_RC_VEL;
@@ -236,8 +243,8 @@ void setup() {
   motor_infos[2].kp = 16;
   motor_infos[2].ki = 0;
   motor_infos[2].kd = 0;
-  motor_infos[2].qpps = 865000;
-  motor_infos[2].scale = 100;
+  motor_infos[2].qpps = 32768;
+  motor_infos[2].scale = 3;
 
   // Actuator FL 
   motor_infos[4].hardware = MH_ST_POS;
@@ -321,6 +328,12 @@ void setup() {
   motor_infos[12].hardware = MH_ST_PWM_BOTH;
   motor_infos[12].addr = 2;
   motor_infos[12].scale = 1;
+
+  motor_infos[13].hardware = MH_PIN_PWM;
+  motor_infos[13].addr = 12;
+  pinMode(motor_infos[13].addr, OUTPUT);
+  digitalWrite(motor_infos[13].addr, LOW);
+  motor_infos[13].scale = 1;
 
   // Send a command to all motors
   motor_infos[50].hardware = MH_ALL;
@@ -429,7 +442,9 @@ FAULT_T configure_sensors() {
         success = roboclaw.SetM1EncoderMode(sensor_info.addr, 0x81);
       }
       if (!success) {
-        return FAULT_LOST_ROBOCLAW;
+        // Commented out to debug
+        //return FAULT_LOST_ROBOCLAW;
+        Serial.println("Lost roboclaw");
       }
       break;
     case SH_RC_ENC:
@@ -439,7 +454,9 @@ FAULT_T configure_sensors() {
         success = roboclaw.SetM1EncoderMode(sensor_info.addr, 0x80);
       }
       if (!success) {
-        return FAULT_LOST_ROBOCLAW;
+        // Commented out to debug
+        //return FAULT_LOST_ROBOCLAW;
+        Serial.println("Lost roboclaw");
       }
       break;
     case SH_PIN_LIMIT:
@@ -657,14 +674,14 @@ FAULT_T getSensor(uint16_t ID, int16_t *val) {
     //Not sure if this works yet!
   case SH_RC_CUR:
     if (sensor_info.whichMotor == 2){
-       val32 = roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
+       valid = roboclaw.ReadCurrents(sensor_info.addr, dummy, *val);
     } else {
-       val32 = roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
+       valid = roboclaw.ReadCurrents(sensor_info.addr, *val, dummy);
     }
     if (!valid){
       return FAULT_LOST_ROBOCLAW;
     }
-    *val = (int16_t)(val32 / sensor_info.scale);
+    *val = *val / sensor_info.scale;
     break;
   case SH_PIN_LIMIT:
     //if the pin limit switch is for BC translation:
@@ -710,9 +727,9 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       break;
     }
     if (motor_info.whichMotor == 2) {
-      success = roboclaw.SpeedM2(motor_info.addr, val_scaled);
+      success = roboclaw.SpeedAccelM2(motor_info.addr, motor_info.qpps, val_scaled);
     } else {
-      success = roboclaw.SpeedM1(motor_info.addr, val_scaled);
+      success = roboclaw.SpeedAccelM1(motor_info.addr, motor_info.qpps, val_scaled);
     }
     if (!success) {
       return FAULT_LOST_ROBOCLAW;
@@ -762,6 +779,8 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
       }
     }*/
     sabretooth[motor_info.addr].motor(motor_info.whichMotor, val_scaled);
+      
+    Serial.println((val_scaled != 0) * 80);   
     break;
   case MH_ST_POS:
     motor_setpoints[ID] = val_scaled;
@@ -776,6 +795,12 @@ FAULT_T setActuator(uint16_t ID, int16_t val) {
     sabretooth[motor_info.addr].motor(1, -val_scaled);
     sabretooth[motor_info.addr].motor(2, val_scaled); 
     break;
+  case MH_PIN_PWM:
+    if(stopped){
+      break;
+    }
+    analogWrite(motor_info.addr, val_scaled); 
+    break;  
   case MH_ALL:
     if(val_scaled == 0){ // we want to stop all of the motors
       for(int i = 0; i < 13; i++){
@@ -854,6 +879,7 @@ void hciWait() {
         else if (val < -127) {
           val = -127;
         }
+        
         bool success;
         if(motor_info.hardware == MH_ST_POS) {
           if(id == 9) {

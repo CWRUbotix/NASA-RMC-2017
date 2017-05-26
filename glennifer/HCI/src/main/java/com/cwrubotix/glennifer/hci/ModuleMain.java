@@ -305,6 +305,10 @@ public class ModuleMain {
                 configDEPOSBH.ID = 37;
                 configDEPOSBH.name = "Deposition Actuator Pot B Limit High";
                 configDEPOSBH.limitSwitch = true;
+
+                SensorConfig config123 = configDEPOSBH.copy();
+                config123.ID = 38;
+                config123.name = "Excavation bucket conveyor current";
                
 		// Add sensors
                 hci.addSensor(new Sensor(configFLRPM), configFLRPM.ID);
@@ -345,6 +349,7 @@ public class ModuleMain {
                 hci.addSensor(new Sensor(configDEPOSB), configDEPOSB.ID);
                 hci.addSensor(new Sensor(configDEPOSBL), configDEPOSBL.ID);
                 hci.addSensor(new Sensor(configDEPOSBH), configDEPOSBH.ID);
+                hci.addSensor(new Sensor(config123), config123.ID);
 
                 // Initialize actuators
                 
@@ -603,6 +608,17 @@ public class ModuleMain {
                         a.actuatorID = id;
 			System.out.println("Deposition conveyor rpm for val: " + a.targetValue);
                         hci.queueActuation(a);
+                    } else if (keys[2].equals("vibration_rpm")) {
+                        Messages.SpeedContolCommand scc = Messages.SpeedContolCommand.parseFrom(body);
+                        Actuation a = new Actuation();
+                        a.override = true;
+                        a.hold = true;
+                        int id = 13;
+                        a.targetValue = (scc.getRpm() / 100.0F) * 255;
+                        a.type = HardwareControlInterface.ActuationType.AngVel;
+                        a.actuatorID = id;
+                        System.out.println("Deposition vibration rpm for val: " + a.targetValue);
+                        hci.queueActuation(a);
                     } else {
                         System.out.println("Deposition motor control routing key has unrecognized motor");
                         return;
@@ -670,7 +686,7 @@ public class ModuleMain {
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_rpm", null, msg.toByteArray());
 				}
                 //WHEEL POD POSITION
-                else if (sensorDataID == 4 || sensorDataID == 7 || sensorDataID == 10 || sensorDataID == 13){
+                else if (sensorDataID == 4 || sensorDataID == 5 || sensorDataID == 6 || sensorDataID == 7){
                     value = Mechanics.wheelPodValueToPos(value);
 					if (value > 1) value = 1;
 					if (value < -1) value = -1;
@@ -681,11 +697,11 @@ public class ModuleMain {
 							.build();
                     if (sensorDataID == 4)
                         channel.basicPublish("amq.topic", "sensor.locomotion.front_left.wheel_pod_pos", null, msg.toByteArray());
-                    else if (sensorDataID == 7)
+                    else if (sensorDataID == 5)
                         channel.basicPublish("amq.topic", "sensor.locomotion.front_right.wheel_pod_pos", null, msg.toByteArray());
-                    else if (sensorDataID == 10)
+                    else if (sensorDataID == 6)
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_left.wheel_pod_pos", null, msg.toByteArray());
-                    else if (sensorDataID == 13)
+                    else if (sensorDataID == 7)
                         channel.basicPublish("amq.topic", "sensor.locomotion.back_right.wheel_pod_pos", null, msg.toByteArray());
                 }
                 //WHEEL POD LIMIT EXTENDED
@@ -731,11 +747,17 @@ public class ModuleMain {
 							.build();
 					channel.basicPublish("amq.topic", "sensor.excavation.arm_pos_b", null, msg.toByteArray());
 				} else if(sensorDataID == 22){
-					Messages.RpmUpdate msg = Messages.RpmUpdate.newBuilder()
-							.setRpm((float)value)
+					Messages.PositionUpdate msg = Messages.PositionUpdate.newBuilder()
+							.setPosition((((float)value - 45.0F) / 785.0F) * 100.0F)
 							.setTimestamp(unixTime)
 							.build();
 					channel.basicPublish("amq.topic","sensor.excavation.translation_pos", null,msg.toByteArray());
+                } else if(sensorDataID == 38) { // Excavation conveyor current
+                    Messages.CurrentUpdate msg = Messages.CurrentUpdate.newBuilder()
+                            .setCurrent((float)value / 100.0F)
+                            .setTimestamp(unixTime)
+                            .build();
+                    channel.basicPublish("amq.topic","sensor.excavation.conveyor_current", null,msg.toByteArray());
 				} else {
 					// TODO: do others
 				}

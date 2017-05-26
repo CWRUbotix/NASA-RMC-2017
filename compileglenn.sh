@@ -12,9 +12,13 @@ cp -r config glennifer/motor_dispatch/src/python
 
 # compile the things
 cd glennifer/HCI
-mvn compile
+mvn package
 cd ..
 
 cd robot_state
-mvn compile
+mvn package
+cd ..
+
+cd autodrill
+mvn package
 cd ..

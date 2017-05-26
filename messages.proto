@@ -41,6 +41,12 @@ message PositionUpdate {
 	required UnixTime timestamp = 2;
 }
 
+// sensor.excavation.conveyor_current
+message CurrentUpdate {
+	required float current = 1;
+	required UnixTime timestamp = 2;
+}
+
 // sensor.locomotion.front_left.wheel_pod_limit_extended
 // sensor.locomotion.front_right.wheel_pod_limit_extended
 // sensor.locomotion.back_left.wheel_pod_limit_extended
@@ -93,6 +99,7 @@ message Adjustment {
 // motorcontrol.locomotion.back_right.wheel_rpm
 // motorcontrol.excavation.bucket_conveyor_rpm
 // motorcontrol.deposition.conveyor_rpm
+// motorcontrol.deposition.vibration_rpm
 message SpeedContolCommand {
 	required float rpm = 1;
 	required float timeout = 2;
@@ -146,37 +153,22 @@ message LocomotionControlCommandConfigure {
 	required float timeout = 3;
 }
 
-// subsyscommand.excavation.position_arm
-message ExcavationControlCommandPositionArm {
-	optional float position = 1;
-	optional float power = 2;
-	required float timeout = 3;
+// subsyscommand.excavation.dig_deep
+message ExcavationControlCommandDigDeep {
+	required float depth = 1;
+	required float dig_speed = 2;
 }
 
-// subsyscommand.excavation.position_translation
-message ExcavationControlCommandPositionTranslation {
-	optional float position = 1;
-	optional float power = 2;
-	required float timeout = 3;
+// subsyscommand.excavation.dig_surface
+message ExcavationControlCommandDigSurface {
+	required float depth = 1;
+	required float dig_speed = 2;
+	required float dist = 3;
+	required float drive_speed = 4;
 }
 
-// subsyscommand.excavation.move_bucket_conveyor
-message ExcavationControlCommandMoveBucketConveyor {
-	optional float speed = 1;
-	required float timeout = 2;
-}
-
-// subsyscommand.deposition.position_dump
-message DepositionControlCommandPositionDump {
-	optional float position = 1;
-	optional float power = 2;
-	required float timeout = 3;
-}
-
-// subsyscommand.deposition.move_conveyor
-message DepositionControlCommandMoveConveyor {
-	optional float speed = 1;
-	required float timeout = 2;
+// subsyscommand.excavation.dig_end
+message ExcavationControlCommandDigEnd {
 }
 
 //state.subscribe
@@ -248,6 +240,9 @@ message ExcavationStateSummary {
 
 //details of excavation state
 message ExcavationStateDetailed {
+	required float rpm = 1;
+	required float displacement = 2;
+	required float arm_pos = 3;
 	required bool arm_left_extended = 4;
 	required bool arm_right_extended = 5;
 	required bool arm_left_retracted = 6;
@@ -256,6 +251,7 @@ message ExcavationStateDetailed {
 	required bool translation_right_extended = 9;
 	required bool translation_left_retracted = 10;
 	required bool translation_right_retracted = 11;
+	required float conveyor_motor_current = 12;
 }
 
 //summary of deposition state

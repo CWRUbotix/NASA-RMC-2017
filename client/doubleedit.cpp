@@ -7,7 +7,6 @@
 DoubleEdit::DoubleEdit(QWidget *parent) :
     DoubleEdit(0, parent)
 {
-
 }
 
 DoubleEdit::DoubleEdit(qreal contents, QWidget *parent) :

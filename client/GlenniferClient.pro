@@ -20,6 +20,7 @@ SOURCES += main.cpp\
     cameraone.cpp \
     doubleedit.cpp \
     intedit.cpp \
+    drillslider.cpp \
     ledindicator.cpp
 
 HEADERS  += mainwindow.h \
@@ -30,6 +31,7 @@ HEADERS  += mainwindow.h \
     cameraone.h \
     doubleedit.h \
     intedit.h \
+    drillslider.h \
     ledindicator.h
 
 FORMS    += mainwindow.ui \

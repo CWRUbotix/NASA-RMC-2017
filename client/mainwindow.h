@@ -77,6 +77,10 @@ public slots:
     void handleDepositionDumpStop();
     void handleDepositionDumpStore();
     void handleDepositionConveyor(bool checked);
+    void handleLowerCurrent(int value);
+    void handleUpperCurrent(int value);
+    void handleDigSpeed(int value);
+    void handleVibrate(bool checked);
     void handleEStop();
     void handleEUnstop();
 
@@ -88,7 +92,48 @@ public slots:
     void handleTankPivotRK();
     void handleTankPivotLK();
 
+    void actionTabRight();
+    void actionTabLeft();
+
+    void digConfig();
+    void dumpConfig();
+    void forwardConfig();
+    void turnConfig();
+    void strafeConfig();
+
+    void drill(float value, QString key);
+    void handleDrill(int type, float value);
+    void digDeep(float meters);
+    void digFwd(float meters);
+    void digRev(float meters);
+    void digEnd();
+    void bcktWdraw();
+    void bcktFwd();
+    void bcktRev();
+    void dumpExtend();
+    void dumpRetract();
+    void dumpConveyor(bool checked);
+    void drillParameters(double depth);
+    void armDrive();
+    void armDig();
+    void armGTFO();
+    void armPrep();
+    void inverseExcavationConveyer(bool checked);
+    void regularExcavationConveyer(bool checked);
+
+    void handleDigDeep();
+    void handleDigSurface();
+    void handleDigReverse();
+    void handleDigStop();
+    void handleExcavationTargetDepthSet(int value);
+    void handleExcavationDigSpeedSet(int value);
+    void handleExcavationMoveSpeedSet(int value);
+
     void handleState(QString key, QByteArray data);
+
+    void handleA_KeyPress();
+    void handleD_KeyPress();
+
 
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
@@ -113,6 +158,16 @@ private:
     int m_configSpeeds[3] = {100, 60, 50};
 
     CameraOne *cameraOne;
+    int m_digConfig = 0; //0 is drive, 1 is dig, 2 is GTFO
+    bool isInDig = false;
+    bool isInDump = false;
+    //int drillType = 0; //0 is deep, 1 is surface, 2 is reverse
+    //new value for drilling to restrict slider and box values in for example drill deep and drill surface like michael told me
+    float drillValue = 0.0F;
+    QString drillDeep = "drill.deep";
+    QString drillFwd = "drill.surface";
+    QString drillEnd = "drill.end";
+    int m_dumpConfig = 0; //0 is store, 1 is dump/fully extended
 };
 
 #endif // MAINWINDOW_H
